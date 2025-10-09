@@ -10,11 +10,13 @@ class Claim extends Model
     protected $fillable = [
         'claim_id',
         'user_id',
+        'type_of_claim',
+        'attached_document',
         'claim_date',
         'claim_amount',
         'reimbursement_amount',
         'reimbursement_date',
-        'status'
+        'status',
     ];
 
     public function user()

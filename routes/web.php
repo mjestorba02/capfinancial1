@@ -98,6 +98,10 @@ Route::middleware(['auth'])->group(function () {
         //Claims and Reimbursment
         Route::get('/claims', [ClaimsController::class, 'index'])->name('claims.index');
         Route::post('/claims', [ClaimsController::class, 'store'])->name('claims.store');
+
+        Route::get('/timesheet/report', [TimesheetController::class, 'report'])->name('timesheet.report');
+
+        Route::get('/timesheet/download/{employee}', [TimesheetController::class, 'download'])->name('timesheet.download');
     });
 });
 Auth::routes();

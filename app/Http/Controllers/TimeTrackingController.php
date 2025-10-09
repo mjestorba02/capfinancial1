@@ -6,6 +6,7 @@ use App\Models\TimeTracking;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use App\Models\Shift;
 
 class TimeTrackingController extends Controller
 {
@@ -22,42 +23,56 @@ class TimeTrackingController extends Controller
         $request->validate([
             'employee_id' => 'required|exists:users,id',
             'date'        => 'required|date',
-            'time_in'     => 'required|date_format:H:i',
-            'time_out'    => 'required|date_format:H:i|after:time_in',
+            'time_in'     => 'required',
+            'time_out'    => 'required',
         ]);
 
-        $timeIn  = Carbon::parse($request->date . ' ' . $request->time_in);
-        $timeOut = Carbon::parse($request->date . ' ' . $request->time_out);
-        $dayName = Carbon::parse($request->date)->format('l');
+        $date    = $request->date;
+        $timeIn  = Carbon::parse("{$date} {$request->time_in}");
+        $timeOut = Carbon::parse("{$date} {$request->time_out}");
+
+        // If timeout is earlier or equal to timein, assume next day (overnight shift)
+        if ($timeOut->lte($timeIn)) {
+            $timeOut->addDay();
+        }
+
+        $dayName = Carbon::parse($date)->format('l');
 
         $status    = 'Present';
         $overtime  = 0;
         $undertime = 0;
-        $hours     = abs(round($timeOut->diffInMinutes($timeIn) / 60, 2)); // ✅ always positive
 
-        // Find the employee's shift for that day
-        $shift = \App\Models\Shift::where('employee_id', $request->employee_id)
+        // ✅ Always positive total hours
+        $totalHours = abs(round($timeOut->diffInSeconds($timeIn) / 3600, 2));
+
+        // Find employee's shift for that day
+        $shift = Shift::where('employee_id', $request->employee_id)
             ->whereJsonContains('days', $dayName)
             ->first();
 
         if ($shift) {
-            $shiftStart = Carbon::parse($request->date . ' ' . $shift->start_time);
-            $shiftEnd   = Carbon::parse($request->date . ' ' . $shift->end_time);
+            $shiftStart = Carbon::parse("{$date} {$shift->start_time}");
+            $shiftEnd   = Carbon::parse("{$date} {$shift->end_time}");
+
+            // Handle shifts that cross midnight
+            if ($shiftEnd->lte($shiftStart)) {
+                $shiftEnd->addDay();
+            }
 
             // Late check
             if ($timeIn->gt($shiftStart)) {
                 $status = 'Late';
             }
 
-            // Overtime check
+            // ✅ Always positive overtime
             if ($timeOut->gt($shiftEnd)) {
-                $overtime = abs(round($timeOut->diffInMinutes($shiftEnd) / 60, 2));
+                $overtime = abs(round($timeOut->diffInSeconds($shiftEnd) / 3600, 2));
             }
 
-            // Undertime check
+            // ✅ Always positive undertime
             if ($timeOut->lt($shiftEnd)) {
-                $undertime = abs(round($shiftEnd->diffInMinutes($timeOut) / 60, 2));
-                $status = 'Undertime';
+                $undertime = abs(round($shiftEnd->diffInSeconds($timeOut) / 3600, 2));
+                $status = ($status === 'Late') ? 'Late & Undertime' : 'Undertime';
             }
         } else {
             $status = 'No Schedule';
@@ -65,12 +80,12 @@ class TimeTrackingController extends Controller
 
         TimeTracking::create([
             'employee_id' => $request->employee_id,
-            'date'        => $request->date,
+            'date'        => $date,
             'time_in'     => $request->time_in,
             'time_out'    => $request->time_out,
-            'total_hours' => $hours,
+            'total_hours' => $totalHours,
             'overtime'    => $overtime,
-            'undertime'   => $undertime, // ✅ new column
+            'undertime'   => $undertime,
             'status'      => $status,
         ]);
 

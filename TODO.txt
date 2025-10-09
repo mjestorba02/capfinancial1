@@ -1,0 +1,7 @@
+HR3-
+
+Reports Module - Generate and downloadable
+Leave Management - add Request Leave Module 
+Time and Attendance Portal - Portal Time in and Time out only base sa schedule nila.
+Shift and Schedule add overtime form para sa mga employee na mag Oovertime.
+Claims and Reimbursement - add column - Types of claim and attached documents file.

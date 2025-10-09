@@ -9,6 +9,7 @@ use App\Models\Shift;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
+use PDF;
 
 class TimesheetController extends Controller
 {
@@ -163,13 +164,14 @@ class TimesheetController extends Controller
             ];
         });
 
-        // ✅ Totals from DB values
+        // Totals from DB values
         $totals = [
             'hours_worked' => $records->sum('hours_worked'),
             'overtime'     => $records->sum('overtime'),
         ];
 
         return response()->json([
+            'employee_id' => $employee->id,
             'employee'   => $employee->name ?? 'N/A',
             'department' => $employee->department ?? 'N/A',
             'position'   => $employee->position ?? 'N/A',
@@ -178,5 +180,89 @@ class TimesheetController extends Controller
             'records'    => $records,
             'totals'     => $totals,
         ]);
+    }
+
+    public function report(Request $request)
+    {
+        $positions = \App\Models\User::select('position')->distinct()->pluck('position');
+
+        $from = $request->from;
+        $to = $request->to;
+        $position = $request->position;
+
+        $reportData = [];
+
+        if ($from && $to) {
+            // Get all time tracking records joined with users
+            $query = \App\Models\TimeTracking::with('employee')
+                ->whereBetween('date', [$from, $to]);
+
+            if ($position) {
+                $query->whereHas('employee', function ($q) use ($position) {
+                    $q->where('position', $position);
+                });
+            }
+
+            $records = $query->get();
+
+            // Group by employee
+            $grouped = $records->groupBy('employee_id');
+
+            foreach ($grouped as $empId => $logs) {
+                $employee = $logs->first()->employee;
+
+                $totalHours = $logs->sum('total_hours');
+                $overtime = $logs->sum('overtime');
+                $undertime = $logs->sum('undertime');
+
+                $reportData[] = [
+                    'employee_id' => $employee->id,
+                    'employee' => $employee->name,
+                    'position' => $employee->position ?? 'N/A',
+                    'department' => $employee->department ?? 'N/A',
+                    'total_hours' => round($totalHours, 2),
+                    'overtime' => round($overtime, 2),
+                    'undertime' => round($undertime, 2),
+                ];
+            }
+        }
+
+        return view('hr.timesheet_report', compact('positions', 'reportData', 'from', 'to', 'position'));
+    }
+
+    public function download($employee, Request $request)
+    {
+        // Filter the data for that specific employee
+        $from = $request->query('from');
+        $to = $request->query('to');
+
+        $records = \App\Models\TimeTracking::whereHas('employee', function($q) use ($employee) {
+                $q->where('name', $employee);
+            })
+            ->whereBetween('date', [$from, $to])
+            ->get();
+
+        if ($records->isEmpty()) {
+            return redirect()->back()->with('error', 'No timesheet data found for this employee.');
+        }
+
+        $employeeInfo = $records->first()->employee;
+
+        // Total calculations
+        $totalHours = $records->sum('total_hours');
+        $totalOvertime = $records->sum('overtime');
+        $totalUndertime = $records->sum('undertime');
+
+        $pdf = PDF::loadView('timesheet.pdf', [
+            'employee' => $employeeInfo,
+            'records' => $records,
+            'from' => $from,
+            'to' => $to,
+            'totalHours' => $totalHours,
+            'totalOvertime' => $totalOvertime,
+            'totalUndertime' => $totalUndertime,
+        ])->setPaper('a4', 'portrait');
+
+        return $pdf->download("Timesheet_{$employee}_{$from}_to_{$to}.pdf");
     }
 }

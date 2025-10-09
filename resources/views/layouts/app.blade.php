@@ -129,10 +129,27 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ route('timesheet.index') }}" class="nav-link">
-                            <i class="fe fe-file-text fe-16"></i>
-                            <span class="ml-3 item-text">Timesheet</span>
+                        <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#timesheetMenu" role="button" aria-expanded="false" aria-controls="timesheetMenu">
+                            <span>
+                                <i class="fe fe-file-text fe-16"></i>
+                                <span class="ml-3 item-text">Timesheet</span>
+                            </span>
+                            <i class="fe fe-chevron-down small"></i>
                         </a>
+                        <div class="collapse" id="timesheetMenu">
+                            <ul class="nav flex-column ml-4">
+                                <li class="nav-item">
+                                    <a href="{{ route('timesheet.index') }}" class="nav-link small">
+                                        <i class="fe fe-edit me-2"></i> Record
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('timesheet.report') }}" class="nav-link small">
+                                        <i class="fe fe-bar-chart me-2"></i> Report
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
                     </li>
                     <li class="nav-item">
                         <a href="{{ route('leave.index') }}" class="nav-link">
