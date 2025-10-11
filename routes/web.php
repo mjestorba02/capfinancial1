@@ -113,7 +113,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/overtime/update-status/{id}', [OvertimeController::class, 'updateStatus'])->name('overtime.updateStatus');
         Route::delete('/overtime/{id}', [OvertimeController::class, 'destroy'])->name('overtime.destroy');
 
-        Route::get('/timesheet/get-employees/{position}', [App\Http\Controllers\TimeSheetController::class, 'getEmployees']);
+        Route::get('/timesheet/get-employees/{position}', [App\Http\Controllers\TimesheetController::class, 'getEmployees']);
 
     });
 });
