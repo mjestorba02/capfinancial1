@@ -7,7 +7,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="{{ asset('assets/images/newlogo.svg') }}">
-    <title>@yield('title', 'HR Dashboard')</title>
+    <title>@yield('title', 'Financial 1')</title>
 
     <!-- Simple bar CSS -->
     <link rel="stylesheet" href="{{ asset('css/simplebar.css') }}">
@@ -46,7 +46,7 @@
             </button>
 
             <h5 class="navbar-brand mb-0 text-uppercase fw-bold text-primary">
-                Human Resource Management System 3
+                Financial Management System
             </h5>
 
             <form class="form-inline mr-auto searchform text-muted">
