@@ -31,9 +31,7 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/css/select2.min.css" rel="stylesheet" />
 
     <style>
-        /* Prevent theme switching artifacts */
-        body,
-        * {
+        body, * {
             transition: none !important;
         }
     </style>
@@ -47,7 +45,6 @@
                 <i class="fe fe-menu navbar-toggler-icon"></i>
             </button>
 
-            <!-- System Header Title -->
             <h5 class="navbar-brand mb-0 text-uppercase fw-bold text-primary">
                 Human Resource Management System 3
             </h5>
@@ -63,23 +60,15 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <!-- updated to Bootstrap 5 -->
                     <a class="nav-link text-muted my-2" href="#" data-bs-toggle="modal" data-bs-target=".modal-shortcut">
                         <span class="fe fe-grid-3 fe-16"></span>
                     </a>
                 </li>
-                <!-- <li class="nav-item nav-notif">
-                    <a class="nav-link text-muted my-2" href="#" data-bs-toggle="modal" data-bs-target=".modal-notif">
-                        <span class="fe fe-bell fe-16"></span>
-                        <span class="dot dot-md bg-success"></span>
-                    </a>
-                </li> -->
                 <li class="nav-item dropdown">
-                    <!-- updated to Bootstrap 5 -->
                     <a class="nav-link dropdown-toggle text-muted pr-0" href="#" id="navbarDropdownMenuLink"
                         role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <span class="avatar avatar-sm mt-2">
-                            <img src="{{ Auth::user() && Auth::user()->photo_path ? asset('storage/' . Auth::user()->photo_path) : asset('assets/avatars/face-1.jpg') }}" alt="Profile Photo" class="avatar-img rounded-circle">
+                            <img src="{{ Auth::user() && Auth::user()->photo_path ? asset('storage/' . Auth::user()->photo_path) : asset('assets/avatars/avatar.jpg') }}" alt="Profile Photo" class="avatar-img rounded-circle">
                         </span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
@@ -101,10 +90,8 @@
                 <i class="fe fe-x"><span class="sr-only"></span></i>
             </a>
             <nav class="vertnav navbar navbar-light">
-                <!-- nav bar -->
                 <div class="w-100 mb-4 d-flex">
                     <a class="navbar-brand mx-auto mt-2 flex-fill text-center" href="{{ route('dashboard') }}">
-                        <!-- logo -->
                         <svg version="1.1" id="logo" class="navbar-brand-img brand-sm"
                             xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 120 120">
                             <g>
@@ -116,7 +103,7 @@
                     </a>
                 </div>
                 <ul class="navbar-nav flex-fill w-100 mb-2">
-                    <li class="nav-item">
+                    <li class="nav-item mb-3">
                         <a href="{{ route('dashboard') }}" class="nav-link">
                             <i class="fe fe-home fe-16"></i>
                             <span class="ml-3 item-text">Dashboard</span>
@@ -129,103 +116,99 @@
                 </p>
                 <ul class="navbar-nav flex-fill w-100 mb-2">
 
-                    {{-- Time & Attendance --}}
-                    <li class="nav-item">
-                        <a href="{{ route('timetracking.index') }}"
-                        class="nav-link {{ Request::routeIs('timetracking.*') ? 'active' : '' }}">
-                            <i class="fe fe-clock fe-16"></i>
-                            <span class="ml-3 item-text">Time & Attendance</span>
-                        </a>
-                    </li>
-
-                    {{-- Timesheet Dropdown --}}
-                    @php
-                        $isTimesheetActive = Request::routeIs('timesheet.*');
-                    @endphp
-                    <li class="nav-item">
-                        <a class="nav-link d-flex justify-content-between align-items-center {{ $isTimesheetActive ? 'active' : 'collapsed' }}"
-                        data-bs-toggle="collapse"
-                        href="#timesheetMenu"
-                        role="button"
-                        aria-expanded="{{ $isTimesheetActive ? 'true' : 'false' }}"
-                        aria-controls="timesheetMenu">
-                            <span>
-                                <i class="fe fe-file-text fe-16"></i>
-                                <span class="ml-3 item-text">Timesheet</span>
-                            </span>
-                            <i class="fe fe-chevron-down small"></i>
-                        </a>
-                        <div class="collapse {{ $isTimesheetActive ? 'show' : '' }}" id="timesheetMenu">
-                            <ul class="nav flex-column ml-4">
-                                <li class="nav-item">
-                                    <a href="{{ route('timesheet.index') }}"
-                                    class="nav-link small {{ Request::routeIs('timesheet.index') ? 'active' : '' }}">
-                                        <i class="fe fe-edit me-2"></i> Record
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{{ route('timesheet.report') }}"
-                                    class="nav-link small {{ Request::routeIs('timesheet.report') ? 'active' : '' }}">
-                                        <i class="fe fe-bar-chart me-2"></i> Report
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-
-                    {{-- Leave Management --}}
-                    <li class="nav-item">
-                        <a href="{{ route('leave.index') }}"
-                        class="nav-link {{ Request::routeIs('leave.*') ? 'active' : '' }}">
-                            <i class="fe fe-calendar fe-16"></i>
-                            <span class="ml-3 item-text">Leave Management</span>
-                        </a>
-                    </li>
-
-                    {{-- Shift & Schedule Dropdown --}}
-                    @php
-                        $isShiftActive = Request::routeIs('shifts.*') || Request::routeIs('overtime.*');
-                    @endphp
-                    <li class="nav-item">
-                        <a class="nav-link d-flex justify-content-between align-items-center {{ $isShiftActive ? 'active' : 'collapsed' }}"
-                        data-bs-toggle="collapse"
-                        href="#shiftMenu"
-                        role="button"
-                        aria-expanded="{{ $isShiftActive ? 'true' : 'false' }}"
-                        aria-controls="shiftMenu">
-                            <span>
-                                <i class="fe fe-users fe-16"></i>
-                                <span class="ml-3 item-text">Shift & Schedule</span>
-                            </span>
-                            <i class="fe fe-chevron-down small"></i>
-                        </a>
-                        <div class="collapse {{ $isShiftActive ? 'show' : '' }}" id="shiftMenu">
-                            <ul class="nav flex-column ml-4">
-                                <li class="nav-item">
-                                    <a href="{{ route('shifts.index') }}"
-                                    class="nav-link small {{ Request::routeIs('shifts.index') ? 'active' : '' }}">
-                                        <i class="fe fe-calendar me-2"></i> Schedules
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{{ route('overtime.index') }}"
-                                    class="nav-link small {{ Request::routeIs('overtime.index') ? 'active' : '' }}">
-                                        <i class="fe fe-clock me-2"></i> Request Overtime
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-
-                    {{-- Claims --}}
-                    <li class="nav-item">
-                        <a href="{{ route('claims.index') }}"
-                        class="nav-link {{ Request::routeIs('claims.*') ? 'active' : '' }}">
+                    <li class="nav-item mb-3">
+                        <a href="{{ route('collections.index') }}"
+                        class="nav-link {{ Request::routeIs('collections.*') ? 'active' : '' }}">
                             <i class="fe fe-credit-card fe-16"></i>
-                            <span class="ml-3 item-text">Claims & Reimbursement</span>
+                            <span class="ml-3 item-text">Collections</span>
                         </a>
                     </li>
 
+                    @php
+                        $isBudgetActive = Request::routeIs('budget_requests.*');
+                    @endphp
+                    <li class="nav-item mb-3">
+                        <a class="nav-link d-flex justify-content-between align-items-center {{ $isBudgetActive ? 'active' : 'collapsed' }}"
+                        data-bs-toggle="collapse"
+                        href="#budgetMenu"
+                        role="button"
+                        aria-expanded="{{ $isBudgetActive ? 'true' : 'false' }}"
+                        aria-controls="budgetMenu">
+                            <span>
+                                <i class="fe fe-dollar-sign fe-16"></i>
+                                <span class="ml-3 item-text">Budget Management</span>
+                            </span>
+                            <i class="fe fe-chevron-down small"></i>
+                        </a>
+
+                        <div class="collapse {{ $isBudgetActive ? 'show' : '' }}" id="budgetMenu">
+                            <ul class="nav flex-column ml-4">
+                                <li class="nav-item">
+                                    <a href="{{ route('budget_requests.index') }}"
+                                    class="nav-link small {{ Request::routeIs('budget.request') ? 'active' : '' }}">
+                                        <i class="fe fe-file-plus me-2"></i> Budget Request
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('finance.allocations.index') }}"
+                                    class="nav-link small {{ Request::routeIs('budget.allocation') ? 'active' : '' }}">
+                                        <i class="fe fe-pie-chart me-2"></i> Budget Allocation & Planning
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+
+                    @php
+                        $isLedgerActive = Request::routeIs('ledger.*');
+                    @endphp
+                    <li class="nav-item mb-3">
+                        <a class="nav-link d-flex justify-content-between align-items-center {{ $isLedgerActive ? 'active' : 'collapsed' }}"
+                        data-bs-toggle="collapse"
+                        href="#ledgerMenu"
+                        role="button"
+                        aria-expanded="{{ $isLedgerActive ? 'true' : 'false' }}"
+                        aria-controls="ledgerMenu">
+                            <span>
+                                <i class="fe fe-book fe-16"></i>
+                                <span class="ml-3 item-text">General Ledger</span>
+                            </span>
+                            <i class="fe fe-chevron-down small"></i>
+                        </a>
+
+                        <div class="collapse {{ $isLedgerActive ? 'show' : '' }}" id="ledgerMenu">
+                            <ul class="nav flex-column ml-4">
+                                <li class="nav-item">
+                                    <a href="{{ route('chart.index') }}"
+                                    class="nav-link small {{ Request::routeIs('chart.*') ? 'active' : '' }}">
+                                        <i class="fe fe-layers me-2"></i> Chart of Accounts
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('journal_entries.index') }}"
+                                    class="nav-link small {{ Request::routeIs('journal_entries.*') ? 'active' : '' }}">
+                                        <i class="fe fe-edit-3 me-2"></i> Journal Entry
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+
+                    <li class="nav-item mb-3">
+                        <a href="{{ route('accounts.index') }}"
+                        class="nav-link {{ Request::routeIs('accounts.*') ? 'active' : '' }}">
+                            <i class="fe fe-briefcase fe-16"></i>
+                            <span class="ml-3 item-text">Accounts</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item mb-3">
+                        <a href="{{ route('disbursements.index') }}"
+                        class="nav-link {{ Request::routeIs('disbursements.*') ? 'active' : '' }}">
+                            <i class="fe fe-send fe-16"></i>
+                            <span class="ml-3 item-text">Disbursement</span>
+                        </a>
+                    </li>
                 </ul>
             </nav>
         </aside>
@@ -234,43 +217,12 @@
             <div class="container-fluid">
                 @yield('content')
             </div>
-
-            <!-- Example Modal (Notification) -->
-            <div class="modal fade modal-notif modal-slide" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog modal-sm">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Notifications</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="list-group list-group-flush my-n3">
-                                <div class="list-group-item bg-transparent">
-                                    <div class="row align-items-center">
-                                        <div class="col-auto"><span class="fe fe-box fe-24"></span></div>
-                                        <div class="col">
-                                            <small><strong>Package uploaded successfully</strong></small>
-                                            <div class="my-0 text-muted small">Package is zipped and uploaded</div>
-                                            <small class="badge bg-light text-muted">1m ago</small>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- more items... -->
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal">Clear All</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </main>
     </div>
 
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
     <script src="{{ asset('js/moment.min.js') }}"></script>
     <script src="{{ asset('js/simplebar.min.js') }}"></script>
     <script src="{{ asset('js/daterangepicker.js') }}"></script>

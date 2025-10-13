@@ -1,15 +1,19 @@
 <?php 
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\TimeTrackingController;
-use App\Http\Controllers\TimesheetController;
-use App\Http\Controllers\LeaveManagementController;
-use App\Http\Controllers\ShiftController;
-use App\Http\Controllers\ClaimsController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\AttendancePortalController;
-use App\Http\Controllers\OvertimeController;
+use App\Http\Controllers\CollectionController;
+use App\Http\Controllers\BudgetRequestController;
+use App\Http\Controllers\AllocationController;
+use App\Http\Controllers\ChartOfAccountsController;
+use App\Http\Controllers\JournalEntryController;
+use App\Http\Controllers\AccountsController;
+use App\Http\Controllers\DisbursementController;
+
+//Employee Auth
+use App\Http\Controllers\EmployeeAuthController;
+use App\Http\Controllers\EmployeeBudgetController;
 
 // Authentication routes
 use Illuminate\Support\Facades\Auth;
@@ -73,51 +77,57 @@ Route::middleware(['auth'])->group(function () {
         return view('files-grid');
     })->name('files-grid');
 
-    Route::prefix('hr')->group(function () {
-        //Time Tracking
-        Route::get('/time-tracking', [TimeTrackingController::class, 'index'])->name('timetracking.index');
-        Route::post('/time-tracking', [TimeTrackingController::class, 'store'])->name('timetracking.store');
+    Route::prefix('finance')->group(function () {
+        Route::resource('collections', CollectionController::class);
+        Route::resource('budget_requests', BudgetRequestController::class);
 
-        //Timesheet
-        Route::get('/timesheet', [TimesheetController::class, 'index'])->name('timesheet.index');
-        Route::post('/timesheet', [TimesheetController::class, 'store'])->name('timesheet.store');
-        Route::put('/timesheet/{timesheet}', [TimesheetController::class, 'update'])->name('timesheet.update');
-        Route::delete('/timesheet/{timesheet}', [TimesheetController::class, 'destroy'])->name('timesheet.destroy');
+        Route::get('allocations', [AllocationController::class, 'index'])->name('finance.allocations.index');
+        Route::post('allocations', [AllocationController::class, 'store'])->name('finance.allocations.store');
+        Route::put('allocations/{allocation}', [AllocationController::class, 'update'])->name('finance.allocations.update');
+        Route::delete('allocations/{allocation}', [AllocationController::class, 'destroy'])->name('finance.allocations.destroy');
 
-        //Timesheet Data
-        Route::get('/timesheet/employee/{employeeId}/details', [TimesheetController::class, 'details'])->name('timesheet.employee.details');
+        // optional route to update used via small POST/PUT from modal
+        Route::put('allocations/{allocation}/used', [AllocationController::class, 'updateUsed'])->name('finance.allocations.updateUsed');
 
-        //Leave Management
-        Route::get('/leave-management', [LeaveManagementController::class, 'index'])->name('leave.index');
-        Route::post('/leave-type', [LeaveManagementController::class, 'storeType'])->name('leave.storeType');
-        Route::post('/employee-leave', [LeaveManagementController::class, 'storeEmployeeLeave'])->name('leave.storeEmployeeLeave');
+        Route::put('/budget_requests/{id}/approve', [BudgetRequestController::class, 'approve'])->name('budget_requests.approve');
 
-        // Shift and Schedule
-        Route::get('/shifts', [ShiftController::class, 'index'])->name('shifts.index');
-        Route::post('/shifts', [ShiftController::class, 'store'])->name('shifts.store');
-        Route::put('/shifts/{shift}', [ShiftController::class, 'update'])->name('shifts.update');
-        Route::delete('/shifts/{shift}', [ShiftController::class, 'destroy'])->name('shifts.destroy');
+        Route::get('/chart-of-accounts', [ChartOfAccountsController::class, 'index'])->name('chart.index');
+        Route::get('/chart-of-accounts/{id}', [ChartOfAccountsController::class, 'show'])->name('chart.show');
+        Route::post('/chart-of-accounts', [ChartOfAccountsController::class, 'store'])->name('chart.store');
+        Route::put('/chart-of-accounts/{id}', [ChartOfAccountsController::class, 'update'])->name('chart.update');
+        Route::delete('/chart-of-accounts/{id}', [ChartOfAccountsController::class, 'destroy'])->name('chart.destroy');
 
-        //Claims and Reimbursement
-        Route::get('/claims', [ClaimsController::class, 'index'])->name('claims.index');
-        Route::post('/claims', [ClaimsController::class, 'store'])->name('claims.store');
-        Route::put('/claims/{id}', [ClaimsController::class, 'update'])->name('claims.update');
-        Route::delete('/claims/{id}', [ClaimsController::class, 'destroy'])->name('claims.destroy');
+        Route::resource('journal_entries', JournalEntryController::class);
 
-        Route::get('/timesheet/report', [TimesheetController::class, 'report'])->name('timesheet.report');
+        Route::get('/accounts', [AccountsController::class, 'index'])->name('accounts.index');
 
-        Route::get('/timesheet/download/{employee}', [TimesheetController::class, 'download'])->name('timesheet.download');
+        // Receivables
+        Route::post('/accounts/receivables', [AccountsController::class, 'storeReceivable'])->name('receivables.store');
+        Route::put('/accounts/receivables/{receivable}', [AccountsController::class, 'updateReceivable'])->name('receivables.update');
+        Route::delete('/accounts/receivables/{receivable}', [AccountsController::class, 'destroyReceivable'])->name('receivables.destroy');
 
-        Route::get('/overtime', [OvertimeController::class, 'index'])->name('overtime.index');
-        Route::post('/overtime/store', [OvertimeController::class, 'store'])->name('overtime.store');
-        Route::post('/overtime/update-status/{id}', [OvertimeController::class, 'updateStatus'])->name('overtime.updateStatus');
-        Route::delete('/overtime/{id}', [OvertimeController::class, 'destroy'])->name('overtime.destroy');
+        // Payables
+        Route::post('/accounts/payables', [AccountsController::class, 'storePayable'])->name('payables.store');
+        Route::put('/accounts/payables/{payable}', [AccountsController::class, 'updatePayable'])->name('payables.update');
+        Route::delete('/accounts/payables/{payable}', [AccountsController::class, 'destroyPayable'])->name('payables.destroy');
 
-        Route::get('/timesheet/get-employees/{position}', [App\Http\Controllers\TimesheetController::class, 'getEmployees']);
+        Route::post('/collections/{collection}/approve', [CollectionController::class, 'approve'])->name('collections.approve');
 
+        Route::resource('disbursements', DisbursementController::class);
     });
 });
 Auth::routes();
+
+Route::prefix('employee')->group(function () {
+    Route::get('/login', [EmployeeAuthController::class, 'showLoginForm'])->name('employee.login');
+    Route::post('/login', [EmployeeAuthController::class, 'login'])->name('employee.login.post');
+    Route::get('/logout', [EmployeeAuthController::class, 'logout'])->name('employee.logout');
+
+    Route::middleware('employee.auth')->group(function () {
+        Route::get('/dashboard', [EmployeeBudgetController::class, 'index'])->name('employee.dashboard');
+        Route::post('/budget-requests', [EmployeeBudgetController::class, 'store'])->name('employee.budget.store');
+    });
+});
 
 // Attendance Portal
 Route::get('/attendance', [AttendancePortalController::class, 'index'])->name('attendance.portal');
