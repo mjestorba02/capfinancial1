@@ -126,6 +126,7 @@
                         <option value="Operating Revenue">Operating Revenue</option>
                         <option value="Operating Expense">Operating Expense</option>
                         <option value="COGS">COGS</option>
+                        <option value="Non-operating Expense">Non-operating Expense</option>
                     </select>
                 </div>
 
@@ -194,6 +195,7 @@
                         <option value="Operating Revenue" {{ $account->category === 'Operating Revenue' ? 'selected' : '' }}>Operating Revenue</option>
                         <option value="Operating Expense" {{ $account->category === 'Operating Expense' ? 'selected' : '' }}>Operating Expense</option>
                         <option value="COGS" {{ $account->category === 'COGS' ? 'selected' : '' }}>COGS</option>
+                        <option value="Non-operating Expense" {{ $account->category === 'Non-operating Expense' ? 'selected' : '' }}>Non-operating Expense</option>
                     </select>
                 </div>
 
