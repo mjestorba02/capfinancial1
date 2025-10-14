@@ -6,6 +6,7 @@ use App\Models\Collection;
 use App\Models\Payable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use PDF;
 
 class AccountsController extends Controller
 {
@@ -14,7 +15,6 @@ class AccountsController extends Controller
         // ========== COLLECTIONS (ACCOUNTS RECEIVABLE: Paid Only) ==========
         $collectionQuery = Collection::query()->where('status', 'Paid');
 
-        // Optional filters
         if ($request->filled('r_search')) {
             $s = $request->r_search;
             $collectionQuery->where(fn($q) =>
@@ -86,9 +86,9 @@ class AccountsController extends Controller
             'vendor' => 'required|string|max:255',
             'invoice_number' => 'nullable|string|max:255',
             'amount' => 'required|numeric|min:0.01',
-            'mode_of_payment' => 'nullable|string|max:100', // ✅ added
+            'mode_of_payment' => 'nullable|string|max:100',
             'due_date' => 'nullable|date',
-            'payment_date' => 'nullable|date',              // ✅ added
+            'payment_date' => 'nullable|date',
             'status' => 'required|in:Unpaid,Paid,Overdue',
             'remarks' => 'nullable|string|max:1000',
         ]);
@@ -121,15 +121,8 @@ class AccountsController extends Controller
             'remarks' => 'nullable|string|max:1000',
         ]);
 
-        // ✅ Preserve original payment_date if left blank
-        if (empty($data['payment_date'])) {
-            unset($data['payment_date']);
-        }
-
-        // ✅ Preserve original due_date if left blank
-        if (empty($data['due_date'])) {
-            unset($data['due_date']);
-        }
+        if (empty($data['payment_date'])) unset($data['payment_date']);
+        if (empty($data['due_date'])) unset($data['due_date']);
 
         $payable->update($data);
 
@@ -140,5 +133,27 @@ class AccountsController extends Controller
     {
         $payable->delete();
         return redirect()->route('accounts.index')->with('success', 'Payable deleted successfully.');
+    }
+
+    // -----------------------
+    // PDF EXPORT FUNCTIONS
+    // -----------------------
+    public function exportPayablesPDF()
+    {
+        $payables = Payable::orderByDesc('due_date')->get();
+        $pdf = PDF::loadView('finance.exports.payables_pdf', compact('payables'))
+                  ->setPaper('a4', 'landscape');
+        return $pdf->download('accounts_payable.pdf');
+    }
+
+    public function exportReceivablesPDF()
+    {
+        $collections = Collection::where('status', 'Paid')
+                                 ->orderByDesc('payment_date')
+                                 ->get();
+
+        $pdf = PDF::loadView('finance.exports.receivables_pdf', compact('collections'))
+                  ->setPaper('a4', 'landscape');
+        return $pdf->download('paid_collections.pdf');
     }
 }

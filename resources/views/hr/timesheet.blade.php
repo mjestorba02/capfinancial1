@@ -104,11 +104,11 @@
                                     </button>
 
                                     {{-- Delete form --}}
-                                    <form action="{{ route('timesheet.destroy', $sheet->id) }}" method="POST" style="display:inline;">
+                                    <!-- <form action="{{ route('timesheet.destroy', $sheet->id) }}" method="POST" style="display:inline;">
                                         @csrf
                                         @method('DELETE')
                                         <button class="btn btn-sm btn-danger" onclick="return confirm('Delete this record?')">Delete</button>
-                                    </form>
+                                    </form> -->
                                 </td>
                             </tr>
                         @endforeach

@@ -106,14 +106,14 @@
                                     </a>
 
                                     <!-- Delete Icon -->
-                                    <form method="POST" action="{{ route('budget_requests.destroy', $req->id) }}" 
+                                    <!-- <form method="POST" action="{{ route('budget_requests.destroy', $req->id) }}" 
                                         onsubmit="return confirm('Delete this request?')" class="d-inline">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="bg-transparent border-0 p-0 text-white" title="Delete">
                                             <i class="fe fe-trash fe-18"></i>
                                         </button>
-                                    </form>
+                                    </form> -->
                                 </div>
                             </td>
                         </tr>

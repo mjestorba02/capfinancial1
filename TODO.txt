@@ -1,7 +1,11 @@
-HR3-
+Baliktad Yung Chart of Accounts and Journal Entries [DONE]
 
-Reports Module - Generate and downloadable
-Leave Management - add Request Leave Module 
-Time and Attendance Portal - Portal Time in and Time out only base sa schedule nila.
-Shift and Schedule add overtime form para sa mga employee na mag Oovertime.
-Claims and Reimbursement - add column - Types of claim and attached documents file.
+Walangs add sa collections notif na lang na my new collections and then approved [DONE]
+
+Downloadable Reports sa Ap and Ar [DONE]
+
+Disbursement to Accounts Payable records
+
+All Records mapupunta sa Journal Entries
+
+Removed Delete button [DONE]

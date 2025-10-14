@@ -9,7 +9,7 @@
             <h2 class="fw-bold text-primary mb-0">Accounts Receivable - Collections</h2>
             <p class="text-muted mb-0">Track and record customer payments and invoices.</p>
         </div>
-        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">Add Collection</button>
+        <!-- <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">Add Collection</button> -->
     </div>
 
     @if(session('success'))
@@ -77,7 +77,7 @@
                                     </a>
 
                                     <!-- Delete Icon -->
-                                    <form method="POST" action="{{ route('collections.destroy', $item->id) }}" 
+                                    <!-- <form method="POST" action="{{ route('collections.destroy', $item->id) }}" 
                                         onsubmit="return confirm('Delete this record?')" 
                                         class="d-inline">
                                         @csrf
@@ -85,7 +85,7 @@
                                         <button type="submit" class="bg-transparent border-0 p-0 text-danger" title="Delete">
                                             <i class="fe fe-trash fe-18"></i>
                                         </button>
-                                    </form>
+                                    </form> -->
                                 </div>
                             </td>
                         </tr>

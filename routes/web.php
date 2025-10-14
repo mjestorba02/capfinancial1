@@ -118,15 +118,16 @@ Route::middleware(['auth'])->group(function () {
 });
 Auth::routes();
 
+Route::get('/export/payables-pdf', [AccountsController::class, 'exportPayablesPDF'])->name('export.payables.pdf');
+Route::get('/export/receivables-pdf', [AccountsController::class, 'exportReceivablesPDF'])->name('export.receivables.pdf');
+
 Route::prefix('employee')->group(function () {
     Route::get('/login', [EmployeeAuthController::class, 'showLoginForm'])->name('employee.login');
     Route::post('/login', [EmployeeAuthController::class, 'login'])->name('employee.login.post');
     Route::get('/logout', [EmployeeAuthController::class, 'logout'])->name('employee.logout');
 
-    Route::middleware('employee.auth')->group(function () {
-        Route::get('/dashboard', [EmployeeBudgetController::class, 'index'])->name('employee.dashboard');
-        Route::post('/budget-requests', [EmployeeBudgetController::class, 'store'])->name('employee.budget.store');
-    });
+    Route::get('/dashboard', [EmployeeBudgetController::class, 'index'])->name('employee.dashboard');
+    Route::post('/budget-requests', [EmployeeBudgetController::class, 'store'])->name('employee.budget.store');
 });
 
 // Attendance Portal

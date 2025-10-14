@@ -62,14 +62,14 @@
                                     </a>
 
                                     {{-- Delete --}}
-                                    <form method="POST" action="{{ route('disbursements.destroy', $item->id) }}"
+                                    <!-- <form method="POST" action="{{ route('disbursements.destroy', $item->id) }}"
                                           onsubmit="return confirm('Delete this record?')" class="d-inline">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="bg-transparent border-0 p-0 text-danger" title="Delete">
                                             <i class="fe fe-trash fe-18"></i>
                                         </button>
-                                    </form>
+                                    </form> -->
                                 </div>
                             </td>
                         </tr>

@@ -105,14 +105,14 @@
                                         </a>
 
                                         <!-- Delete Icon -->
-                                        <form action="{{ route('finance.allocations.destroy', $a->id) }}" method="POST" class="d-inline"
+                                        <!-- <form action="{{ route('finance.allocations.destroy', $a->id) }}" method="POST" class="d-inline"
                                             onsubmit="return confirm('Delete this allocation?')">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="bg-transparent border-0 p-0 text-white" title="Delete">
                                                 <i class="fe fe-trash fe-18"></i>
                                             </button>
-                                        </form>
+                                        </form> -->
                                     </div>
                                 </td>
                             </tr>

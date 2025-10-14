@@ -25,9 +25,14 @@
     <div class="card shadow mb-5">
         <div class="card-header bg-light d-flex justify-content-between align-items-center">
             <h5 class="fw-bold mb-0">Accounts Payable</h5>
-            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addPayableModal">
-                <i class="fe fe-plus me-1"></i> Add Payable
-            </button>
+            <div>
+                <a href="{{ route('export.payables.pdf') }}" class="btn btn-danger btn-sm me-2">
+                    <i class="fe fe-file-text me-1"></i> Export PDF
+                </a>
+                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addPayableModal">
+                    <i class="fe fe-plus me-1"></i> Add Payable
+                </button>
+            </div>
         </div>
 
         <div class="card-body">
@@ -87,8 +92,11 @@
     {{-- ACCOUNTS RECEIVABLE SECTION (PAID COLLECTIONS) --}}
     {{-- ============================= --}}
     <div class="card shadow">
-        <div class="card-header bg-light">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center">
             <h5 class="fw-bold mb-0">Accounts Receivable — Paid Collections</h5>
+            <a href="{{ route('export.receivables.pdf') }}" class="btn btn-danger btn-sm">
+                <i class="fe fe-file-text me-1"></i> Export PDF
+            </a>
         </div>
 
         <div class="card-body">

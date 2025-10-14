@@ -1,15 +1,14 @@
 @extends('layouts.app')
 
-@section('title', 'Chart of Accounts')
+@section('title', 'Journal Entries')
 
 @section('content')
 <div class="container-fluid px-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h2 class="fw-bold text-primary mb-0">Chart of Accounts</h2>
-            <p class="text-muted mb-0">Manage financial account records and categories.</p>
+            <h2 class="fw-bold text-primary mb-0">Journal Entries</h2>
+            <p class="text-muted mb-0">Manage and track accounting journal entries.</p>
         </div>
-        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">Add Account</button>
     </div>
 
     @if(session('success'))
@@ -19,7 +18,7 @@
     {{-- Accounts Table --}}
     <div class="card shadow">
         <div class="card-body">
-            <h5 class="mb-3">Accounts Summary</h5>
+            <h5 class="mb-3">Journal Entries</h5>
             <table class="table table-bordered table-hover align-middle">
                 <thead>
                     <tr class="text-center">
@@ -50,13 +49,13 @@
                                         <i class="fe fe-edit fe-18"></i>
                                     </a>
                                     <!-- Delete -->
-                                    <form action="{{ route('chart.destroy', $account->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this account?')">
+                                    <!-- <form action="{{ route('chart.destroy', $account->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this account?')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-link text-danger p-0 m-0" title="Delete">
                                             <i class="fe fe-trash fe-18"></i>
                                         </button>
-                                    </form>
+                                    </form> -->
                                 </div>
                             </td>
                         </tr>
