@@ -29,7 +29,7 @@
                         <th>Account Type</th>
                         <th>Category</th>
                         <th>Description</th>
-                        <th>Balance</th>
+                        <!-- <th>Balance</th> -->
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -42,7 +42,7 @@
                             <td>{{ $account->account_type }}</td>
                             <td>{{ $account->category }}</td>
                             <td>{{ $account->description ?? '-' }}</td>
-                            <td class="text-end">₱{{ number_format($account->balance, 2) }}</td>
+                            <!-- <td class="text-end">₱{{ number_format($account->balance, 2) }}</td> -->
                             <td class="text-center">
                                 <div class="d-flex justify-content-center align-items-center gap-2">
                                     <!-- Edit -->
@@ -132,10 +132,10 @@
                     <textarea name="description" class="form-control" rows="2"></textarea>
                 </div>
 
-                <div class="form-group mb-3">
+                <!-- <div class="form-group mb-3">
                     <label class="fw-semibold">Initial Balance</label>
                     <input type="number" step="0.01" name="balance" class="form-control" value="0.00">
-                </div>
+                </div> -->
             </div>
 
             <div class="modal-footer">
