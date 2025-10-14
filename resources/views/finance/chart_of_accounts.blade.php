@@ -125,6 +125,7 @@
                         <option value="Owner's Equity">Owner's Equity</option>
                         <option value="Operating Revenue">Operating Revenue</option>
                         <option value="Operating Expense">Operating Expense</option>
+                        <option value="COGS">COGS</option>
                     </select>
                 </div>
 
@@ -192,6 +193,7 @@
                         <option value="Owner's Equity" {{ $account->category === "Owner's Equity" ? 'selected' : '' }}>Owner's Equity</option>
                         <option value="Operating Revenue" {{ $account->category === 'Operating Revenue' ? 'selected' : '' }}>Operating Revenue</option>
                         <option value="Operating Expense" {{ $account->category === 'Operating Expense' ? 'selected' : '' }}>Operating Expense</option>
+                        <option value="COGS" {{ $account->category === 'COGS' ? 'selected' : '' }}>COGS</option>
                     </select>
                 </div>
 
