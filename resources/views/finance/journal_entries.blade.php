@@ -1,16 +1,15 @@
 @extends('layouts.app')
 
-@section('title', 'Chart of Accounts')
+@section('title', 'Journal Entries')
 
 @section('content')
 <div class="container-fluid px-4">
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h2 class="fw-bold text-primary mb-0">Chart of Accounts</h2>
-            <p class="text-muted mb-0">Manage financial account records and categories.</p>
+            <h2 class="fw-bold text-primary mb-0">Journal Entries</h2>
+            <p class="text-muted mb-0">Manage and track accounting journal entries.</p>
         </div>
-        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">Add Account</button>
     </div>
 
     @if(session('success'))
@@ -20,7 +19,7 @@
     <!-- Journal Entries Table -->
     <div class="card shadow">
         <div class="card-body">
-            <h5 class="mb-3">Chart of Accounts</h5>
+            <h5 class="mb-3">Journal Entries</h5>
 
             <!-- Filter Section -->
             <form method="GET" action="{{ route('journal_entries.index') }}" class="row g-3 align-items-end mb-4">
@@ -85,7 +84,7 @@
                     @empty
                         <tr>
                             <td colspan="7" class="text-center text-muted py-3">
-                                <i class="fe fe-info me-2"></i> No account found.
+                                <i class="fe fe-info me-2"></i> No journal entries found.
                             </td>
                         </tr>
                     @endforelse
@@ -101,7 +100,7 @@
         <form method="POST" action="{{ route('journal_entries.store') }}" class="modal-content">
             @csrf
             <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="addModalLabel">Add Account Entry</h5>
+                <h5 class="modal-title" id="addModalLabel">Add Journal Entry</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body px-4 py-4">
@@ -145,7 +144,7 @@
             @csrf
             @method('PUT')
             <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="editModalLabel{{ $journal->id }}">Edit Account Entry</h5>
+                <h5 class="modal-title" id="editModalLabel{{ $journal->id }}">Edit Journal Entry</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body px-4 py-4">

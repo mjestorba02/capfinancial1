@@ -179,13 +179,13 @@
                         <div class="collapse {{ $isLedgerActive ? 'show' : '' }}" id="ledgerMenu">
                             <ul class="nav flex-column ml-4">
                                 <li class="nav-item">
-                                    <a href="{{ route('journal_entries.index') }}"
+                                    <a href="{{ route('chart.index') }}"
                                     class="nav-link small {{ Request::routeIs('chart.*') ? 'active' : '' }}">
                                         <i class="fe fe-layers me-2"></i> Chart of Accounts
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="{{ route('chart.index') }}"
+                                    <a href="{{ route('journal_entries.index') }}"
                                     class="nav-link small {{ Request::routeIs('journal_entries.*') ? 'active' : '' }}">
                                         <i class="fe fe-edit-3 me-2"></i> Journal Entry
                                     </a>
