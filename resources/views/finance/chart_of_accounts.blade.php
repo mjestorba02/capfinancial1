@@ -110,6 +110,7 @@
                         <option value="Equity">Equity</option>
                         <option value="Revenue">Revenue</option>
                         <option value="Expense">Expense</option>
+                        <option value="Income">Income</option>
                     </select>
                 </div>
 
@@ -177,6 +178,7 @@
                         <option value="Equity" {{ $account->account_type === 'Equity' ? 'selected' : '' }}>Equity</option>
                         <option value="Revenue" {{ $account->account_type === 'Revenue' ? 'selected' : '' }}>Revenue</option>
                         <option value="Expense" {{ $account->account_type === 'Expense' ? 'selected' : '' }}>Expense</option>
+                        <option value="Income" {{ $account->account_type === 'Income' ? 'selected' : '' }}>Income</option>
                     </select>
                 </div>
 
