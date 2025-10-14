@@ -183,7 +183,7 @@
 <!-- 🔹 Add Payment Modal -->
 <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <form method="POST" action="{{ route('employee.budget.store') }}" class="modal-content">
+        <form method="POST" action="{{ route('employee.payment.store') }}" class="modal-content">
             @csrf
             <div class="modal-header bg-primary text-white">
                 <h5 class="modal-title fw-semibold" id="addModalLabel">Add Payment</h5>

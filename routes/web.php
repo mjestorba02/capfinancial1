@@ -128,6 +128,7 @@ Route::prefix('employee')->group(function () {
 
     Route::get('/dashboard', [EmployeeBudgetController::class, 'index'])->name('employee.dashboard');
     Route::post('/budget-requests', [EmployeeBudgetController::class, 'store'])->name('employee.budget.store');
+    Route::post('/payment', [EmployeeBudgetController::class, 'paymentstore'])->name('employee.payment.store');
 });
 
 // Attendance Portal
