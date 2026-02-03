@@ -65,6 +65,7 @@
                         <th>Purpose</th>
                         <th>Amount</th>
                         <th>Status</th>
+                        <th>Image</th>
                         <th>Date</th>
                         <th class="text-center">Actions</th>
                     </tr>
@@ -83,6 +84,16 @@
                                     {{ $req->status }}
                                 </span>
                             </td>
+                            <td class="text-center">
+                                @if($req->image_path)
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#viewImageModal{{ $req->id }}" 
+                                    title="View Image" class="text-info text-decoration-none">
+                                        <i class="fe fe-eye fe-18"></i>
+                                    </a>
+                                @else
+                                    <span class="text-muted">—</span>
+                                @endif
+                            </td>
                             <td>{{ $req->created_at->format('Y-m-d') }}</td>
                             <td class="text-center">
                                 <div class="d-flex justify-content-center align-items-center" style="gap: 12px;">
@@ -98,6 +109,12 @@
                                             </button>
                                         </form>
                                     @endif
+
+                                    <!-- Upload Image Icon -->
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#imageModal{{ $req->id }}" 
+                                    title="Upload Image" class="text-warning text-decoration-none">
+                                        <i class="fe fe-image fe-18"></i>
+                                    </a>
 
                                     <!-- Edit Icon -->
                                     <a href="#" data-bs-toggle="modal" data-bs-target="#editModal{{ $req->id }}" 
@@ -225,4 +242,155 @@
         </div>
     </div>
 </div>
+
+<!-- 🔹 Image Upload & View Modals (one for each budget request) -->
+@foreach($requests as $req)
+<div class="modal fade" id="imageModal{{ $req->id }}" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content p-4">
+            <div class="modal-header border-0">
+                <h5 class="modal-title">Manage Image - {{ $req->request_id }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Current Image Preview Section -->
+                @if($req->image_path)
+                    <div class="mb-4 pb-3 border-bottom">
+                        <label class="form-label fw-semibold mb-3">📷 Current Image</label>
+                        <div class="text-center mb-3">
+                            <img src="{{ asset('storage/' . $req->image_path) }}" alt="Budget Request Image" class="img-fluid rounded border" style="max-height: 350px; max-width: 100%;">
+                        </div>
+                        <button type="button" class="btn btn-danger w-100" onclick="deleteImage({{ $req->id }})">
+                            <i class="fe fe-trash me-1"></i> Delete Image
+                        </button>
+                    </div>
+                @endif
+
+                <!-- Upload/Replace Section -->
+                <div>
+                    <label class="form-label fw-semibold mb-3">{{ $req->image_path ? '📁 Replace Image' : '📁 Upload Image' }}</label>
+                    <form id="imageForm{{ $req->id }}" enctype="multipart/form-data">
+                        @csrf
+                        <div class="mb-3">
+                            <input type="file" class="form-control" id="imageInput{{ $req->id }}" name="image" accept="image/*">
+                            <small class="text-muted d-block mt-2">✓ Allowed: JPG, PNG, GIF | Max: 2MB</small>
+                        </div>
+
+                        <!-- Image Preview Before Upload -->
+                        <div id="previewContainer{{ $req->id }}" class="mb-3 text-center" style="display:none;">
+                            <p class="text-muted small mb-2">Preview:</p>
+                            <img id="previewImg{{ $req->id }}" class="img-fluid rounded border" style="max-height: 300px; max-width: 100%;">
+                        </div>
+
+                        <button type="button" class="btn btn-primary w-100" onclick="uploadImage({{ $req->id }})">
+                            <i class="fe fe-upload me-1"></i> Upload Image
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- View Image Modal (for table eye icon) -->
+@if($req->image_path)
+<div class="modal fade" id="viewImageModal{{ $req->id }}" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title">📷 Image Preview - {{ $req->request_id }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img src="{{ asset('storage/' . $req->image_path) }}" alt="Budget Request Image" class="img-fluid rounded border" style="max-height: 500px; max-width: 100%;">
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <a href="{{ asset('storage/' . $req->image_path) }}" download class="btn btn-primary">
+                    <i class="fe fe-download me-1"></i> Download
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
+@endforeach
+
+
+<script>
+// Preview image before upload
+@foreach($requests as $req)
+document.getElementById('imageInput{{ $req->id }}')?.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            document.getElementById('previewImg{{ $req->id }}').src = event.target.result;
+            document.getElementById('previewContainer{{ $req->id }}').style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
+});
+@endforeach
+
+// Upload image via AJAX
+function uploadImage(requestId) {
+    const fileInput = document.getElementById('imageInput' + requestId);
+    
+    if (!fileInput.files[0]) {
+        alert('Please select an image');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('image', fileInput.files[0]);
+    formData.append('_token', document.querySelector('input[name="_token"]').value);
+
+    fetch(`/finance/budget_requests/${requestId}/upload-image`, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Image uploaded successfully!');
+            location.reload();
+        } else {
+            alert('Error uploading image: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error uploading image');
+    });
+}
+
+// Delete image via AJAX
+function deleteImage(requestId) {
+    if (!confirm('Are you sure you want to delete this image?')) {
+        return;
+    }
+
+    fetch(`/finance/budget_requests/${requestId}/delete-image`, {
+        method: 'DELETE',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Image deleted successfully!');
+            location.reload();
+        } else {
+            alert('Error deleting image: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error deleting image');
+    });
+}
+</script>
 @endsection

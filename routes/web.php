@@ -90,6 +90,10 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('collections', CollectionController::class);
         Route::resource('budget_requests', BudgetRequestController::class);
 
+        // 🔹 Budget Request Image Upload
+        Route::post('budget_requests/{id}/upload-image', [BudgetRequestController::class, 'uploadImage'])->name('budget_requests.uploadImage');
+        Route::delete('budget_requests/{id}/delete-image', [BudgetRequestController::class, 'deleteImage'])->name('budget_requests.deleteImage');
+
         Route::get('allocations', [AllocationController::class, 'index'])->name('finance.allocations.index');
         Route::post('allocations', [AllocationController::class, 'store'])->name('finance.allocations.store');
         Route::put('allocations/{allocation}', [AllocationController::class, 'update'])->name('finance.allocations.update');

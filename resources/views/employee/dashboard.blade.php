@@ -196,8 +196,7 @@
                     <label class="fw-semibold">Customer Name</label>
                     <input type="text" name="customer_name"
                         class="form-control"
-                        value="{{ $employee->name }}"
-                        readonly>
+                        value="{{ $employee->name }}">
                 </div>
 
                 <!-- Amount Paid -->

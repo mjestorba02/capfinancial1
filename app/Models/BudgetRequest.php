@@ -17,6 +17,7 @@ class BudgetRequest extends Model
         'amount',
         'status',
         'remarks',      // 🔹 new: optional message from employee/admin
+        'image_path',   // 🔹 new: image file path
     ];
 
     // 🔹 Add relationship to Employee

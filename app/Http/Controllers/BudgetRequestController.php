@@ -123,4 +123,45 @@ class BudgetRequestController extends Controller
 
         return redirect()->back()->with('success', 'Budget Request Approved Successfully.');
     }
+
+    // 🔹 Upload Image
+    public function uploadImage(Request $request, $id)
+    {
+        $request->validate([
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $budget = BudgetRequest::findOrFail($id);
+
+        // Delete old image if exists
+        if ($budget->image_path && \Storage::exists($budget->image_path)) {
+            \Storage::delete($budget->image_path);
+        }
+
+        // Store new image
+        $path = $request->file('image')->store('budget_request_images', 'public');
+        $budget->update(['image_path' => $path]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Image uploaded successfully',
+            'image_url' => asset('storage/' . $path),
+        ]);
+    }
+
+    // 🔹 Delete Image
+    public function deleteImage($id)
+    {
+        $budget = BudgetRequest::findOrFail($id);
+
+        if ($budget->image_path && \Storage::exists($budget->image_path)) {
+            \Storage::delete($budget->image_path);
+            $budget->update(['image_path' => null]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Image deleted successfully',
+        ]);
+    }
 }
