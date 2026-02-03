@@ -12,6 +12,7 @@ class BudgetRequest extends Model
     protected $fillable = [
         'request_id',
         'employee_id',  // 🔹 new: links request to employee
+        'name',
         'department',
         'purpose',
         'amount',

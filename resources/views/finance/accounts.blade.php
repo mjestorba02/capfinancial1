@@ -67,6 +67,7 @@
                                 <span class="badge 
                                     @if($item->status === 'Paid') bg-success 
                                     @elseif($item->status === 'Unpaid') bg-warning 
+                                    @elseif($item->status === 'Overdue') bg-danger 
                                     @else bg-secondary @endif">
                                     {{ $item->status }}
                                 </span>
