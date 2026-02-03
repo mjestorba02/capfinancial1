@@ -10,6 +10,7 @@ use App\Http\Controllers\ChartOfAccountsController;
 use App\Http\Controllers\JournalEntryController;
 use App\Http\Controllers\AccountsController;
 use App\Http\Controllers\DisbursementController;
+use App\Http\Controllers\AIController;
 
 //Employee Auth
 use App\Http\Controllers\EmployeeAuthController;
@@ -76,6 +77,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/files-grid', function () {
         return view('files-grid');
     })->name('files-grid');
+
+    // AI Assistant Routes
+    Route::prefix('ai')->group(function () {
+        Route::get('/chat', [AIController::class, 'chat'])->name('ai.chat');
+        Route::post('/request', [AIController::class, 'processRequest'])->name('ai.request');
+        Route::get('/suggestions', [AIController::class, 'getSuggestions'])->name('ai.suggestions');
+        Route::get('/test', [AIController::class, 'test'])->name('ai.test');
+    });
 
     Route::prefix('finance')->group(function () {
         Route::resource('collections', CollectionController::class);

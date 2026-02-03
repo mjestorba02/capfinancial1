@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="{{ asset('assets/images/newlogo.svg') }}">
@@ -17,6 +18,7 @@
         rel="stylesheet">
     <!-- Icons CSS -->
     <link rel="stylesheet" href="{{ asset('css/feather.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link rel="stylesheet" href="{{ asset('css/select2.css') }}">
     <link rel="stylesheet" href="{{ asset('css/dropzone.css') }}">
     <link rel="stylesheet" href="{{ asset('css/uppy.min.css') }}">
@@ -207,6 +209,19 @@
                         class="nav-link {{ Request::routeIs('disbursements.*') ? 'active' : '' }}">
                             <i class="fe fe-send fe-16"></i>
                             <span class="ml-3 item-text">Disbursement</span>
+                        </a>
+                    </li>
+                </ul>
+
+                <p class="text-muted nav-heading mt-4 mb-1">
+                    <span>AI Assistant</span>
+                </p>
+                <ul class="navbar-nav flex-fill w-100 mb-2">
+                    <li class="nav-item mb-3">
+                        <a href="{{ route('ai.chat') }}"
+                        class="nav-link {{ Request::routeIs('ai.*') ? 'active' : '' }}">
+                            <i class="fe fe-zap fe-16"></i>
+                            <span class="ml-3 item-text">Financial AI</span>
                         </a>
                     </li>
                 </ul>

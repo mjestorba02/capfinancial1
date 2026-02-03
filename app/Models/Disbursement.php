@@ -16,5 +16,13 @@ class Disbursement extends Model
         'amount',
         'status',
         'disbursement_date',
+        'external_id',
+        'remarks',
+    ];
+
+    protected $dates = [
+        'disbursement_date',
+        'created_at',
+        'updated_at',
     ];
 }

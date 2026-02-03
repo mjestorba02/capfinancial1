@@ -18,5 +18,12 @@ class Collection extends Model
         'status',
         'payment_date',
         'remarks',
+        'external_id',
+    ];
+
+    protected $dates = [
+        'payment_date',
+        'created_at',
+        'updated_at',
     ];
 }
