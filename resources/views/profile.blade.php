@@ -9,7 +9,7 @@
         <div class="row mt-5 align-items-center">
             <div class="col-md-3 text-center mb-5">
                 <div class="avatar avatar-xl">
-                    <img src="{{ Auth::user()->photo_path ? asset('storage/' . Auth::user()->photo_path) : asset('assets/avatars/face-1.jpg') }}" alt="Profile Photo" class="avatar-img rounded-circle">
+                    <img src="{{ Auth::user()->photo_path ? asset('storage/' . Auth::user()->photo_path) : asset('assets/avatars/face-1.jpg') }}" alt="Profile Photo" class="avatar-img rounded-circle" onerror="this.onerror=null; this.src='{{ asset('assets/avatars/face-1.jpg') }}';">
                 </div>
             </div>
             <div class="col">

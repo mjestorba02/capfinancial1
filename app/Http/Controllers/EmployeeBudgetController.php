@@ -33,7 +33,59 @@ class EmployeeBudgetController extends Controller
             ->latest()
             ->get();
 
-        return view('employee.dashboard', compact('employee', 'requests', 'collections'));
+        // --- Analytics: Budget Requests ---
+        $budgetTotal = $requests->sum('amount');
+        $budgetApproved = $requests->where('status', 'Approved')->sum('amount');
+        $budgetPending = $requests->where('status', 'Pending')->sum('amount');
+        $budgetRejected = $requests->where('status', 'Rejected')->sum('amount');
+        $budgetByStatus = [
+            'labels' => ['Approved', 'Pending', 'Rejected'],
+            'counts' => [
+                $requests->where('status', 'Approved')->count(),
+                $requests->where('status', 'Pending')->count(),
+                $requests->where('status', 'Rejected')->count(),
+            ],
+            'amounts' => [$budgetApproved, $budgetPending, $budgetRejected],
+        ];
+        $months = collect();
+        for ($i = 5; $i >= 0; $i--) {
+            $date = now()->subMonths($i);
+            $months->push([
+                'label' => $date->format('M Y'),
+                'amount' => \App\Models\BudgetRequest::where('employee_id', $employeeId)
+                    ->whereYear('created_at', $date->year)
+                    ->whereMonth('created_at', $date->month)
+                    ->sum('amount'),
+            ]);
+        }
+        $budgetByMonth = $months;
+
+        // --- Analytics: Payment Portal (Collections) ---
+        $paymentsTotal = $collections->sum('amount_paid');
+        $statuses = ['Paid', 'Pending', 'Overdue'];
+        $paymentsByStatus = [
+            'labels' => $statuses,
+            'counts' => array_map(fn ($s) => $collections->where('status', $s)->count(), $statuses),
+            'amounts' => array_map(fn ($s) => $collections->where('status', $s)->sum('amount_paid'), $statuses),
+        ];
+        $paymentsMonths = collect();
+        for ($i = 5; $i >= 0; $i--) {
+            $date = now()->subMonths($i);
+            $paymentsMonths->push([
+                'label' => $date->format('M Y'),
+                'amount' => \App\Models\Collection::where('employee_id', $employeeId)
+                    ->whereYear('payment_date', $date->year)
+                    ->whereMonth('payment_date', $date->month)
+                    ->sum('amount_paid'),
+            ]);
+        }
+        $paymentsByMonth = $paymentsMonths;
+
+        return view('employee.dashboard', compact(
+            'employee', 'requests', 'collections',
+            'budgetTotal', 'budgetByStatus', 'budgetByMonth',
+            'paymentsTotal', 'paymentsByStatus', 'paymentsByMonth'
+        ));
     }
 
     public function store(Request $request)

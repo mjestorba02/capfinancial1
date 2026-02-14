@@ -30,6 +30,22 @@
     <!-- App CSS -->
     <link rel="stylesheet" href="{{ asset('css/app-light.css') }}" id="lightTheme">
     <link rel="stylesheet" href="{{ asset('css/app-dark.css') }}" id="darkTheme" disabled>
+    <script>
+      (function() {
+        var mode = localStorage.getItem("mode");
+        var darkTheme = document.getElementById("darkTheme");
+        var lightTheme = document.getElementById("lightTheme");
+        if (darkTheme && lightTheme) {
+          if (mode === "dark") {
+            darkTheme.disabled = false;
+            lightTheme.disabled = true;
+          } else {
+            darkTheme.disabled = true;
+            lightTheme.disabled = false;
+          }
+        }
+      })();
+    </script>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/css/select2.min.css" rel="stylesheet" />
 
     <style>
@@ -41,6 +57,7 @@
 </head>
 
 <body class="vertical light">
+    <script>document.body.className = localStorage.getItem("mode") === "dark" ? "vertical dark" : "vertical light";</script>
     <div class="wrapper">
         <nav class="topnav navbar navbar-light">
             <button type="button" class="navbar-toggler text-muted mt-2 p-0 mr-3 collapseSidebar">
@@ -51,10 +68,6 @@
                 Financial Management System
             </h5>
 
-            <form class="form-inline mr-auto searchform text-muted">
-                <input class="form-control mr-sm-2 bg-transparent border-0 pl-4 text-muted" type="search"
-                    placeholder="Type something..." aria-label="Search">
-            </form>
             <ul class="nav">
                 <li class="nav-item">
                     <a class="nav-link text-muted my-2" href="#" id="modeSwitcher" data-mode="light">
@@ -70,7 +83,7 @@
                     <a class="nav-link dropdown-toggle text-muted pr-0" href="#" id="navbarDropdownMenuLink"
                         role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <span class="avatar avatar-sm mt-2">
-                            <img src="{{ Auth::user() && Auth::user()->photo_path ? asset('storage/' . Auth::user()->photo_path) : asset('assets/avatars/avatar.jpg') }}" alt="Profile Photo" class="avatar-img rounded-circle">
+                            <img src="{{ Auth::user() && Auth::user()->photo_path ? asset('storage/' . Auth::user()->photo_path) : asset('assets/avatars/avatar.jpg') }}" alt="Profile Photo" class="avatar-img rounded-circle" onerror="this.onerror=null; this.src='{{ asset('assets/avatars/avatar.jpg') }}';">
                         </span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
@@ -109,6 +122,12 @@
                         <a href="{{ route('dashboard') }}" class="nav-link">
                             <i class="fe fe-home fe-16"></i>
                             <span class="ml-3 item-text">Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item mb-3">
+                        <a href="{{ route('user-approvals.index') }}" class="nav-link {{ Request::routeIs('user-approvals.*') ? 'active' : '' }}">
+                            <i class="fe fe-user-check fe-16"></i>
+                            <span class="ml-3 item-text">User Approvals</span>
                         </a>
                     </li>
                 </ul>

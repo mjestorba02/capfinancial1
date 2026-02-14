@@ -5,7 +5,7 @@
 @section('content')
 <div class="wrapper vh-100 bg-light">
     <div class="row align-items-center h-100">
-        <form method="POST" action="{{ route('register') }}" enctype="multipart/form-data" class="col-lg-4 col-md-6 col-10 mx-auto text-center p-4 shadow rounded bg-white">
+        <form method="POST" action="{{ route('register') }}" class="col-lg-4 col-md-6 col-10 mx-auto text-center p-4 shadow rounded bg-white">
             @csrf
             @if ($errors->any())
                 <div class="alert alert-danger text-left">
@@ -38,15 +38,19 @@
             </div>
             <div class="form-group mb-3">
                 <label for="position" class="sr-only">Position</label>
-                <input type="text" name="position" id="position" class="form-control form-control-lg" placeholder="Position" required>
+                <select name="position" id="position" class="form-control form-control-lg" required>
+                    <option value="">Select Position</option>
+                    <option value="Employee">Employee</option>
+                    <option value="Admin">Admin</option>
+                </select>
             </div>
             <div class="form-group mb-3">
                 <label for="department" class="sr-only">Department</label>
-                <input type="text" name="department" id="department" class="form-control form-control-lg" placeholder="Department" required>
-            </div>
-            <div class="form-group mb-3">
-                <label for="photo_path" class="sr-only">Profile Photo</label>
-                <input type="file" name="photo_path" id="photo_path" class="form-control form-control-lg" accept="image/*">
+                <select name="department" id="department" class="form-control form-control-lg" required>
+                    <option value="">Select Department</option>
+                    <option value="Human Resources">Human Resources</option>
+                    <option value="Finance">Finance</option>
+                </select>
             </div>
             <div class="form-group mb-3">
                 <label for="password" class="sr-only">Password</label>

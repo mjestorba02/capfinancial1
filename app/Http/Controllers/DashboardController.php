@@ -43,6 +43,55 @@ class DashboardController extends Controller
         $budgetAllocations = Allocation::select('id','department','allocated','used','project','budget_request_id')
             ->get();
 
+        // --- Analytics: Cash flow breakdown (for pie chart) ---
+        $flowBreakdown = [
+            'labels' => ['Collections', 'Payables (Unpaid)', 'Disbursements'],
+            'amounts' => [$totalCollections, $totalPayables, $totalDisbursements],
+        ];
+
+        // --- Analytics: Budget requests by status ---
+        $budgetByStatus = [
+            'labels' => ['Approved', 'Pending', 'Rejected'],
+            'counts' => [
+                BudgetRequest::where('status', 'Approved')->count(),
+                BudgetRequest::where('status', 'Pending')->count(),
+                BudgetRequest::where('status', 'Rejected')->count(),
+            ],
+            'amounts' => [
+                BudgetRequest::where('status', 'Approved')->sum('amount'),
+                BudgetRequest::where('status', 'Pending')->sum('amount'),
+                BudgetRequest::where('status', 'Rejected')->sum('amount'),
+            ],
+        ];
+
+        // --- Analytics: Last 6 months (collections, disbursements, budget requests) ---
+        $monthlyData = collect();
+        for ($i = 5; $i >= 0; $i--) {
+            $date = now()->subMonths($i);
+            $monthlyData->push([
+                'label' => $date->format('M Y'),
+                'collections' => Collection::whereYear('payment_date', $date->year)
+                    ->whereMonth('payment_date', $date->month)
+                    ->sum('amount_paid'),
+                'disbursements' => Disbursement::whereYear('disbursement_date', $date->year)
+                    ->whereMonth('disbursement_date', $date->month)
+                    ->sum('amount'),
+                'budget_amount' => BudgetRequest::whereYear('created_at', $date->year)
+                    ->whereMonth('created_at', $date->month)
+                    ->sum('amount'),
+                'budget_count' => BudgetRequest::whereYear('created_at', $date->year)
+                    ->whereMonth('created_at', $date->month)
+                    ->count(),
+            ]);
+        }
+
+        // --- Analytics: Allocation by department (allocated vs used) ---
+        $allocationChart = $budgetAllocations->map(fn ($a) => [
+            'department' => $a->department,
+            'allocated' => (float) $a->allocated,
+            'used' => (float) $a->used,
+        ])->values();
+
         return view('dashboard', compact(
             'totalCollections',
             'budgetRequests',
@@ -53,7 +102,11 @@ class DashboardController extends Controller
             'disbursementProgress',
             'recentBudgetRequests',
             'recentPayables',
-            'budgetAllocations'
+            'budgetAllocations',
+            'flowBreakdown',
+            'budgetByStatus',
+            'monthlyData',
+            'allocationChart'
         ));
     }
 

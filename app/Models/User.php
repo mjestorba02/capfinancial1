@@ -23,6 +23,7 @@ class User extends Authenticatable
         'position',
         'department',
         'photo_path',
+        'approval_status',
         'password',
     ];
 

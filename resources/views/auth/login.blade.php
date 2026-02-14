@@ -12,6 +12,19 @@
                     {{ session('error') }}
                 </div>
             @endif
+            @if(session('success'))
+                <div class="alert alert-success text-left">
+                    {{ session('success') }}
+                </div>
+            @endif
+            @if(session('pending_approval'))
+                <div class="alert alert-info text-left d-flex align-items-center" role="alert">
+                    <i class="fe fe-clock me-2" style="font-size: 1.25rem;"></i>
+                    <div>
+                        <strong>Registration complete.</strong> Please wait for approval. An admin will review your account before you can sign in.
+                    </div>
+                </div>
+            @endif
             <a class="navbar-brand mx-auto mt-2 flex-fill text-center" href="#">
                 <svg version="1.1" id="logo" class="navbar-brand-img brand-md" xmlns="http://www.w3.org/2000/svg"
                     xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 120 120"

@@ -15,6 +15,7 @@ use App\Http\Controllers\AIController;
 //Employee Auth
 use App\Http\Controllers\EmployeeAuthController;
 use App\Http\Controllers\EmployeeBudgetController;
+use App\Http\Controllers\UserApprovalController;
 
 // Authentication routes
 use Illuminate\Support\Facades\Auth;
@@ -28,13 +29,20 @@ Route::post('/register', [App\Http\Controllers\Auth\RegisterController::class, '
 
 // Search route
 Route::get('/search', [App\Http\Controllers\DashboardController::class, 'search'])->name('search');
-// Disable default register route
-Auth::routes(['register' => false]);
+// Use our custom login (with OTP) for admin; disable default login and register
+Auth::routes(['register' => false, 'login' => false]);
 
-// Custom login view
+// Main login: one page for both admins and employees (role-based redirect after login)
 Route::get('/login', function () {
+    if (session()->has('employee_id')) {
+        return redirect()->route('employee.dashboard');
+    }
     return view('auth-login');
 })->name('login');
+Route::post('/login', [App\Http\Controllers\Auth\MainLoginController::class, 'login'])->middleware('guest');
+// Admin OTP (2FA)
+Route::get('/login/otp', [App\Http\Controllers\Auth\MainLoginController::class, 'showOtpForm'])->name('login.otp.form');
+Route::post('/login/otp', [App\Http\Controllers\Auth\MainLoginController::class, 'verifyOtp'])->name('login.otp.verify');
 
 // Redirect root to login if not authenticated, else to dashboard
 Route::get('/', function () {
@@ -47,6 +55,13 @@ Route::get('/', function () {
 // Protect dashboard and profile routes
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // User Approvals (admin)
+    Route::get('/user-approvals', [UserApprovalController::class, 'index'])->name('user-approvals.index');
+    Route::post('/user-approvals/{user}/approve', [UserApprovalController::class, 'approve'])->name('user-approvals.approve');
+    Route::post('/user-approvals/{user}/reject', [UserApprovalController::class, 'reject'])->name('user-approvals.reject');
+    Route::post('/user-approvals/employee/{employee}/approve', [UserApprovalController::class, 'approveEmployee'])->name('user-approvals.employee.approve');
+    Route::post('/user-approvals/employee/{employee}/reject', [UserApprovalController::class, 'rejectEmployee'])->name('user-approvals.employee.reject');
 
     // Profile
     Route::get('/profile', function () {
@@ -129,7 +144,6 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('disbursements', DisbursementController::class);
     });
 });
-Auth::routes();
 
 Route::get('/export/payables-pdf', [AccountsController::class, 'exportPayablesPDF'])->name('export.payables.pdf');
 Route::get('/export/receivables-pdf', [AccountsController::class, 'exportReceivablesPDF'])->name('export.receivables.pdf');
@@ -137,6 +151,8 @@ Route::get('/export/receivables-pdf', [AccountsController::class, 'exportReceiva
 Route::prefix('employee')->group(function () {
     Route::get('/login', [EmployeeAuthController::class, 'showLoginForm'])->name('employee.login');
     Route::post('/login', [EmployeeAuthController::class, 'login'])->name('employee.login.post');
+    Route::get('/login/otp', [EmployeeAuthController::class, 'showOtpForm'])->name('employee.login.otp.form');
+    Route::post('/login/otp', [EmployeeAuthController::class, 'verifyOtp'])->name('employee.login.otp.verify');
     Route::get('/logout', [EmployeeAuthController::class, 'logout'])->name('employee.logout');
 
     Route::get('/dashboard', [EmployeeBudgetController::class, 'index'])->name('employee.dashboard');

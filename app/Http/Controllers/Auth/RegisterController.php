@@ -3,24 +3,17 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Employee;
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class RegisterController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Register Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller handles the registration of new users as well as their
-    | validation and creation. By default this controller uses a trait to
-    | provide this functionality without requiring any additional code.
-    |
-    */
-
     use RegistersUsers;
 
     /**
@@ -28,7 +21,7 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/dashboard';
+    protected $redirectTo = '/login';
 
     /**
      * Create a new controller instance.
@@ -41,14 +34,28 @@ class RegisterController extends Controller
     }
 
     /**
-     * Show the custom registration form.
+     * Handle a registration request for the application.
+     * Employees are created in employees table and can log in immediately.
+     * Admins are created in users table with pending status; admin must approve before they can log in.
      */
-    public function showRegistrationForm()
+    public function register(Request $request)
     {
-        return view('auth-register');
+        $this->validator($request->all())->validate();
+
+        $data = $request->all();
+
+        if ($data['position'] === 'Employee') {
+            $this->createEmployee($data);
+            return redirect()->route('login')
+                ->with('success', 'Registration submitted! You will be able to sign in to the employee portal after an admin approves your account.');
+        }
+
+        // Admin registration
+        event(new Registered($user = $this->createUser($data)));
+
+        return redirect()->route('login')
+            ->with('pending_approval', true);
     }
-
-
 
     /**
      * Get a validator for an incoming registration request.
@@ -60,33 +67,51 @@ class RegisterController extends Controller
     {
         return Validator::make($data, [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'position' => ['required', 'string', 'max:255'],
-            'department' => ['required', 'string', 'max:255'],
-            'photo_path' => ['nullable', 'image', 'max:2048'],
+            'email' => [
+                'required',
+                'string',
+                'email',
+                'max:255',
+                Rule::unique('users'),
+                Rule::unique('employees'),
+            ],
+            'position' => ['required', 'string', 'in:Employee,Admin'],
+            'department' => ['required', 'string', 'in:Human Resources,Finance'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
     }
 
     /**
-     * Create a new user instance after a valid registration.
+     * Create a new user (admin) instance after a valid registration.
      *
      * @param  array  $data
      * @return \App\Models\User
      */
-    protected function create(array $data)
+    protected function createUser(array $data)
     {
-        \Log::debug('RegisterController@create called', $data);
-        $photoPath = null;
-        if (request()->hasFile('photo_path')) {
-            $photoPath = request()->file('photo_path')->store('profile_photos', 'public');
-        }
         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'position' => $data['position'],
             'department' => $data['department'],
-            'photo_path' => $photoPath,
+            'approval_status' => 'pending',
+            'password' => Hash::make($data['password']),
+        ]);
+    }
+
+    /**
+     * Create a new employee instance after a valid registration.
+     *
+     * @param  array  $data
+     * @return \App\Models\Employee
+     */
+    protected function createEmployee(array $data)
+    {
+        return Employee::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'department' => $data['department'],
+            'approval_status' => 'pending',
             'password' => Hash::make($data['password']),
         ]);
     }

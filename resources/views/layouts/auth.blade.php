@@ -21,10 +21,27 @@
     <!-- App CSS -->
     <link rel="stylesheet" href="{{ asset('css/app-light.css') }}" id="lightTheme">
     <link rel="stylesheet" href="{{ asset('css/app-dark.css') }}" id="darkTheme" disabled>
+    <script>
+      (function() {
+        var mode = localStorage.getItem("mode");
+        var darkTheme = document.getElementById("darkTheme");
+        var lightTheme = document.getElementById("lightTheme");
+        if (darkTheme && lightTheme) {
+          if (mode === "dark") {
+            darkTheme.disabled = false;
+            lightTheme.disabled = true;
+          } else {
+            darkTheme.disabled = true;
+            lightTheme.disabled = false;
+          }
+        }
+      })();
+    </script>
     @yield('styles')
 </head>
 
 <body class="light">
+    <script>document.body.className = localStorage.getItem("mode") === "dark" ? "dark" : "light";</script>
     @yield('content')
 
     <!-- Scripts -->

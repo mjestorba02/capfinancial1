@@ -30,6 +30,13 @@
             border-radius: 10px;
             margin-bottom: 20px;
         }
+        .stat-card {
+            border-radius: 12px;
+            border: none;
+            transition: transform 0.2s;
+        }
+        .stat-card:hover { transform: translateY(-2px); }
+        .chart-card { border-radius: 12px; border: none; }
     </style>
 </head>
 <body>
@@ -40,6 +47,9 @@
         <a class="navbar-brand fw-semibold" href="#">Employee Portal</a>
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="#analytics-section">Overview</a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link {{ request()->is('employee/budget*') ? 'active' : '' }}" href="#budget-section">Budget Requests</a>
                 </li>
@@ -53,6 +63,96 @@
 </nav>
 
 <div class="container py-5">
+
+    <!-- 🔸 Analytics / Overview Section -->
+    <div id="analytics-section" class="mb-5">
+        <div class="header d-flex justify-content-between align-items-center mb-4">
+            <h3 class="m-0">My Finance Overview</h3>
+            <button class="btn btn-light btn-sm" onclick="document.getElementById('budget-section').scrollIntoView({behavior:'smooth'})">Go to Budget</button>
+        </div>
+
+        {{-- Summary cards --}}
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <div class="card stat-card shadow-sm h-100">
+                    <div class="card-body text-center py-4">
+                        <h6 class="text-muted text-uppercase small mb-2">Total Budget Requested</h6>
+                        <h3 class="text-primary mb-0">₱{{ number_format($budgetTotal ?? 0, 2) }}</h3>
+                        <small class="text-muted">{{ $requests->count() }} request(s)</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card stat-card shadow-sm h-100">
+                    <div class="card-body text-center py-4">
+                        <h6 class="text-muted text-uppercase small mb-2">Budget by Status</h6>
+                        <div class="d-flex justify-content-center gap-2 flex-wrap">
+                            <span class="badge bg-success">Approved: {{ $requests->where('status','Approved')->count() }}</span>
+                            <span class="badge bg-secondary">Pending: {{ $requests->where('status','Pending')->count() }}</span>
+                            <span class="badge bg-danger">Rejected: {{ $requests->where('status','Rejected')->count() }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card stat-card shadow-sm h-100">
+                    <div class="card-body text-center py-4">
+                        <h6 class="text-muted text-uppercase small mb-2">Payment Portal Total</h6>
+                        <h3 class="text-success mb-0">₱{{ number_format($paymentsTotal ?? 0, 2) }}</h3>
+                        <small class="text-muted">{{ $collections->count() }} payment(s)</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Charts row 1: Budget --}}
+        <div class="row g-4 mb-4">
+            <div class="col-lg-6">
+                <div class="card chart-card shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Budget Requests by Status</h5>
+                        <div class="position-relative" style="height: 260px;">
+                            <canvas id="chartBudgetStatus"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card chart-card shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Budget Requested (Last 6 Months)</h5>
+                        <div class="position-relative" style="height: 260px;">
+                            <canvas id="chartBudgetMonth"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Charts row 2: Payment portal --}}
+        <div class="row g-4 mb-4">
+            <div class="col-lg-6">
+                <div class="card chart-card shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Payments by Status</h5>
+                        <div class="position-relative" style="height: 260px;">
+                            <canvas id="chartPaymentStatus"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card chart-card shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Payments Collected (Last 6 Months)</h5>
+                        <div class="position-relative" style="height: 260px;">
+                            <canvas id="chartPaymentMonth"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- 🔸 Budget Requests Section -->
     <div id="budget-section" class="mb-5">
@@ -230,12 +330,66 @@
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script>
 document.getElementById('amount_paid').addEventListener('input', function() {
     document.getElementById('amount_due').value = this.value || 0;
 });
-</script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+(function() {
+    var budgetStatus = @json($budgetByStatus ?? ['labels'=>[],'amounts'=>[]]);
+    var budgetMonth = @json($budgetByMonth ?? collect());
+    var paymentStatus = @json($paymentsByStatus ?? ['labels'=>[],'amounts'=>[]]);
+    var paymentMonth = @json($paymentsByMonth ?? collect());
+
+    var colors = { green: 'rgba(40, 167, 69, 0.8)', gray: 'rgba(108, 117, 125, 0.8)', red: 'rgba(220, 53, 69, 0.8)', blue: 'rgba(0, 123, 255, 0.8)' };
+    var borderColors = ['#28a745', '#6c757d', '#dc3545'];
+
+    if (document.getElementById('chartBudgetStatus') && budgetStatus.labels.length) {
+        new Chart(document.getElementById('chartBudgetStatus'), {
+            type: 'doughnut',
+            data: {
+                labels: budgetStatus.labels,
+                datasets: [{ data: budgetStatus.amounts, backgroundColor: [colors.green, colors.gray, colors.red], borderWidth: 2 }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+        });
+    }
+
+    if (document.getElementById('chartBudgetMonth') && budgetMonth.length) {
+        new Chart(document.getElementById('chartBudgetMonth'), {
+            type: 'bar',
+            data: {
+                labels: budgetMonth.map(function(m){ return m.label; }),
+                datasets: [{ label: 'Amount (₱)', data: budgetMonth.map(function(m){ return m.amount; }), backgroundColor: colors.blue }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } }, plugins: { legend: { display: false } } }
+        });
+    }
+
+    if (document.getElementById('chartPaymentStatus') && paymentStatus.labels.length) {
+        new Chart(document.getElementById('chartPaymentStatus'), {
+            type: 'doughnut',
+            data: {
+                labels: paymentStatus.labels,
+                datasets: [{ data: paymentStatus.amounts, backgroundColor: [colors.green, colors.gray, colors.red], borderWidth: 2 }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+        });
+    }
+
+    if (document.getElementById('chartPaymentMonth') && paymentMonth.length) {
+        new Chart(document.getElementById('chartPaymentMonth'), {
+            type: 'line',
+            data: {
+                labels: paymentMonth.map(function(m){ return m.label; }),
+                datasets: [{ label: 'Collected (₱)', data: paymentMonth.map(function(m){ return m.amount; }), borderColor: '#28a745', backgroundColor: 'rgba(40, 167, 69, 0.1)', fill: true, tension: 0.3 }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
+        });
+    }
+})();
+</script>
 </body>
 </html>
