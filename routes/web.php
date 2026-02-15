@@ -56,12 +56,14 @@ Route::get('/', function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // User Approvals (admin)
-    Route::get('/user-approvals', [UserApprovalController::class, 'index'])->name('user-approvals.index');
-    Route::post('/user-approvals/{user}/approve', [UserApprovalController::class, 'approve'])->name('user-approvals.approve');
-    Route::post('/user-approvals/{user}/reject', [UserApprovalController::class, 'reject'])->name('user-approvals.reject');
-    Route::post('/user-approvals/employee/{employee}/approve', [UserApprovalController::class, 'approveEmployee'])->name('user-approvals.employee.approve');
-    Route::post('/user-approvals/employee/{employee}/reject', [UserApprovalController::class, 'rejectEmployee'])->name('user-approvals.employee.reject');
+    // User Approvals (HR only)
+    Route::middleware('hr')->group(function () {
+        Route::get('/user-approvals', [UserApprovalController::class, 'index'])->name('user-approvals.index');
+        Route::post('/user-approvals/{user}/approve', [UserApprovalController::class, 'approve'])->name('user-approvals.approve');
+        Route::post('/user-approvals/{user}/reject', [UserApprovalController::class, 'reject'])->name('user-approvals.reject');
+        Route::post('/user-approvals/employee/{employee}/approve', [UserApprovalController::class, 'approveEmployee'])->name('user-approvals.employee.approve');
+        Route::post('/user-approvals/employee/{employee}/reject', [UserApprovalController::class, 'rejectEmployee'])->name('user-approvals.employee.reject');
+    });
 
     // Profile
     Route::get('/profile', function () {

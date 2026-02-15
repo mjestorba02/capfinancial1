@@ -124,12 +124,14 @@
                             <span class="ml-3 item-text">Dashboard</span>
                         </a>
                     </li>
+                    @if(Auth::user() && Auth::user()->isHr())
                     <li class="nav-item mb-3">
                         <a href="{{ route('user-approvals.index') }}" class="nav-link {{ Request::routeIs('user-approvals.*') ? 'active' : '' }}">
                             <i class="fe fe-user-check fe-16"></i>
                             <span class="ml-3 item-text">User Approvals</span>
                         </a>
                     </li>
+                    @endif
                 </ul>
 
                 <p class="text-muted nav-heading mt-4 mb-1">
