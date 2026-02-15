@@ -75,8 +75,8 @@ class RegisterController extends Controller
                 Rule::unique('users'),
                 Rule::unique('employees'),
             ],
-            'position' => ['required', 'string', 'in:Employee,Admin'],
-            'department' => ['required', 'string', 'in:Human Resources,Finance'],
+            'position' => ['required', 'string', 'in:Employee,Admin,HR'],
+            'department' => ['required', 'string', 'in:Finance'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
     }

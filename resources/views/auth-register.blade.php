@@ -42,13 +42,13 @@
                     <option value="">Select Position</option>
                     <option value="Employee">Employee</option>
                     <option value="Admin">Admin</option>
+                    <option value="HR">HR</option>
                 </select>
             </div>
             <div class="form-group mb-3">
                 <label for="department" class="sr-only">Department</label>
                 <select name="department" id="department" class="form-control form-control-lg" required>
                     <option value="">Select Department</option>
-                    <option value="Human Resources">Human Resources</option>
                     <option value="Finance">Finance</option>
                 </select>
             </div>
