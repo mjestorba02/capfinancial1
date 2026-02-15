@@ -163,8 +163,8 @@ Route::prefix('employee')->group(function () {
 });
 
 // Attendance Portal
-Route::get('/attendance', [AttendancePortalController::class, 'index'])->name('attendance.portal');
-Route::post('/attendance/check-name', [AttendancePortalController::class, 'checkName'])->name('attendance.checkName');
-Route::post('/attendance/verify', [AttendancePortalController::class, 'verify'])->name('attendance.verify');
+#Route::get('/attendance', [AttendancePortalController::class, 'index'])->name('attendance.portal');
+#Route::post('/attendance/check-name', [AttendancePortalController::class, 'checkName'])->name('attendance.checkName');
+# Route::post('/attendance/verify', [AttendancePortalController::class, 'verify'])->name('attendance.verify');
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
