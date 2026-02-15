@@ -37,13 +37,7 @@
                     <option value="HR">HR</option>
                 </select>
             </div>
-            <div class="form-group mb-3">
-                <label for="department" class="sr-only">Department</label>
-                <select name="department" id="department" class="form-control form-control-lg" required>
-                    <option value="">Select Department</option>
-                    <option value="Finance">Finance</option>
-                </select>
-            </div>
+          
             <div class="form-group mb-3">
                 <label for="password" class="sr-only">Password</label>
                 <input type="password" name="password" id="password" class="form-control form-control-lg" placeholder="Password" required>
