@@ -40,7 +40,12 @@
             </div>
             <div class="form-group mb-3">
                 <label for="inputPassword" class="sr-only">Password</label>
-                <input type="password" name="password" id="inputPassword" class="form-control form-control-lg" placeholder="Password" required>
+                <div class="input-group input-group-lg">
+                    <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
+                    <button type="button" class="btn btn-outline-secondary" id="togglePassword">
+                        <span class="fe fe-eye"></span>
+                    </button>
+                </div>
             </div>
             <div class="form-group mb-3 text-left">
                 <input type="checkbox" name="remember" id="remember">
@@ -51,4 +56,22 @@
         </form>
     </div>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var toggle = document.getElementById('togglePassword');
+        var input = document.getElementById('inputPassword');
+        if (toggle && input) {
+            toggle.addEventListener('click', function () {
+                var isPassword = input.getAttribute('type') === 'password';
+                input.setAttribute('type', isPassword ? 'text' : 'password');
+                this.innerHTML = isPassword
+                    ? '<span class="fe fe-eye-off"></span>'
+                    : '<span class="fe fe-eye"></span>';
+            });
+        }
+    });
+</script>
 @endsection
