@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" href="{{ asset('favicon.ico') }}">
+    <link rel="icon" type="image/svg+xml" href="{{ asset('assets/images/newlogo.svg') }}">
     <title>@yield('title', 'Tiny Dashboard - A Bootstrap Dashboard Template')</title>
     <!-- Simple bar CSS -->
     <link rel="stylesheet" href="{{ asset('css/simplebar.css') }}">

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Profile - HR Dashboard')
+@section('title', 'Profile - Dashboard')
 
 @section('content')
 <div class="row justify-content-center">

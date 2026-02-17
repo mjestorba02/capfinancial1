@@ -7,7 +7,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" href="{{ asset('assets/images/newlogo.svg') }}">
+    <link rel="icon" type="image/svg+xml" href="{{ asset('assets/images/newlogo.svg') }}">
     <title>@yield('title', 'Financial 1')</title>
 
     <!-- Simple bar CSS -->

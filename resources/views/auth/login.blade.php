@@ -1,6 +1,6 @@
 @extends('layouts.auth')
 
-@section('title', 'Login - HR Dashboard')
+@section('title', 'Login - Dashboard')
 
 @section('content')
 <div class="wrapper vh-100 bg-light">
