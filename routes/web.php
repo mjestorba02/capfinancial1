@@ -120,6 +120,10 @@ Route::middleware(['auth'])->group(function () {
         Route::put('allocations/{allocation}/used', [AllocationController::class, 'updateUsed'])->name('finance.allocations.updateUsed');
 
         Route::put('/budget_requests/{id}/approve', [BudgetRequestController::class, 'approve'])->name('budget_requests.approve');
+        Route::put('/budget_requests/{id}/hr-approve', [BudgetRequestController::class, 'hrApprove'])->name('budget_requests.hr_approve');
+        Route::put('/budget_requests/{id}/hr-reject', [BudgetRequestController::class, 'hrReject'])->name('budget_requests.hr_reject');
+        Route::put('/budget_requests/{id}/admin-approve', [BudgetRequestController::class, 'adminApprove'])->name('budget_requests.admin_approve');
+        Route::put('/budget_requests/{id}/admin-reject', [BudgetRequestController::class, 'adminReject'])->name('budget_requests.admin_reject');
 
         Route::get('/chart-of-accounts', [ChartOfAccountsController::class, 'index'])->name('chart.index');
         Route::get('/chart-of-accounts/{id}', [ChartOfAccountsController::class, 'show'])->name('chart.show');

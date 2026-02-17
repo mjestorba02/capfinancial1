@@ -114,34 +114,46 @@ class EmployeeBudgetController extends Controller
 
     public function store(Request $request)
     {
-        // ensure employee is logged in
         if (!Session::has('employee_id')) {
             return redirect()->route('employee.login')
                 ->withErrors(['login' => 'Please log in to submit a request.']);
         }
 
         $request->validate([
-            'purpose' => 'required|string|max:255',
-            'amount'  => 'required|numeric|min:1|max:5000000',
-            'remarks' => 'nullable|string|max:1000',
+            'purpose'  => 'required|string|max:255',
+            'amount'   => 'required|numeric|min:1|max:5000000',
+            'remarks'  => 'nullable|string|max:1000',
+            'details'  => 'nullable|string|max:2000',
+            'attachment' => 'nullable|file|mimes:pdf,jpeg,jpg,png,gif|max:5120', // 5MB
         ]);
 
-        // 🔹 Generate unique request_id (like REQ-001)
+        $employeeId = Session::get('employee_id');
+        $employee = \App\Models\Employee::find($employeeId);
+        $employeeName = $employee ? $employee->name : 'Unknown';
+
         $last = BudgetRequest::orderByDesc('id')->first();
-        $nextNumber = $last ? ((int) substr($last->request_id, 4)) + 1 : 1;
-        $request_id = 'REQ-' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+        $nextNumber = $last ? ((int) preg_replace('/\D/', '', $last->request_id)) + 1 : 1;
+        $request_id = 'REQ-' . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
+
+        $attachmentPath = null;
+        if ($request->hasFile('attachment')) {
+            $attachmentPath = $request->file('attachment')->store('budget_request_attachments', 'public');
+        }
 
         BudgetRequest::create([
-            'request_id'  => $request_id,
-            'employee_id' => Session::get('employee_id'),
-            'department'  => Session::get('employee_department') ?? 'Finance',
-            'purpose'     => $request->purpose,
-            'amount'      => $request->amount,
-            'remarks'     => $request->remarks,
-            'status'      => 'Pending',
+            'request_id'       => $request_id,
+            'employee_id'      => $employeeId,
+            'name'             => $employeeName,
+            'department'       => Session::get('employee_department') ?? ($employee->department ?? 'General'),
+            'purpose'          => $request->purpose,
+            'amount'           => $request->amount,
+            'remarks'          => $request->remarks,
+            'details'          => $request->details,
+            'attachment_path'  => $attachmentPath,
+            'status'           => 'Pending',
         ]);
 
-        return redirect()->back()->with('success', 'Budget request submitted!');
+        return redirect()->back()->with('success', 'Budget request submitted! Request ID: ' . $request_id);
     }
 
     public function paymentstore(Request $request)

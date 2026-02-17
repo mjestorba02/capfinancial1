@@ -11,14 +11,23 @@ class BudgetRequest extends Model
 
     protected $fillable = [
         'request_id',
-        'employee_id',  // 🔹 new: links request to employee
+        'employee_id',
         'name',
         'department',
         'purpose',
         'amount',
         'status',
-        'remarks',      // 🔹 new: optional message from employee/admin
-        'image_path',   // 🔹 new: image file path
+        'remarks',
+        'details',          // employee-provided details
+        'image_path',
+        'attachment_path',  // PDF or image uploaded by employee
+        'hr_approved_at',
+        'admin_approved_at',
+    ];
+
+    protected $casts = [
+        'hr_approved_at' => 'datetime',
+        'admin_approved_at' => 'datetime',
     ];
 
     // 🔹 Add relationship to Employee

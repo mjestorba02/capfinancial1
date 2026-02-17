@@ -17,6 +17,9 @@
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
+    @if(session('error'))
+        <div class="alert alert-danger">{{ session('error') }}</div>
+    @endif
 
     <form method="GET" action="{{ route('budget_requests.index') }}" class="row g-3 mb-4 align-items-end">
         <div class="col-md-3">
@@ -39,6 +42,7 @@
                 <select name="status" class="form-control">
                     <option value="">-- All --</option>
                     <option value="Pending" {{ request('status') == 'Pending' ? 'selected' : '' }}>Pending</option>
+                    <option value="Pending Admin" {{ request('status') == 'Pending Admin' ? 'selected' : '' }}>Pending Admin</option>
                     <option value="Approved" {{ request('status') == 'Approved' ? 'selected' : '' }}>Approved</option>
                     <option value="Rejected" {{ request('status') == 'Rejected' ? 'selected' : '' }}>Rejected</option>
                 </select>
@@ -62,27 +66,39 @@
                         <th>Request ID</th>
                         <th>Employee</th>
                         <th>Department</th>
-                        <th>Purpose</th>
+                        <th>Purpose (Reason)</th>
                         <th>Amount</th>
+                        <th>Details</th>
+                        <th>Date Requested</th>
                         <th>Status</th>
                         <th>Image</th>
-                        <th>Date</th>
+                        <th>Attachment</th>
                         <th class="text-center">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse($requests as $req)
+                        @php
+                            $isHr = $user && $user->isHr();
+                            $isAdmin = $user && $user->isAdmin();
+                            $statusBadge = match($req->status) {
+                                'Approved' => 'success',
+                                'Rejected' => 'danger',
+                                'Pending Admin' => 'info',
+                                default => 'warning',
+                            };
+                        @endphp
                         <tr>
                             <td>{{ $loop->iteration }}</td>
-                            <td>{{ $req->request_id }}</td>
-                            <td>{{ $req->employee->name ?? 'N/A' }}</td>
+                            <td><strong>{{ $req->request_id }}</strong></td>
+                            <td>{{ $req->name ?? ($req->employee->name ?? 'N/A') }}</td>
                             <td>{{ $req->department }}</td>
                             <td>{{ $req->purpose }}</td>
                             <td>₱{{ number_format($req->amount, 2) }}</td>
+                            <td>{{ Str::limit($req->details, 30) ?: '—' }}</td>
+                            <td>{{ $req->created_at->format('Y-m-d H:i') }}</td>
                             <td>
-                                <span class="badge bg-{{ $req->status === 'Approved' ? 'success' : ($req->status === 'Pending' ? 'warning' : 'danger') }}">
-                                    {{ $req->status }}
-                                </span>
+                                <span class="badge bg-{{ $statusBadge }}">{{ $req->status }}</span>
                             </td>
                             <td class="text-center">
                                 @if($req->image_path)
@@ -94,43 +110,64 @@
                                     <span class="text-muted">—</span>
                                 @endif
                             </td>
-                            <td>{{ $req->created_at->format('Y-m-d') }}</td>
                             <td class="text-center">
-                                <div class="d-flex justify-content-center align-items-center" style="gap: 12px;">
-
-                                    @if(strtolower(trim($req->status)) === 'pending')
-                                        <!-- Approve Icon -->
-                                        <form method="POST" action="{{ route('budget_requests.approve', $req->id) }}" 
+                                @if($req->attachment_path)
+                                    <a href="{{ asset('storage/' . $req->attachment_path) }}" target="_blank" class="text-primary small" title="View attachment">View</a>
+                                @else
+                                    <span class="text-muted">—</span>
+                                @endif
+                            </td>
+                            <td class="text-center">
+                                <div class="d-flex justify-content-center align-items-center flex-wrap" style="gap: 8px;">
+                                    {{-- HR: Pending → Send to Admin or Reject --}}
+                                    @if($isHr && $req->status === 'Pending')
+                                        <form method="POST" action="{{ route('budget_requests.hr_approve', $req->id) }}" 
+                                            onsubmit="return confirm('Send this request to Admin for approval?')" class="d-inline">
+                                            @csrf
+                                            @method('PUT')
+                                            <button type="submit" class="btn btn-sm btn-info" title="Send to Admin">To Admin</button>
+                                        </form>
+                                        <form method="POST" action="{{ route('budget_requests.hr_reject', $req->id) }}" 
+                                            onsubmit="return confirm('Reject this request?')" class="d-inline">
+                                            @csrf
+                                            @method('PUT')
+                                            <button type="submit" class="btn btn-sm btn-danger" title="Reject">Reject</button>
+                                        </form>
+                                    @endif
+                                    {{-- Admin: Pending Admin → Approve or Reject --}}
+                                    @if($isAdmin && $req->status === 'Pending Admin')
+                                        <form method="POST" action="{{ route('budget_requests.admin_approve', $req->id) }}" 
                                             onsubmit="return confirm('Approve this request?')" class="d-inline">
                                             @csrf
                                             @method('PUT')
-                                            <button type="submit" class="bg-transparent border-0 p-0 text-success" title="Approve">
-                                                <i class="fe fe-check-circle fe-18"></i>
-                                            </button>
+                                            <button type="submit" class="btn btn-sm btn-success" title="Approve">Approve</button>
+                                        </form>
+                                        <form method="POST" action="{{ route('budget_requests.admin_reject', $req->id) }}" 
+                                            onsubmit="return confirm('Reject this request?')" class="d-inline">
+                                            @csrf
+                                            @method('PUT')
+                                            <button type="submit" class="btn btn-sm btn-danger" title="Reject">Reject</button>
                                         </form>
                                     @endif
-
-                                    <!-- Upload Image Icon -->
+                                    {{-- Legacy single-step approve (admin, for Pending) - optional --}}
+                                    @if($isAdmin && $req->status === 'Pending')
+                                        <form method="POST" action="{{ route('budget_requests.approve', $req->id) }}" 
+                                            onsubmit="return confirm('Approve directly (skip HR step)?')" class="d-inline">
+                                            @csrf
+                                            @method('PUT')
+                                            <button type="submit" class="btn btn-sm btn-outline-success" title="Approve directly">Approve</button>
+                                        </form>
+                                    @endif
+                                    <!-- Upload Image -->
                                     <a href="#" data-bs-toggle="modal" data-bs-target="#imageModal{{ $req->id }}" 
                                     title="Upload Image" class="text-warning text-decoration-none">
                                         <i class="fe fe-image fe-18"></i>
                                     </a>
-
-                                    <!-- Edit Icon -->
+                                    <!-- Edit -->
                                     <a href="#" data-bs-toggle="modal" data-bs-target="#editModal{{ $req->id }}" 
                                     title="Edit" class="text-white text-decoration-none">
                                         <i class="fe fe-edit fe-18"></i>
                                     </a>
-
-                                    <!-- Delete Icon -->
-                                    <!-- <form method="POST" action="{{ route('budget_requests.destroy', $req->id) }}" 
-                                        onsubmit="return confirm('Delete this request?')" class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="bg-transparent border-0 p-0 text-white" title="Delete">
-                                            <i class="fe fe-trash fe-18"></i>
-                                        </button>
-                                    </form> -->
                                 </div>
                             </td>
                         </tr>
@@ -162,6 +199,7 @@
                                                 <label>Status</label>
                                                 <select name="status" class="form-control" required>
                                                     <option value="Pending" {{ $req->status == 'Pending' ? 'selected' : '' }}>Pending</option>
+                                                    <option value="Pending Admin" {{ $req->status == 'Pending Admin' ? 'selected' : '' }}>Pending Admin</option>
                                                     <option value="Approved" {{ $req->status == 'Approved' ? 'selected' : '' }}>Approved</option>
                                                     <option value="Rejected" {{ $req->status == 'Rejected' ? 'selected' : '' }}>Rejected</option>
                                                 </select>
@@ -181,7 +219,7 @@
                         </div>
                     @empty
                         <tr>
-                            <td colspan="9" class="text-center text-muted">No budget requests found.</td>
+                            <td colspan="12" class="text-center text-muted">No budget requests found.</td>
                         </tr>
                     @endforelse
                 </tbody>
