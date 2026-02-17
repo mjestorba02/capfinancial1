@@ -38,7 +38,7 @@
             <div class="mt-3">
                 <a href="{{ $context === 'employee' ? route('employee.login') : route('login') }}" class="text-primary">Back to login</a>
             </div>
-            <p class="mt-5 mb-3 text-muted">© 2025</p>
+            <p class="mt-5 mb-3 text-muted">© Copyright 2026</p>
         </form>
     </div>
 </div>

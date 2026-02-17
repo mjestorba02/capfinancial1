@@ -1,6 +1,10 @@
 -- Run this in phpMyAdmin (or your MySQL client) to add workflow and details to budget_requests.
 -- If you get "Duplicate column name", that column already exists; skip that line or comment it out.
 
+-- 0. Add employee name column (run this if you get "Unknown column 'name' in INSERT")
+ALTER TABLE budget_requests
+  ADD COLUMN name VARCHAR(255) NULL AFTER request_id;
+
 -- 1. Add details column (after remarks)
 ALTER TABLE budget_requests
   ADD COLUMN details TEXT NULL AFTER remarks;

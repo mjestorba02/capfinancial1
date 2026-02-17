@@ -52,7 +52,7 @@
                 <label for="remember">Stay logged in</label>
             </div>
             <button class="btn btn-lg btn-primary btn-block w-100" type="submit">Let me in</button>
-            <p class="mt-5 mb-3 text-muted">© 2025</p>
+            <p class="mt-5 mb-3 text-muted">© Copyright 2026</p>
         </form>
     </div>
 </div>

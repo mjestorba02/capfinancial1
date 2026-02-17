@@ -58,7 +58,7 @@
             <div class="mt-3">
                 <a href="{{ route('login') }}" class="text-primary">Already have an account?</a>
             </div>
-            <p class="mt-5 mb-3 text-muted">© 2025</p>
+            <p class="mt-5 mb-3 text-muted">© Copyright 2026</p>
         </form>
     </div>
 </div>
