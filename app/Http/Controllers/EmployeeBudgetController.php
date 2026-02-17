@@ -120,10 +120,9 @@ class EmployeeBudgetController extends Controller
         }
 
         $request->validate([
-            'purpose'  => 'required|string|max:255',
-            'amount'   => 'required|numeric|min:1|max:5000000',
-            'remarks'  => 'nullable|string|max:1000',
-            'details'  => 'nullable|string|max:2000',
+            'purpose'   => 'required|string|max:255',
+            'amount'    => 'required|numeric|min:1|max:5000000',
+            'details'   => 'required|string|max:2000',
             'attachment' => 'nullable|file|mimes:pdf,jpeg,jpg,png,gif|max:5120', // 5MB
         ]);
 
@@ -147,7 +146,6 @@ class EmployeeBudgetController extends Controller
             'department'       => Session::get('employee_department') ?? ($employee->department ?? 'General'),
             'purpose'          => $request->purpose,
             'amount'           => $request->amount,
-            'remarks'          => $request->remarks,
             'details'          => $request->details,
             'attachment_path'  => $attachmentPath,
             'status'           => 'Pending',

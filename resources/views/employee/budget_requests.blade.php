@@ -22,12 +22,8 @@
                             <small class="text-muted">Max: ₱5,000,000</small>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label">Details</label>
-                            <textarea name="details" class="form-control" rows="2" placeholder="Additional details (optional)"></textarea>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">Remarks</label>
-                            <input type="text" name="remarks" class="form-control" placeholder="Optional remarks">
+                            <label class="form-label">Details <span class="text-danger">*</span></label>
+                            <textarea name="details" class="form-control" rows="2" required placeholder="Provide details for this request"></textarea>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Attach PDF or Image</label>
