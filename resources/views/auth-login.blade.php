@@ -12,11 +12,6 @@
                     {{ session('error') }}
                 </div>
             @endif
-            @if(session('error'))
-                <div class="alert alert-danger text-left">
-                    {{ session('error') }}
-                </div>
-            @endif
             <a class="navbar-brand mx-auto mt-2 flex-fill text-center" href="#">
                 <svg version="1.1" id="logo" class="navbar-brand-img brand-md" xmlns="http://www.w3.org/2000/svg"
                     xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 120 120"
