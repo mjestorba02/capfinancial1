@@ -88,6 +88,30 @@ class EmployeeBudgetController extends Controller
         ));
     }
 
+    public function budgetRequests()
+    {
+        if (!Session::has('employee_id')) {
+            return redirect()->route('employee.login')
+                ->withErrors(['login' => 'Please log in to access budget requests.']);
+        }
+        $employeeId = Session::get('employee_id');
+        $employee = \App\Models\Employee::find($employeeId);
+        $requests = \App\Models\BudgetRequest::where('employee_id', $employeeId)->latest()->get();
+        return view('employee.budget_requests', compact('employee', 'requests'));
+    }
+
+    public function paymentPortal()
+    {
+        if (!Session::has('employee_id')) {
+            return redirect()->route('employee.login')
+                ->withErrors(['login' => 'Please log in to access the payment portal.']);
+        }
+        $employeeId = Session::get('employee_id');
+        $employee = \App\Models\Employee::find($employeeId);
+        $collections = \App\Models\Collection::where('employee_id', $employeeId)->latest()->get();
+        return view('employee.payment_portal', compact('employee', 'collections'));
+    }
+
     public function store(Request $request)
     {
         // ensure employee is logged in

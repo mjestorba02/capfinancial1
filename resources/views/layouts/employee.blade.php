@@ -118,19 +118,19 @@
                 </p>
                 <ul class="navbar-nav flex-fill w-100 mb-2">
                     <li class="nav-item mb-3">
-                        <a href="{{ route('employee.dashboard') }}#analytics-section" class="nav-link">
+                        <a href="{{ route('employee.dashboard') }}#analytics-section" class="nav-link {{ Request::routeIs('employee.dashboard') ? 'active' : '' }}">
                             <i class="fe fe-pie-chart fe-16"></i>
                             <span class="ml-3 item-text">Overview</span>
                         </a>
                     </li>
                     <li class="nav-item mb-3">
-                        <a href="{{ route('employee.dashboard') }}#budget-section" class="nav-link">
+                        <a href="{{ route('employee.budget.requests') }}" class="nav-link {{ Request::routeIs('employee.budget.requests') ? 'active' : '' }}">
                             <i class="fe fe-dollar-sign fe-16"></i>
                             <span class="ml-3 item-text">Budget Requests</span>
                         </a>
                     </li>
                     <li class="nav-item mb-3">
-                        <a href="{{ route('employee.dashboard') }}#payment-section" class="nav-link">
+                        <a href="{{ route('employee.payment.portal') }}" class="nav-link {{ Request::routeIs('employee.payment.portal') ? 'active' : '' }}">
                             <i class="fe fe-credit-card fe-16"></i>
                             <span class="ml-3 item-text">Payment Portal</span>
                         </a>

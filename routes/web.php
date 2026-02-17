@@ -158,7 +158,9 @@ Route::prefix('employee')->group(function () {
     Route::get('/logout', [EmployeeAuthController::class, 'logout'])->name('employee.logout');
 
     Route::get('/dashboard', [EmployeeBudgetController::class, 'index'])->name('employee.dashboard');
+    Route::get('/budget-requests', [EmployeeBudgetController::class, 'budgetRequests'])->name('employee.budget.requests');
     Route::post('/budget-requests', [EmployeeBudgetController::class, 'store'])->name('employee.budget.store');
+    Route::get('/payment-portal', [EmployeeBudgetController::class, 'paymentPortal'])->name('employee.payment.portal');
     Route::post('/payment', [EmployeeBudgetController::class, 'paymentstore'])->name('employee.payment.store');
 });
 
