@@ -47,7 +47,7 @@
                         <thead class="table-light">
                             <tr>
                                 <th>Request ID</th>
-                                <th>Employee Name</th>
+                                <th class="cell-employee-name">Employee Name</th>
                                 <th>Reason</th>
                                 <th>Amount</th>
                                 <th>Details</th>
@@ -60,7 +60,7 @@
                             @foreach($requests as $req)
                             <tr>
                                 <td><strong>{{ $req->request_id }}</strong></td>
-                                <td>{{ $req->name ?? ($req->employee->name ?? '—') }}</td>
+                                <td class="cell-employee-name">{{ $req->name ?? ($req->employee->name ?? '—') }}</td>
                                 <td>{{ $req->purpose }}</td>
                                 <td>₱{{ number_format($req->amount, 2) }}</td>
                                 <td>{{ Str::limit($req->details, 40) ?: '—' }}</td>

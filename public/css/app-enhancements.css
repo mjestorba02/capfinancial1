@@ -112,6 +112,18 @@ body.vertical {
   }
 }
 
+/* Profile dropdown: show full name (no truncation) */
+.topnav .dropdown-menu {
+  min-width: 12rem;
+}
+
+.topnav .dropdown-item-text {
+  white-space: nowrap;
+  overflow: visible;
+  max-width: none;
+  padding-right: 1rem;
+}
+
 /* ---- Sidebar ---- */
 .sidebar-left {
   background: var(--fms-sidebar-bg) !important;
@@ -262,6 +274,13 @@ body.vertical {
 .main-content .table td.cell-purpose {
   max-width: 220px;
   word-wrap: break-word;
+}
+
+/* Employee/name columns: ensure full name visible (no truncation) */
+.main-content .table th.cell-employee-name,
+.main-content .table td.cell-employee-name {
+  min-width: 7rem;
+  white-space: nowrap;
 }
 
 /* ---- Buttons ---- */
