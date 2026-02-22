@@ -20,7 +20,7 @@ class EmployeeAuthController extends Controller
         return view('employee.login');
     }
 
-    // 🔹 Handle login: validate credentials, send OTP, redirect to OTP page
+    // 🔹 Handle login: validate credentials, then log in (OTP disabled for testing — restore when done)
     public function login(Request $request)
     {
         $request->validate([
@@ -38,16 +38,23 @@ class EmployeeAuthController extends Controller
             return back()->withErrors(['login' => 'Your account is still pending approval. Please wait for an admin to approve your registration.']);
         }
 
-        $this->otpService->createAndSend(
-            OtpService::TYPE_EMPLOYEE,
-            (int) $employee->id,
-            $employee->email
-        );
+        // --- OTP temporarily disabled for testing. To restore: uncomment block below and remove the direct login block.
+        // $this->otpService->createAndSend(
+        //     OtpService::TYPE_EMPLOYEE,
+        //     (int) $employee->id,
+        //     $employee->email
+        // );
+        // $request->session()->put('otp_type', OtpService::TYPE_EMPLOYEE);
+        // $request->session()->put('otp_verifiable_id', $employee->id);
+        // return redirect()->route('employee.login.otp.form');
 
-        $request->session()->put('otp_type', OtpService::TYPE_EMPLOYEE);
-        $request->session()->put('otp_verifiable_id', $employee->id);
+        // Direct login (no OTP) for testing
+        Session::put('employee_id', $employee->id);
+        Session::put('employee_name', $employee->name);
+        Session::put('employee_department', $employee->department);
 
-        return redirect()->route('employee.login.otp.form');
+        return redirect()->route('employee.dashboard')
+            ->with('success', 'Welcome back, ' . $employee->name . '!');
     }
 
     // 🔹 Show OTP verification form (employee)

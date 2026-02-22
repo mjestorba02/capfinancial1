@@ -15,7 +15,7 @@ class MainLoginController extends Controller
     ) {}
 
     /**
-     * Handle admin login: validate credentials, send OTP, redirect to OTP page.
+     * Handle admin/HR login: validate credentials, then log in (OTP disabled for testing — restore when done).
      */
     public function login(Request $request)
     {
@@ -38,17 +38,23 @@ class MainLoginController extends Controller
             return back()->with('error', 'User not found.');
         }
 
-        $this->otpService->createAndSend(
-            OtpService::TYPE_ADMIN,
-            (int) $user->id,
-            $user->email
-        );
+        // --- OTP temporarily disabled for testing. To restore: uncomment block below and remove the direct login block.
+        // $this->otpService->createAndSend(
+        //     OtpService::TYPE_ADMIN,
+        //     (int) $user->id,
+        //     $user->email
+        // );
+        // $request->session()->put('otp_type', OtpService::TYPE_ADMIN);
+        // $request->session()->put('otp_verifiable_id', $user->id);
+        // $request->session()->put('otp_remember', $request->boolean('remember'));
+        // return redirect()->route('login.otp.form');
 
-        $request->session()->put('otp_type', OtpService::TYPE_ADMIN);
-        $request->session()->put('otp_verifiable_id', $user->id);
-        $request->session()->put('otp_remember', $request->boolean('remember'));
+        // Direct login (no OTP) for testing — admin and HR use this same flow
+        $remember = $request->boolean('remember');
+        $request->session()->forget(['otp_type', 'otp_verifiable_id', 'otp_remember']);
+        Auth::guard('web')->login($user, $remember);
 
-        return redirect()->route('login.otp.form');
+        return redirect()->intended(route('dashboard'))->with('success', 'Welcome back!');
     }
 
     /**
