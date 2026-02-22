@@ -237,7 +237,7 @@ class EmployeeBudgetController extends Controller
         }
 
         $employee = Employee::find($employeeId);
-        $customerName = ($employee->name ?? 'Employee') . ' (Budget Order)';
+        $customerName = $employee->name ?? 'Employee';
 
         $lastReceipt = BudgetOrder::orderByDesc('id')->first();
         $nextNum = $lastReceipt ? ((int) preg_replace('/\D/', '', $lastReceipt->receipt_number)) + 1 : 1;
@@ -249,9 +249,9 @@ class EmployeeBudgetController extends Controller
             'customer_name' => $customerName,
             'invoice_number' => $receiptNumber,
             'amount_due' => $amount,
-            'amount_paid' => 0,
+            'amount_paid' => $amount,
             'status' => 'Ordered',
-            'payment_date' => null,
+            'payment_date' => now(),
             'remarks' => 'Budget order: ' . $request->material_description,
         ]);
 
