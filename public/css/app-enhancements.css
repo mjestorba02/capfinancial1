@@ -1,0 +1,352 @@
+/**
+ * Financial Management System – UI Enhancements
+ * Applied across employee portal and admin app for consistent, modern look.
+ */
+
+:root {
+  --fms-primary: #0d6efd;
+  --fms-primary-hover: #0b5ed7;
+  --fms-page-bg: #f0f2f5;
+  --fms-card-radius: 0.5rem;
+  --fms-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --fms-card-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --fms-heading-color: #1a1d21;
+  --fms-text-muted: #5c6370;
+  --fms-border: rgba(0, 0, 0, 0.06);
+  --fms-sidebar-bg: #fff;
+  --fms-topnav-height: 56px;
+}
+
+/* Dark mode overrides (when body.dark) */
+body.dark {
+  --fms-page-bg: #1a1d21;
+  --fms-heading-color: #e9ecef;
+  --fms-text-muted: #adb5bd;
+  --fms-border: rgba(255, 255, 255, 0.08);
+  --fms-sidebar-bg: #212529;
+  --fms-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  --fms-card-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+/* ---- Layout ---- */
+body.vertical {
+  background-color: var(--fms-page-bg) !important;
+}
+
+.vertical .main-content {
+  padding: 1.5rem 1.75rem 2rem !important;
+  background-color: var(--fms-page-bg);
+}
+
+.vertical .main-content .container-fluid {
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* ---- Top nav ---- */
+.topnav.navbar {
+  min-height: var(--fms-topnav-height);
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  background: var(--fms-sidebar-bg) !important;
+  border-bottom: 1px solid var(--fms-border);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.topnav .navbar-brand {
+  font-size: 1.05rem;
+  letter-spacing: 0.02em;
+  color: var(--fms-heading-color) !important;
+}
+
+/* ---- Sidebar ---- */
+.sidebar-left {
+  background: var(--fms-sidebar-bg) !important;
+  border-right: 1px solid var(--fms-border) !important;
+  box-shadow: 1px 0 0 rgba(0, 0, 0, 0.04);
+}
+
+.vertnav .nav-heading {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fms-text-muted) !important;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.vertnav .nav-link {
+  border-radius: 0.375rem;
+  padding: 0.5rem 0.75rem !important;
+  margin-left: 0.25rem;
+  margin-right: 0.25rem;
+  color: var(--fms-text-muted);
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.vertnav .nav-link:hover {
+  background: rgba(13, 110, 253, 0.08);
+  color: var(--fms-primary);
+}
+
+.vertnav .nav-link.active {
+  background: rgba(13, 110, 253, 0.12);
+  color: var(--fms-primary);
+  font-weight: 600;
+}
+
+.vertnav .nav-link .fe {
+  opacity: 0.9;
+}
+
+/* ---- Page content ---- */
+.main-content .row:first-child {
+  margin-bottom: 0;
+}
+
+/* Page title block (first h4 + paragraph) */
+.main-content h4.mb-4,
+.main-content .page-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--fms-heading-color);
+  letter-spacing: -0.02em;
+  margin-bottom: 0.35rem !important;
+}
+
+.main-content .page-subtitle,
+.main-content h4.mb-4 + p.text-muted {
+  font-size: 0.9375rem;
+  color: var(--fms-text-muted);
+  line-height: 1.5;
+  margin-bottom: 1.5rem !important;
+}
+
+/* ---- Cards ---- */
+.main-content .card {
+  border: 1px solid var(--fms-border);
+  border-radius: var(--fms-card-radius);
+  box-shadow: var(--fms-card-shadow);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  overflow: hidden;
+}
+
+.main-content .card:hover {
+  box-shadow: var(--fms-card-shadow-hover);
+}
+
+.main-content .card-body {
+  padding: 1.25rem 1.5rem;
+}
+
+.main-content .card .fw-semibold.mb-3,
+.main-content .card h5.fw-semibold {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--fms-heading-color);
+  margin-bottom: 0.5rem !important;
+}
+
+.main-content .card .text-muted.small.mb-3,
+.main-content .card .text-muted.mb-0 {
+  font-size: 0.875rem;
+  color: var(--fms-text-muted);
+  line-height: 1.45;
+}
+
+/* Section cards with optional header bar */
+.card.section-card .card-body {
+  padding-top: 1.5rem;
+}
+
+/* ---- Tables ---- */
+.main-content .table-responsive {
+  border-radius: var(--fms-card-radius);
+  overflow: hidden;
+}
+
+.main-content .table {
+  margin-bottom: 0;
+  font-size: 0.9rem;
+}
+
+.main-content .table thead th {
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--fms-text-muted);
+  background: var(--fms-page-bg) !important;
+  border-bottom: 1px solid var(--fms-border);
+  padding: 0.75rem 1rem;
+}
+
+.main-content .table tbody td {
+  padding: 0.85rem 1rem;
+  vertical-align: middle;
+  color: var(--fms-heading-color);
+  border-color: var(--fms-border);
+}
+
+.main-content .table tbody tr:hover {
+  background: rgba(13, 110, 253, 0.03);
+}
+
+.main-content .table .text-muted {
+  color: var(--fms-text-muted) !important;
+}
+
+/* Purpose/description column: allow wrap and max width for readability */
+.main-content .table td.cell-purpose {
+  max-width: 220px;
+  word-wrap: break-word;
+}
+
+/* ---- Buttons ---- */
+.main-content .btn-primary {
+  font-weight: 600;
+  padding: 0.4rem 0.9rem;
+  border-radius: 0.375rem;
+  transition: background 0.2s ease, transform 0.05s ease;
+}
+
+.main-content .btn-primary:hover {
+  background: var(--fms-primary-hover);
+}
+
+.main-content .btn-outline-primary {
+  font-weight: 500;
+  border-radius: 0.375rem;
+}
+
+.main-content .btn-sm {
+  font-size: 0.8125rem;
+  padding: 0.35rem 0.75rem;
+}
+
+/* ---- Modals ---- */
+.modal-content {
+  border: 1px solid var(--fms-border);
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+}
+
+.modal-header {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--fms-border);
+}
+
+.modal-header.bg-primary {
+  border-radius: 0.5rem 0.5rem 0 0;
+  padding: 1rem 1.25rem;
+}
+
+.modal-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.modal-body {
+  padding: 1.25rem 1.5rem;
+}
+
+.modal-body .form-label {
+  font-weight: 500;
+  color: var(--fms-heading-color);
+  margin-bottom: 0.35rem;
+}
+
+.modal-body .form-control {
+  border-radius: 0.375rem;
+  padding: 0.5rem 0.75rem;
+}
+
+.modal-body .mb-3 {
+  margin-bottom: 1rem !important;
+}
+
+.modal-body small.text-muted {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.8125rem;
+}
+
+.modal-footer {
+  padding: 1rem 1.25rem 1.25rem;
+  border-top: 1px solid var(--fms-border);
+  gap: 0.5rem;
+}
+
+/* ---- Forms ---- */
+.main-content .form-control {
+  border-radius: 0.375rem;
+  border-color: var(--fms-border);
+}
+
+.main-content .form-control:focus {
+  border-color: var(--fms-primary);
+  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+}
+
+/* ---- Alerts ---- */
+.main-content .alert {
+  border-radius: 0.375rem;
+  border: 1px solid transparent;
+}
+
+/* ---- Badges ---- */
+.badge {
+  font-weight: 500;
+  padding: 0.35em 0.65em;
+}
+
+/* ---- Empty states ---- */
+.main-content .text-muted.mb-0:only-child,
+.main-content p.text-muted.mb-0 {
+  padding: 0.5rem 0;
+}
+
+/* ---- Dashboard summary cards ---- */
+.main-content .card.shadow-sm.text-center.p-3.h-100 {
+  border: 1px solid var(--fms-border);
+  border-radius: var(--fms-card-radius);
+}
+
+.main-content .card.shadow-sm.text-center .h6.text-muted {
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+}
+
+.main-content .card.shadow-sm.text-center h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--fms-heading-color);
+}
+
+/* ---- Auth layout (login/register) ---- */
+.wrapper.vh-100.bg-light {
+  background: linear-gradient(135deg, #f0f2f5 0%, #e4e6eb 100%) !important;
+}
+
+.wrapper.vh-100 .shadow.rounded.bg-white {
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--fms-border);
+}
+
+/* Responsive: reduce padding on small screens */
+@media (max-width: 991.98px) {
+  .vertical .main-content {
+    padding: 1rem !important;
+  }
+  .main-content .card-body {
+    padding: 1rem 1.25rem;
+  }
+  .modal-body {
+    padding: 1rem 1.25rem;
+  }
+}

@@ -15,11 +15,10 @@ ADD COLUMN `budget_request_id` BIGINT UNSIGNED NULL AFTER `id`;
 
 -- ------------------------------------------------------------
 -- 2. Add employee_id to collections (if not already there)
+-- SKIP THIS BLOCK if you get "Duplicate column name 'employee_id'" — you already have it.
 -- ------------------------------------------------------------
-ALTER TABLE `collections`
-ADD COLUMN `employee_id` BIGINT UNSIGNED NULL AFTER `budget_request_id`;
-
--- If you get "Duplicate column name 'employee_id'", that column already exists. Skip to step 3.
+-- ALTER TABLE `collections`
+-- ADD COLUMN `employee_id` BIGINT UNSIGNED NULL AFTER `budget_request_id`;
 
 
 -- ------------------------------------------------------------

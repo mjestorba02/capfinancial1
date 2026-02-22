@@ -6,7 +6,7 @@
 <div class="row">
     <div class="col-12">
         <h4 class="mb-4">Budget</h4>
-        <p class="text-muted mb-4">Use your approved budget requests to order materials. Each order creates a receipt and appears in Accounts Receivable - Collections (admin/HR) as <strong>Ordered</strong>.</p>
+        <p class="page-subtitle text-muted">Use your approved budget requests to order materials. Each order creates a receipt and appears in Accounts Receivable - Collections (admin/HR) as <strong>Ordered</strong>.</p>
 
         @if(session('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -22,7 +22,7 @@
         @endif
 
         {{-- Approved budget requests (available to order from) --}}
-        <div class="card shadow-sm mb-4">
+        <div class="card shadow-sm section-card mb-4">
             <div class="card-body">
                 <h5 class="fw-semibold mb-3">Approved Budget Requests</h5>
                 <p class="text-muted small mb-3">Only requests approved by both HR and Admin appear here. You can place material orders against each approved budget.</p>
@@ -49,7 +49,7 @@
                                 @endphp
                                 <tr>
                                     <td><strong>{{ $req->request_id }}</strong></td>
-                                    <td>{{ $req->purpose }}</td>
+                                    <td class="cell-purpose" title="{{ $req->purpose }}">{{ $req->purpose }}</td>
                                     <td>₱{{ number_format($req->amount, 2) }}</td>
                                     <td>₱{{ number_format($used, 2) }}</td>
                                     <td>₱{{ number_format($remaining, 2) }}</td>
@@ -74,7 +74,7 @@
                                                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body">
-                                                <p class="small text-muted">Remaining budget: ₱{{ number_format($remaining, 2) }}</p>
+                                                <p class="small text-muted mb-3">Remaining budget: ₱{{ number_format($remaining, 2) }}</p>
                                                 <div class="mb-3">
                                                     <label class="form-label">Material / Item Description <span class="text-danger">*</span></label>
                                                     <input type="text" name="material_description" class="form-control" required placeholder="e.g. Office supplies, cables">
@@ -84,8 +84,8 @@
                                                     <input type="number" name="amount" class="form-control" required min="0.01" step="0.01" max="{{ $remaining }}" placeholder="0.00">
                                                     <small class="text-muted">Max: ₱{{ number_format($remaining, 2) }}</small>
                                                 </div>
-                                                <div class="mb-3">
-                                                    <label class="form-label">Remarks</label>
+                                                <div class="mb-0">
+                                                    <label class="form-label">Remarks <span class="text-muted fw-normal">(optional)</span></label>
                                                     <textarea name="remarks" class="form-control" rows="2" placeholder="Optional notes"></textarea>
                                                 </div>
                                             </div>
@@ -105,7 +105,7 @@
         </div>
 
         {{-- My orders and receipts --}}
-        <div class="card shadow-sm">
+        <div class="card shadow-sm section-card">
             <div class="card-body">
                 <h5 class="fw-semibold mb-3">My Orders & Receipts</h5>
                 @if($orders->isEmpty())

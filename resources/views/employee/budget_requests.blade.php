@@ -6,8 +6,9 @@
 <div class="row">
     <div class="col-12">
         <h4 class="mb-4">My Budget Requests</h4>
+        <p class="page-subtitle text-muted">Submit new requests and track status of existing ones.</p>
 
-        <div class="card shadow-sm mb-4">
+        <div class="card shadow-sm section-card mb-4">
             <div class="card-body">
                 <form method="POST" action="{{ route('employee.budget.store') }}" enctype="multipart/form-data">
                     @csrf
@@ -38,7 +39,7 @@
             </div>
         </div>
 
-        <div class="card shadow-sm">
+        <div class="card shadow-sm section-card">
             <div class="card-body">
                 <h5 class="fw-semibold mb-3">Submitted Requests</h5>
                 <div class="table-responsive">

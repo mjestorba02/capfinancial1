@@ -6,6 +6,7 @@
 <div class="row">
     <div class="col-12">
         <h4 class="mb-4">Employee Finance Dashboard</h4>
+        <p class="page-subtitle text-muted d-none d-md-block">Overview of your budget requests, payments, and quick actions.</p>
 
         <!-- Analytics / Overview Section -->
         <div id="analytics-section" class="mb-5">

@@ -5,12 +5,13 @@
 @section('content')
 <div class="row">
     <div class="col-12">
-        <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-2">
             <h4 class="mb-0">Payment Portal</h4>
             <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addModal">Add Payment</button>
         </div>
+        <p class="page-subtitle text-muted">View and add payment records linked to invoices.</p>
 
-        <div class="card shadow-sm">
+        <div class="card shadow-sm section-card">
             <div class="card-body">
                 <h5 class="fw-semibold mb-3">My Payment Records</h5>
                 <div class="table-responsive">
