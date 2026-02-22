@@ -28,22 +28,57 @@ body.dark {
   --fms-card-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
-/* ---- Layout ---- */
+/* ---- Layout (fit any screen, no horizontal scroll) ---- */
+html {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
 body.vertical {
   background-color: var(--fms-page-bg) !important;
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+.wrapper {
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
 .vertical .main-content {
   padding: 1.5rem 1.75rem 2rem !important;
   background-color: var(--fms-page-bg);
+  overflow-x: hidden;
+  min-width: 0; /* allow flex child to shrink */
 }
 
 .vertical .main-content .container-fluid {
-  max-width: 1400px;
+  max-width: 100%;
+  width: 100%;
   margin-left: auto;
   margin-right: auto;
-  padding-left: 0;
-  padding-right: 0;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  min-width: 0;
+}
+
+@media (min-width: 1400px) {
+  .vertical .main-content .container-fluid {
+    max-width: 1400px;
+  }
+}
+
+/* Prevent row/col from expanding viewport (min-width allows flex shrink) */
+.main-content .row {
+  min-width: 0;
+}
+
+.main-content .row > [class*="col-"] {
+  min-width: 0;
+}
+
+.main-content .card-body {
+  min-width: 0;
 }
 
 /* ---- Top nav ---- */
@@ -51,15 +86,30 @@ body.vertical {
   min-height: var(--fms-topnav-height);
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
   background: var(--fms-sidebar-bg) !important;
   border-bottom: 1px solid var(--fms-border);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  flex-wrap: wrap;
+  min-width: 0;
 }
 
 .topnav .navbar-brand {
   font-size: 1.05rem;
   letter-spacing: 0.02em;
   color: var(--fms-heading-color) !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: min(100%, 20rem);
+}
+
+@media (max-width: 576px) {
+  .topnav .navbar-brand {
+    font-size: 0.9rem;
+    max-width: 12rem;
+  }
 }
 
 /* ---- Sidebar ---- */
@@ -163,10 +213,18 @@ body.vertical {
   padding-top: 1.5rem;
 }
 
-/* ---- Tables ---- */
+/* ---- Tables (scroll inside card on small screens) ---- */
 .main-content .table-responsive {
   border-radius: var(--fms-card-radius);
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+  margin-bottom: 0;
+}
+
+.main-content .table-responsive .table {
+  margin-bottom: 0;
 }
 
 .main-content .table {
