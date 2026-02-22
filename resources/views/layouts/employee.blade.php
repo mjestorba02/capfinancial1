@@ -130,6 +130,12 @@
                         </a>
                     </li>
                     <li class="nav-item mb-3">
+                        <a href="{{ route('employee.budget') }}" class="nav-link {{ Request::routeIs('employee.budget*') ? 'active' : '' }}">
+                            <i class="fe fe-shopping-cart fe-16"></i>
+                            <span class="ml-3 item-text">Budget</span>
+                        </a>
+                    </li>
+                    <li class="nav-item mb-3">
                         <a href="{{ route('employee.payment.portal') }}" class="nav-link {{ Request::routeIs('employee.payment.portal') ? 'active' : '' }}">
                             <i class="fe fe-credit-card fe-16"></i>
                             <span class="ml-3 item-text">Payment Portal</span>

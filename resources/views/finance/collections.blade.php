@@ -46,6 +46,7 @@
                                 @php
                                     $badgeClass = match($item->status) {
                                         'Paid' => 'success',
+                                        'Ordered' => 'info',
                                         'Overdue' => 'danger',
                                         'Pending' => 'warning',
                                         default => 'secondary',
@@ -59,8 +60,8 @@
                             <td>{{ $item->remarks ?? '-' }}</td>
                             <td class="text-center">
                                 <div class="d-flex justify-content-center align-items-center" style="gap: 12px;">
-                                    <!-- Approve Icon -->
-                                    @if($item->status !== 'Paid')
+                                    <!-- Approve Icon (only for Pending/Overdue payments, not for Ordered) -->
+                                    @if($item->status !== 'Paid' && $item->status !== 'Ordered')
                                     <form method="POST" action="{{ route('collections.approve', $item->id) }}" class="d-inline">
                                         @csrf
                                         <button type="submit" class="bg-transparent border-0 p-0 text-success" title="Approve Payment"

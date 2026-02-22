@@ -58,20 +58,26 @@ class AccountsController extends Controller
         $collections = $collectionQuery->orderByDesc('payment_date')->paginate(20, ['*'], 'collections_page');
         $payables = $payableQuery->orderByDesc('due_date')->paginate(20, ['*'], 'payables_page');
 
+        // Ordered (from employee Budget module) — appears in Accounts Receivable
+        $orderedCollections = Collection::where('status', 'Ordered')->orderByDesc('created_at')->get();
+
         // Totals (summary)
         $totalReceivables = Collection::sum('amount_due');
         $totalCollected = Collection::where('status', 'Paid')->sum('amount_paid');
         $totalUnpaidReceivables = Collection::where('status', 'Pending')->sum('amount_due');
+        $totalOrdered = Collection::where('status', 'Ordered')->sum('amount_due');
 
         $totalPayables = Payable::sum('amount');
         $totalUnpaidPayables = Payable::where('status', 'Unpaid')->sum('amount');
 
         return view('finance.accounts', compact(
             'collections',
+            'orderedCollections',
             'payables',
             'totalReceivables',
             'totalCollected',
             'totalUnpaidReceivables',
+            'totalOrdered',
             'totalPayables',
             'totalUnpaidPayables'
         ));

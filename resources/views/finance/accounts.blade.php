@@ -90,6 +90,49 @@
 
 
     {{-- ============================= --}}
+    {{-- ACCOUNTS RECEIVABLE — ORDERED (from Employee Budget) --}}
+    {{-- ============================= --}}
+    <div class="card shadow mb-5">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold mb-0">Accounts Receivable — Ordered (Budget)</h5>
+            <span class="badge bg-info">Total: ₱{{ number_format($totalOrdered ?? 0, 2) }}</span>
+        </div>
+        <div class="card-body">
+            <p class="text-muted small mb-3">Material orders placed by employees from their approved budget. These appear when both Admin and HR have approved a budget request and the employee orders in the Budget module.</p>
+            <table class="table table-bordered table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Receipt/Invoice #</th>
+                        <th>Customer</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                        <th>Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($orderedCollections as $item)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $item->invoice_number ?? $item->id }}</td>
+                            <td>{{ $item->customer_name ?? 'N/A' }}</td>
+                            <td>₱{{ number_format($item->amount_due ?? 0, 2) }}</td>
+                            <td>{{ $item->created_at ? $item->created_at->format('M d, Y') : '-' }}</td>
+                            <td>{{ Str::limit($item->remarks ?? '-', 50) }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-3">
+                                <i class="fe fe-info me-1"></i> No ordered (budget) collections.
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {{-- ============================= --}}
     {{-- ACCOUNTS RECEIVABLE SECTION (PAID COLLECTIONS) --}}
     {{-- ============================= --}}
     <div class="card shadow">
@@ -116,7 +159,6 @@
                 </thead>
                 <tbody>
                     @php
-                        // Filter all paid collections directly in the view
                         $paidCollections = $collections->where('status', 'Paid');
                     @endphp
 

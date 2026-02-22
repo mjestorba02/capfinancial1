@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\BudgetRequest;
+use App\Models\BudgetOrder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use App\Models\Collection;
+use App\Models\Employee;
 use App\Models\Payable;
 use Illuminate\Support\Str;
+use PDF;
 
 class EmployeeBudgetController extends Controller
 {
@@ -180,5 +183,121 @@ class EmployeeBudgetController extends Controller
         }
 
         return redirect()->back()->with('success', 'Collection record added successfully.');
+    }
+
+    /**
+     * Budget module: list approved budget requests; employee can order materials and create receipts.
+     * Orders appear in Admin/HR Accounts Receivable - Collections as "Ordered".
+     */
+    public function budget()
+    {
+        if (!Session::has('employee_id')) {
+            return redirect()->route('employee.login')
+                ->withErrors(['login' => 'Please log in to access the Budget module.']);
+        }
+        $employeeId = Session::get('employee_id');
+        $employee = Employee::find($employeeId);
+        $approvedRequests = BudgetRequest::where('employee_id', $employeeId)
+            ->where('status', 'Approved')
+            ->with('budgetOrders')
+            ->latest()
+            ->get();
+        $orders = BudgetOrder::where('employee_id', $employeeId)->with('budgetRequest')->latest()->get();
+        return view('employee.budget', compact('employee', 'approvedRequests', 'orders'));
+    }
+
+    /**
+     * Store a material order from an approved budget. Creates BudgetOrder and Collection (status Ordered).
+     */
+    public function orderStore(Request $request)
+    {
+        if (!Session::has('employee_id')) {
+            return redirect()->route('employee.login')
+                ->withErrors(['login' => 'Please log in to place an order.']);
+        }
+
+        $request->validate([
+            'budget_request_id' => 'required|exists:budget_requests,id',
+            'material_description' => 'required|string|max:500',
+            'amount' => 'required|numeric|min:0.01',
+            'remarks' => 'nullable|string|max:1000',
+        ]);
+
+        $employeeId = Session::get('employee_id');
+        $budgetRequest = BudgetRequest::where('id', $request->budget_request_id)
+            ->where('employee_id', $employeeId)
+            ->where('status', 'Approved')
+            ->firstOrFail();
+
+        $amount = (float) $request->amount;
+        $alreadyUsed = $budgetRequest->budgetOrders()->sum('amount');
+        $remaining = $budgetRequest->amount - $alreadyUsed;
+        if ($amount > $remaining) {
+            return redirect()->back()->with('error', 'Amount exceeds remaining budget (₱' . number_format($remaining, 2) . ').');
+        }
+
+        $employee = Employee::find($employeeId);
+        $customerName = ($employee->name ?? 'Employee') . ' (Budget Order)';
+
+        $lastReceipt = BudgetOrder::orderByDesc('id')->first();
+        $nextNum = $lastReceipt ? ((int) preg_replace('/\D/', '', $lastReceipt->receipt_number)) + 1 : 1;
+        $receiptNumber = 'RCP-' . str_pad($nextNum, 4, '0', STR_PAD_LEFT);
+
+        $collection = Collection::create([
+            'employee_id' => $employeeId,
+            'budget_request_id' => $budgetRequest->id,
+            'customer_name' => $customerName,
+            'invoice_number' => $receiptNumber,
+            'amount_due' => $amount,
+            'amount_paid' => 0,
+            'status' => 'Ordered',
+            'payment_date' => null,
+            'remarks' => 'Budget order: ' . $request->material_description,
+        ]);
+
+        $order = BudgetOrder::create([
+            'budget_request_id' => $budgetRequest->id,
+            'employee_id' => $employeeId,
+            'material_description' => $request->material_description,
+            'amount' => $amount,
+            'receipt_number' => $receiptNumber,
+            'collection_id' => $collection->id,
+            'remarks' => $request->remarks,
+        ]);
+
+        return redirect()->route('employee.budget')->with('success', 'Order placed. Receipt #' . $receiptNumber . '. It will appear in Accounts Receivable - Collections as Ordered.');
+    }
+
+    /**
+     * View receipt (HTML).
+     */
+    public function receipt($id)
+    {
+        if (!Session::has('employee_id')) {
+            return redirect()->route('employee.login');
+        }
+        $order = BudgetOrder::where('id', $id)
+            ->where('employee_id', Session::get('employee_id'))
+            ->with(['budgetRequest', 'employee'])
+            ->firstOrFail();
+        return view('employee.receipt', compact('order'));
+    }
+
+    /**
+     * Download receipt as PDF.
+     */
+    public function receiptPdf($id)
+    {
+        if (!Session::has('employee_id')) {
+            return redirect()->route('employee.login');
+        }
+        $order = BudgetOrder::where('id', $id)
+            ->where('employee_id', Session::get('employee_id'))
+            ->with(['budgetRequest', 'employee'])
+            ->firstOrFail();
+
+        $pdf = PDF::loadView('employee.receipt_pdf', compact('order'));
+        $filename = 'receipt-' . $order->receipt_number . '.pdf';
+        return $pdf->download($filename);
     }
 }

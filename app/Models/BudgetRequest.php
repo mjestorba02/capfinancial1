@@ -35,4 +35,9 @@ class BudgetRequest extends Model
     {
         return $this->belongsTo(Employee::class);
     }
+
+    public function budgetOrders()
+    {
+        return $this->hasMany(BudgetOrder::class);
+    }
 }

@@ -5,27 +5,23 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Collection extends Model
+class BudgetOrder extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'employee_id',
         'budget_request_id',
-        'customer_name',
-        'invoice_number',
-        'amount_due',
-        'amount_paid',
-        'status',
-        'payment_date',
+        'employee_id',
+        'material_description',
+        'amount',
+        'receipt_number',
+        'receipt_path',
+        'collection_id',
         'remarks',
-        'external_id',
     ];
 
-    protected $dates = [
-        'payment_date',
-        'created_at',
-        'updated_at',
+    protected $casts = [
+        'amount' => 'decimal:2',
     ];
 
     public function budgetRequest()
@@ -36,5 +32,10 @@ class Collection extends Model
     public function employee()
     {
         return $this->belongsTo(Employee::class);
+    }
+
+    public function collection()
+    {
+        return $this->belongsTo(Collection::class);
     }
 }

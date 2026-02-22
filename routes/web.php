@@ -166,6 +166,12 @@ Route::prefix('employee')->group(function () {
     Route::post('/budget-requests', [EmployeeBudgetController::class, 'store'])->name('employee.budget.store');
     Route::get('/payment-portal', [EmployeeBudgetController::class, 'paymentPortal'])->name('employee.payment.portal');
     Route::post('/payment', [EmployeeBudgetController::class, 'paymentstore'])->name('employee.payment.store');
+
+    // Budget module: approved requests → order materials → receipt → appears in AR Collections as Ordered
+    Route::get('/budget', [EmployeeBudgetController::class, 'budget'])->name('employee.budget');
+    Route::post('/budget/order', [EmployeeBudgetController::class, 'orderStore'])->name('employee.budget.order.store');
+    Route::get('/budget/receipt/{order}', [EmployeeBudgetController::class, 'receipt'])->name('employee.budget.receipt');
+    Route::get('/budget/receipt/{order}/pdf', [EmployeeBudgetController::class, 'receiptPdf'])->name('employee.budget.receipt.pdf');
 });
 
 // Attendance Portal
