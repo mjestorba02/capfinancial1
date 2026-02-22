@@ -112,16 +112,21 @@ body.vertical {
   }
 }
 
-/* Profile dropdown: show full name (no truncation) */
+/* Profile dropdown: show full name (no truncation), keep inside border */
 .topnav .dropdown-menu {
   min-width: 12rem;
+  padding: 0.25rem 0;
 }
 
-.topnav .dropdown-item-text {
+.topnav .dropdown-item-text,
+.topnav .dropdown-item-text-name {
+  display: block;
   white-space: nowrap;
   overflow: visible;
   max-width: none;
-  padding-right: 1rem;
+  padding: 0.25rem 1rem 0.25rem 1rem;
+  margin: 0;
+  box-sizing: border-box;
 }
 
 /* ---- Sidebar ---- */

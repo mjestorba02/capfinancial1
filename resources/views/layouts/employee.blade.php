@@ -75,7 +75,7 @@
                         </span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
-                        <li class="dropdown-item-text small text-muted">{{ session('employee_name', 'Employee') }}</li>
+                        <li><span class="dropdown-item-text dropdown-item-text-name small text-muted">{{ session('employee_name', 'Employee') }}</span></li>
                         <li><hr class="dropdown-divider"></li>
                         <li>
                             <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
