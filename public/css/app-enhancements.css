@@ -334,6 +334,7 @@ body.vertical {
 
 .modal-body {
   padding: 1.25rem 1.5rem;
+  overflow: visible;
 }
 
 .modal-body .form-label {

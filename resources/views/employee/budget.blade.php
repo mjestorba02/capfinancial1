@@ -63,43 +63,51 @@
                                         @endif
                                     </td>
                                 </tr>
-                                {{-- Order modal per request --}}
-                                <div class="modal fade" id="orderModal{{ $req->id }}" tabindex="-1">
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <form method="POST" action="{{ route('employee.budget.order.store') }}" class="modal-content">
-                                            @csrf
-                                            <input type="hidden" name="budget_request_id" value="{{ $req->id }}">
-                                            <div class="modal-header bg-primary text-white">
-                                                <h5 class="modal-title">Order Material — {{ $req->request_id }}</h5>
-                                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <p class="small text-muted mb-3">Remaining budget: ₱{{ number_format($remaining, 2) }}</p>
-                                                <div class="mb-3">
-                                                    <label class="form-label">Material / Item Description <span class="text-danger">*</span></label>
-                                                    <input type="text" name="material_description" class="form-control" required placeholder="e.g. Office supplies, cables">
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label class="form-label">Amount (₱) <span class="text-danger">*</span></label>
-                                                    <input type="number" name="amount" class="form-control" required min="0.01" step="0.01" max="{{ $remaining }}" placeholder="0.00">
-                                                    <small class="text-muted">Max: ₱{{ number_format($remaining, 2) }}</small>
-                                                </div>
-                                                <div class="mb-0">
-                                                    <label class="form-label">Remarks <span class="text-muted fw-normal">(optional)</span></label>
-                                                    <textarea name="remarks" class="form-control" rows="2" placeholder="Optional notes"></textarea>
-                                                </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="submit" class="btn btn-primary">Place Order & Create Receipt</button>
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
                                 @endforeach
                             </tbody>
                         </table>
                     </div>
+                    {{-- Order modals (outside table for valid HTML and correct stacking) --}}
+                    @foreach($approvedRequests as $req)
+                        @php
+                            $used = $req->budgetOrders->sum('amount');
+                            $remaining = $req->amount - $used;
+                        @endphp
+                        @if($remaining > 0)
+                        <div class="modal fade" id="orderModal{{ $req->id }}" tabindex="-1" aria-labelledby="orderModalLabel{{ $req->id }}" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <form method="POST" action="{{ route('employee.budget.order.store') }}" class="modal-content" autocomplete="off">
+                                    @csrf
+                                    <input type="hidden" name="budget_request_id" value="{{ $req->id }}">
+                                    <div class="modal-header bg-primary text-white">
+                                        <h5 class="modal-title" id="orderModalLabel{{ $req->id }}">Order Material — {{ $req->request_id }}</h5>
+                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p class="small text-muted mb-3">Remaining budget: ₱{{ number_format($remaining, 2) }}</p>
+                                        <div class="mb-3">
+                                            <label class="form-label" for="material_description_{{ $req->id }}">Material / Item Description <span class="text-danger">*</span></label>
+                                            <input type="text" id="material_description_{{ $req->id }}" name="material_description" class="form-control" required placeholder="e.g. Office supplies, cables" autocomplete="off">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label" for="amount_{{ $req->id }}">Amount (₱) <span class="text-danger">*</span></label>
+                                            <input type="number" id="amount_{{ $req->id }}" name="amount" class="form-control" required min="0.01" step="0.01" max="{{ $remaining }}" placeholder="0.00" autocomplete="off">
+                                            <small class="text-muted">Max: ₱{{ number_format($remaining, 2) }}</small>
+                                        </div>
+                                        <div class="mb-0">
+                                            <label class="form-label" for="remarks_{{ $req->id }}">Remarks <span class="text-muted fw-normal">(optional)</span></label>
+                                            <textarea id="remarks_{{ $req->id }}" name="remarks" class="form-control" rows="2" placeholder="Optional notes" autocomplete="off"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="submit" class="btn btn-primary">Place Order & Create Receipt</button>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        @endif
+                    @endforeach
                 @endif
             </div>
         </div>
