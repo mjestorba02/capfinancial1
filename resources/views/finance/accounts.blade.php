@@ -126,7 +126,7 @@
                             <td>{{ $item->collection_id ?? $item->id }}</td>
                             <td>{{ $item->customer_name ?? 'N/A' }}</td>
                             <td>{{ $item->invoice_number ?? '-' }}</td>
-                            <td>₱{{ number_format($item->amount, 2) }}</td>
+                            <td>₱{{ number_format($item->amount_paid ?? $item->amount_due ?? 0, 2) }}</td>
                             <td>{{ $item->payment_date ?? '-' }}</td>
                             <td><span class="badge bg-success">Paid</span></td>
                             <td>{{ $item->remarks ?? '-' }}</td>

@@ -159,7 +159,7 @@ Route::prefix('employee')->group(function () {
     Route::post('/login', [EmployeeAuthController::class, 'login'])->name('employee.login.post');
     Route::get('/login/otp', [EmployeeAuthController::class, 'showOtpForm'])->name('employee.login.otp.form');
     Route::post('/login/otp', [EmployeeAuthController::class, 'verifyOtp'])->name('employee.login.otp.verify');
-    Route::get('/logout', [EmployeeAuthController::class, 'logout'])->name('employee.logout');
+    Route::post('/logout', [EmployeeAuthController::class, 'logout'])->name('employee.logout');
 
     Route::get('/dashboard', [EmployeeBudgetController::class, 'index'])->name('employee.dashboard');
     Route::get('/budget-requests', [EmployeeBudgetController::class, 'budgetRequests'])->name('employee.budget.requests');
