@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Collection;
 use App\Models\JournalEntry;
 use Carbon\Carbon;
+use PDF;
 
 class CollectionController extends Controller
 {
@@ -118,6 +119,16 @@ class CollectionController extends Controller
         $this->createJournalEntries($collection);
 
         return redirect()->back()->with('success', 'Collection approved and journal entry recorded.');
+    }
+
+    /**
+     * Download collection receipt as PDF (admin/HR).
+     */
+    public function receiptPdf(Collection $collection)
+    {
+        $pdf = PDF::loadView('finance.collection_receipt_pdf', compact('collection'));
+        $filename = 'collection-receipt-' . ($collection->invoice_number ?? $collection->id) . '.pdf';
+        return $pdf->download($filename);
     }
 
     /**

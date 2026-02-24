@@ -60,39 +60,17 @@
                             <td>{{ $item->payment_date ?? '-' }}</td>
                             <td>{{ $item->remarks ?? '-' }}</td>
                             <td class="text-center">
-                                <a href="{{ route('collections.receipt', $item->id) }}" class="btn btn-outline-secondary btn-sm" target="_blank">
-                                    View Receipt
+                                <a href="{{ route('collections.receipt.pdf', $item->id) }}" class="btn btn-outline-secondary btn-sm">
+                                    Receipt PDF
                                 </a>
                             </td>
                             <td class="text-center">
                                 <div class="d-flex justify-content-center align-items-center" style="gap: 12px;">
-                                    <!-- Approve Icon (only for Pending/Overdue payments, not for Ordered) -->
-                                    @if($item->status !== 'Paid' && $item->status !== 'Ordered')
-                                    <form method="POST" action="{{ route('collections.approve', $item->id) }}" class="d-inline">
-                                        @csrf
-                                        <button type="submit" class="bg-transparent border-0 p-0 text-success" title="Approve Payment"
-                                            onclick="return confirm('Mark this collection as Paid?')">
-                                            <i class="fe fe-check-circle fe-18"></i>
-                                        </button>
-                                    </form>
-                                    @endif
-
-                                    <!-- Edit Icon (kept for manual adjustments if needed) -->
+                                    <!-- Edit Icon (for manual adjustments if needed) -->
                                     <a href="#" data-bs-toggle="modal" data-bs-target="#editModal{{ $item->id }}" 
                                     title="Edit Collection" class="text-white text-decoration-none">
                                         <i class="fe fe-edit fe-18"></i>
                                     </a>
-
-                                    <!-- Delete Icon -->
-                                    <!-- <form method="POST" action="{{ route('collections.destroy', $item->id) }}" 
-                                        onsubmit="return confirm('Delete this record?')" 
-                                        class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="bg-transparent border-0 p-0 text-danger" title="Delete">
-                                            <i class="fe fe-trash fe-18"></i>
-                                        </button>
-                                    </form> -->
                                 </div>
                             </td>
                         </tr>

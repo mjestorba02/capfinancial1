@@ -149,6 +149,7 @@ Route::middleware(['auth'])->group(function () {
 
         Route::resource('disbursements', DisbursementController::class);
         Route::get('/collections/{collection}/receipt', [CollectionController::class, 'receipt'])->name('collections.receipt');
+        Route::get('/collections/{collection}/receipt-pdf', [CollectionController::class, 'receiptPdf'])->name('collections.receipt.pdf');
     });
 });
 
