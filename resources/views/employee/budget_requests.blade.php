@@ -8,6 +8,36 @@
         <h4 class="mb-4">My Budget Requests</h4>
         <p class="page-subtitle text-muted">Submit new requests and track status of existing ones.</p>
 
+        @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show mt-2" role="alert">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        @endif
+
+        @if(session('error'))
+        <div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
+            {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        @endif
+
+        @isset($monthlyLimit)
+        <div class="alert alert-info mt-3">
+            <strong>Monthly budget limit:</strong> ₱{{ number_format($monthlyLimit, 2) }} |
+            <strong>Used this month:</strong> ₱{{ number_format($monthlyTotal ?? 0, 2) }} |
+            <strong>Remaining:</strong> ₱{{ number_format($remainingBudget ?? 0, 2) }}
+        </div>
+        @endisset
+
+        @isset($canSubmitBudgetRequest)
+            @if(!$canSubmitBudgetRequest)
+                <div class="alert alert-warning mt-2">
+                    You have reached your monthly budget request limit of ₱{{ number_format($monthlyLimit ?? 50000, 2) }}. You cannot submit additional requests this month.
+                </div>
+            @endif
+        @endisset
+
         <div class="card shadow-sm section-card mb-4">
             <div class="card-body">
                 <form method="POST" action="{{ route('employee.budget.store') }}" enctype="multipart/form-data">
@@ -32,7 +62,20 @@
                             <small class="text-muted">PDF, JPG, PNG, GIF. Max 5MB.</small>
                         </div>
                         <div class="col-md-6 d-flex align-items-end">
-                            <button type="submit" class="btn btn-primary">Submit Request</button>
+                            <button 
+                                type="submit" 
+                                class="btn btn-primary"
+                                @isset($canSubmitBudgetRequest)
+                                    @if(!$canSubmitBudgetRequest) disabled @endif
+                                @endisset
+                            >
+                                Submit Request
+                            </button>
+                            @isset($canSubmitBudgetRequest)
+                                @if(!$canSubmitBudgetRequest)
+                                    <small class="text-danger ms-2">Monthly limit reached.</small>
+                                @endif
+                            @endisset
                         </div>
                     </div>
                 </form>
@@ -100,7 +143,7 @@
             </div>
         </div>
     </div>
-</div>
+}</div>
 
 @foreach($requests as $req)
     @if($req->remarks)
@@ -123,10 +166,4 @@
     @endif
 @endforeach
 
-@if(session('success'))
-<div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
-    {{ session('success') }}
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
-@endif
 @endsection

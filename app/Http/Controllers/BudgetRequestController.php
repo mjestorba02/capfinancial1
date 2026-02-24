@@ -75,6 +75,16 @@ class BudgetRequestController extends Controller
         ]);
 
         $budget = BudgetRequest::findOrFail($id);
+
+        // If status is being changed to Approved, enforce per-employee monthly approval limit (₱50,000)
+        if ($request->status === 'Approved' && $budget->status !== 'Approved') {
+            if (! $this->canApproveForMonth($budget)) {
+                return redirect()
+                    ->back()
+                    ->with('error', 'Cannot approve this request: the employee has reached the monthly approved budget limit of ₱50,000.');
+            }
+        }
+
         $budget->update([
             'department' => $request->department,
             'purpose' => $request->purpose,
@@ -105,6 +115,14 @@ class BudgetRequestController extends Controller
     public function approve($id)
     {
         $budget = BudgetRequest::findOrFail($id);
+
+        // Enforce per-employee monthly approval limit (₱50,000)
+        if (! $this->canApproveForMonth($budget)) {
+            return redirect()
+                ->back()
+                ->with('error', 'Cannot approve this request: the employee has reached the monthly approved budget limit of ₱50,000.');
+        }
+
         $budget->update([
             'status' => 'Approved',
             'remarks' => 'Approved automatically by finance officer',
@@ -165,6 +183,14 @@ class BudgetRequestController extends Controller
         if ($budget->status !== 'Pending Admin') {
             return redirect()->back()->with('error', 'Only requests forwarded by HR can be approved.');
         }
+
+         // Enforce per-employee monthly approval limit (₱50,000)
+        if (! $this->canApproveForMonth($budget)) {
+            return redirect()
+                ->back()
+                ->with('error', 'Cannot approve this request: the employee has reached the monthly approved budget limit of ₱50,000.');
+        }
+
         $budget->update([
             'status' => 'Approved',
             'remarks' => $request->remarks,
@@ -199,6 +225,25 @@ class BudgetRequestController extends Controller
             'admin_approved_at' => now(),
         ]);
         return redirect()->back()->with('success', 'Budget Request rejected with remarks. HR and Employee will see the status and remarks.');
+    }
+
+    /**
+     * Check if approving the given budget request would exceed the
+     * per-employee monthly approved budget limit (₱50,000).
+     */
+    private function canApproveForMonth(BudgetRequest $budget): bool
+    {
+        $monthlyLimit = 50000;
+        $now = now();
+
+        $approvedTotal = BudgetRequest::where('employee_id', $budget->employee_id)
+            ->whereYear('created_at', $now->year)
+            ->whereMonth('created_at', $now->month)
+            ->where('status', 'Approved')
+            ->where('id', '!=', $budget->id)
+            ->sum('amount');
+
+        return ($approvedTotal + (float) $budget->amount) <= $monthlyLimit;
     }
 
     // 🔹 Upload Image

@@ -100,7 +100,26 @@ class EmployeeBudgetController extends Controller
         $employeeId = Session::get('employee_id');
         $employee = \App\Models\Employee::find($employeeId);
         $requests = \App\Models\BudgetRequest::where('employee_id', $employeeId)->latest()->get();
-        return view('employee.budget_requests', compact('employee', 'requests'));
+
+        // Monthly per-employee budget limit (₱50,000)
+        $monthlyLimit = 50000;
+        $now = now();
+        $monthlyTotal = \App\Models\BudgetRequest::where('employee_id', $employeeId)
+            ->whereYear('created_at', $now->year)
+            ->whereMonth('created_at', $now->month)
+            ->whereIn('status', ['Pending', 'Pending Admin', 'Approved'])
+            ->sum('amount');
+        $remainingBudget = max(0, $monthlyLimit - $monthlyTotal);
+        $canSubmitBudgetRequest = $remainingBudget > 0;
+
+        return view('employee.budget_requests', compact(
+            'employee',
+            'requests',
+            'monthlyLimit',
+            'monthlyTotal',
+            'remainingBudget',
+            'canSubmitBudgetRequest'
+        ));
     }
 
     public function paymentPortal()
@@ -132,6 +151,22 @@ class EmployeeBudgetController extends Controller
         $employeeId = Session::get('employee_id');
         $employee = \App\Models\Employee::find($employeeId);
         $employeeName = $employee ? $employee->name : 'Unknown';
+
+        // Enforce per-employee monthly limit of ₱50,000 on submission
+        $monthlyLimit = 50000;
+        $now = now();
+        $currentMonthTotal = BudgetRequest::where('employee_id', $employeeId)
+            ->whereYear('created_at', $now->year)
+            ->whereMonth('created_at', $now->month)
+            ->whereIn('status', ['Pending', 'Pending Admin', 'Approved'])
+            ->sum('amount');
+
+        if (($currentMonthTotal + (float) $request->amount) > $monthlyLimit) {
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'You have reached the monthly budget request limit of ₱50,000. You cannot submit additional requests this month.');
+        }
 
         $last = BudgetRequest::orderByDesc('id')->first();
         $nextNumber = $last ? ((int) preg_replace('/\D/', '', $last->request_id)) + 1 : 1;
