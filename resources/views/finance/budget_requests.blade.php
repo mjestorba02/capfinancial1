@@ -9,9 +9,7 @@
             <h2 class="fw-bold text-primary mb-0">Budget Requests</h2>
             <p class="text-muted mb-0">Submit and manage budget requests.</p>
         </div>
-        <button class="btn btn-warning text-white" data-bs-toggle="modal" data-bs-target="#addModal">
-            <i class="bi bi-plus-lg me-1"></i> New Request
-        </button>
+        
     </div>
 
     @if(session('success'))
