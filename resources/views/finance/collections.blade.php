@@ -30,7 +30,8 @@
                         <th>Amount Paid</th>
                         <th>Status</th>
                         <th>Payment Date</th>
-                        <th>Remarks</th>
+                        <th>Department</th>
+                        <th>Receipt</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -59,6 +60,11 @@
                             <td>{{ $item->payment_date ?? '-' }}</td>
                             <td>{{ $item->remarks ?? '-' }}</td>
                             <td class="text-center">
+                                <a href="{{ route('collections.receipt', $item->id) }}" class="btn btn-outline-secondary btn-sm" target="_blank">
+                                    View Receipt
+                                </a>
+                            </td>
+                            <td class="text-center">
                                 <div class="d-flex justify-content-center align-items-center" style="gap: 12px;">
                                     <!-- Approve Icon (only for Pending/Overdue payments, not for Ordered) -->
                                     @if($item->status !== 'Paid' && $item->status !== 'Ordered')
@@ -71,9 +77,9 @@
                                     </form>
                                     @endif
 
-                                    <!-- Edit Icon -->
+                                    <!-- Edit Icon (kept for manual adjustments if needed) -->
                                     <a href="#" data-bs-toggle="modal" data-bs-target="#editModal{{ $item->id }}" 
-                                    title="Edit" class="text-white text-decoration-none">
+                                    title="Edit Collection" class="text-white text-decoration-none">
                                         <i class="fe fe-edit fe-18"></i>
                                     </a>
 

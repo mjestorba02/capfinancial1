@@ -148,6 +148,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/collections/{collection}/approve', [CollectionController::class, 'approve'])->name('collections.approve');
 
         Route::resource('disbursements', DisbursementController::class);
+        Route::get('/collections/{collection}/receipt', [CollectionController::class, 'receipt'])->name('collections.receipt');
     });
 });
 
@@ -166,6 +167,7 @@ Route::prefix('employee')->group(function () {
     Route::post('/budget-requests', [EmployeeBudgetController::class, 'store'])->name('employee.budget.store');
     Route::get('/payment-portal', [EmployeeBudgetController::class, 'paymentPortal'])->name('employee.payment.portal');
     Route::post('/payment', [EmployeeBudgetController::class, 'paymentstore'])->name('employee.payment.store');
+    Route::get('/payment/{collection}/receipt', [EmployeeBudgetController::class, 'paymentReceipt'])->name('employee.payment.receipt');
 
     // Budget module: approved requests → order materials → receipt → appears in AR Collections as Ordered
     Route::get('/budget', [EmployeeBudgetController::class, 'budget'])->name('employee.budget');

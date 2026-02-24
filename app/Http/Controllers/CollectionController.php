@@ -120,4 +120,12 @@ class CollectionController extends Controller
         return redirect()->back()->with('success', 'Collection approved and journal entry recorded.');
     }
 
+    /**
+     * Show a printable-style receipt for a collection (admin/HR view).
+     */
+    public function receipt(Collection $collection)
+    {
+        return view('finance.collection_receipt', compact('collection'));
+    }
+
 }

@@ -217,7 +217,25 @@ class EmployeeBudgetController extends Controller
             $this->createJournalEntries($collection);
         }
 
-        return redirect()->back()->with('success', 'Collection record added successfully.');
+        return redirect()
+            ->route('employee.payment.receipt', $collection->id)
+            ->with('success', 'Payment saved and receipt generated successfully.');
+    }
+
+    /**
+     * View receipt for a payment collection.
+     */
+    public function paymentReceipt($id)
+    {
+        if (!Session::has('employee_id')) {
+            return redirect()->route('employee.login');
+        }
+
+        $collection = Collection::where('id', $id)
+            ->where('employee_id', Session::get('employee_id'))
+            ->firstOrFail();
+
+        return view('employee.payment_receipt', compact('collection'));
     }
 
     /**

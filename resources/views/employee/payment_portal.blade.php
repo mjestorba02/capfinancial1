@@ -25,7 +25,7 @@
                                 <th>Amount Paid</th>
                                 <th>Status</th>
                                 <th>Payment Date</th>
-                                <th>Remarks</th>
+                                <th>Department</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -74,8 +74,14 @@
                 <input type="hidden" name="payment_date" value="{{ now()->format('Y-m-d') }}">
                 <input type="hidden" name="status" value="Pending">
                 <div class="mb-3">
-                    <label class="form-label fw-semibold">Remarks</label>
-                    <textarea name="remarks" class="form-control" rows="2"></textarea>
+                    <label class="form-label fw-semibold">Department</label>
+                    <select name="remarks" class="form-control">
+                        <option value="">-- Select Department --</option>
+                        <option value="IT / Technical Department">IT / Technical Department</option>
+                        <option value="Marketing Department">Marketing Department</option>
+                        <option value="Logistics / Operations Department">Logistics / Operations Department</option>
+                        <option value="Sales Department">Sales Department</option>
+                    </select>
                 </div>
             </div>
             <div class="modal-footer">
