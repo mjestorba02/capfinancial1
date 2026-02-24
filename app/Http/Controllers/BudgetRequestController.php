@@ -136,26 +136,38 @@ class BudgetRequestController extends Controller
         return redirect()->back()->with('success', 'Request sent to Admin for final approval.');
     }
 
-    /** HR: Reject request */
-    public function hrReject($id)
+    /** HR: Reject request with required remarks */
+    public function hrReject(Request $request, $id)
     {
+        $request->validate([
+            'remarks' => 'required|string',
+        ]);
+
         $budget = BudgetRequest::findOrFail($id);
         if ($budget->status !== 'Pending') {
             return redirect()->back()->with('error', 'Only pending requests can be rejected by HR.');
         }
-        $budget->update(['status' => 'Rejected']);
-        return redirect()->back()->with('success', 'Request rejected by HR.');
+        $budget->update([
+            'status' => 'Rejected',
+            'remarks' => $request->remarks,
+        ]);
+        return redirect()->back()->with('success', 'Request rejected by HR with remarks.');
     }
 
-    /** Admin: Final approve (only when status = Pending Admin) */
-    public function adminApprove($id)
+    /** Admin: Final approve (only when status = Pending Admin) with required remarks */
+    public function adminApprove(Request $request, $id)
     {
+        $request->validate([
+            'remarks' => 'required|string',
+        ]);
+
         $budget = BudgetRequest::findOrFail($id);
         if ($budget->status !== 'Pending Admin') {
             return redirect()->back()->with('error', 'Only requests forwarded by HR can be approved.');
         }
         $budget->update([
             'status' => 'Approved',
+            'remarks' => $request->remarks,
             'admin_approved_at' => now(),
         ]);
         if (\Schema::hasTable('planning')) {
@@ -167,21 +179,26 @@ class BudgetRequestController extends Controller
                 'approved_at' => now(),
             ]);
         }
-        return redirect()->back()->with('success', 'Budget Request approved. HR and Employee will see the status.');
+        return redirect()->back()->with('success', 'Budget Request approved with remarks. HR and Employee will see the status and remarks.');
     }
 
-    /** Admin: Final reject (only when status = Pending Admin) */
-    public function adminReject($id)
+    /** Admin: Final reject (only when status = Pending Admin) with required remarks */
+    public function adminReject(Request $request, $id)
     {
+        $request->validate([
+            'remarks' => 'required|string',
+        ]);
+
         $budget = BudgetRequest::findOrFail($id);
         if ($budget->status !== 'Pending Admin') {
             return redirect()->back()->with('error', 'Only requests forwarded by HR can be rejected.');
         }
         $budget->update([
             'status' => 'Rejected',
+            'remarks' => $request->remarks,
             'admin_approved_at' => now(),
         ]);
-        return redirect()->back()->with('success', 'Budget Request rejected. HR and Employee will see the status.');
+        return redirect()->back()->with('success', 'Budget Request rejected with remarks. HR and Employee will see the status and remarks.');
     }
 
     // 🔹 Upload Image

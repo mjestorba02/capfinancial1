@@ -54,6 +54,7 @@
                                 <th>Date Requested</th>
                                 <th>Status</th>
                                 <th>Attachment</th>
+                                <th>Remarks</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -84,6 +85,13 @@
                                         —
                                     @endif
                                 </td>
+                                <td>
+                                    @if($req->remarks)
+                                        <a href="#" class="text-primary small" data-bs-toggle="modal" data-bs-target="#remarksModal{{ $req->id }}">View</a>
+                                    @else
+                                        —
+                                    @endif
+                                </td>
                             </tr>
                             @endforeach
                         </tbody>
@@ -93,6 +101,27 @@
         </div>
     </div>
 </div>
+
+@foreach($requests as $req)
+    @if($req->remarks)
+    <div class="modal fade" id="remarksModal{{ $req->id }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Remarks for {{ $req->request_id }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-0">{{ $req->remarks }}</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+@endforeach
 
 @if(session('success'))
 <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">

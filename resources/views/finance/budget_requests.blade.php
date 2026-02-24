@@ -127,27 +127,27 @@
                                             @method('PUT')
                                             <button type="submit" class="btn btn-sm btn-info" title="Send to Admin">To Admin</button>
                                         </form>
-                                        <form method="POST" action="{{ route('budget_requests.hr_reject', $req->id) }}" 
-                                            onsubmit="return confirm('Reject this request?')" class="d-inline">
-                                            @csrf
-                                            @method('PUT')
-                                            <button type="submit" class="btn btn-sm btn-danger" title="Reject">Reject</button>
-                                        </form>
+                                        <button type="button" 
+                                            class="btn btn-sm btn-danger"
+                                            title="Reject"
+                                            onclick="openBudgetRemarksModal({{ $req->id }}, 'hr_reject')">
+                                            Reject
+                                        </button>
                                     @endif
                                     {{-- Admin: Pending Admin → Approve or Reject --}}
                                     @if($isAdmin && $req->status === 'Pending Admin')
-                                        <form method="POST" action="{{ route('budget_requests.admin_approve', $req->id) }}" 
-                                            onsubmit="return confirm('Approve this request?')" class="d-inline">
-                                            @csrf
-                                            @method('PUT')
-                                            <button type="submit" class="btn btn-sm btn-success" title="Approve">Approve</button>
-                                        </form>
-                                        <form method="POST" action="{{ route('budget_requests.admin_reject', $req->id) }}" 
-                                            onsubmit="return confirm('Reject this request?')" class="d-inline">
-                                            @csrf
-                                            @method('PUT')
-                                            <button type="submit" class="btn btn-sm btn-danger" title="Reject">Reject</button>
-                                        </form>
+                                        <button type="button" 
+                                            class="btn btn-sm btn-success"
+                                            title="Approve"
+                                            onclick="openBudgetRemarksModal({{ $req->id }}, 'admin_approve')">
+                                            Approve
+                                        </button>
+                                        <button type="button" 
+                                            class="btn btn-sm btn-danger"
+                                            title="Reject"
+                                            onclick="openBudgetRemarksModal({{ $req->id }}, 'admin_reject')">
+                                            Reject
+                                        </button>
                                     @endif
                                     {{-- Legacy single-step approve (admin, for Pending) - optional --}}
                                     @if($isAdmin && $req->status === 'Pending')
@@ -224,6 +224,36 @@
                     @endforelse
                 </tbody>
             </table>
+        </div>
+    </div>
+</div>
+
+<!-- 🔹 Modal for Admin/HR Remarks on Approve/Reject -->
+<div class="modal fade" id="budgetRemarksModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="budgetRemarksTitle">Add Remarks</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="budgetRemarksForm" method="POST">
+                @csrf
+                @method('PUT')
+                <div class="modal-body">
+                    <p class="small text-muted mb-2" id="budgetRemarksDescription">
+                        Please provide a short explanation for this action. The employee will be able to see these remarks.
+                    </p>
+                    <div class="mb-3">
+                        <label for="budgetRemarksTextarea" class="form-label">Remarks</label>
+                        <textarea name="remarks" id="budgetRemarksTextarea" class="form-control" rows="4" required></textarea>
+                    </div>
+                    <input type="hidden" name="action" id="budgetRemarksAction">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="budgetRemarksSubmitBtn">Submit</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -356,6 +386,48 @@
 
 
 <script>
+let budgetRemarksModalInstance = null;
+
+function openBudgetRemarksModal(requestId, action) {
+    if (!budgetRemarksModalInstance) {
+        const modalEl = document.getElementById('budgetRemarksModal');
+        if (!modalEl) return;
+        budgetRemarksModalInstance = new bootstrap.Modal(modalEl);
+    }
+
+    const form = document.getElementById('budgetRemarksForm');
+    const titleEl = document.getElementById('budgetRemarksTitle');
+    const actionInput = document.getElementById('budgetRemarksAction');
+    const textarea = document.getElementById('budgetRemarksTextarea');
+    const submitBtn = document.getElementById('budgetRemarksSubmitBtn');
+
+    let urlTemplate = '';
+    let title = '';
+
+    if (action === 'hr_reject') {
+        urlTemplate = "{{ route('budget_requests.hr_reject', ['id' => '__ID__']) }}";
+        title = 'HR Reject Budget Request';
+        submitBtn.textContent = 'Reject with Remarks';
+    } else if (action === 'admin_approve') {
+        urlTemplate = "{{ route('budget_requests.admin_approve', ['id' => '__ID__']) }}";
+        title = 'Admin Approve Budget Request';
+        submitBtn.textContent = 'Approve with Remarks';
+    } else if (action === 'admin_reject') {
+        urlTemplate = "{{ route('budget_requests.admin_reject', ['id' => '__ID__']) }}";
+        title = 'Admin Reject Budget Request';
+        submitBtn.textContent = 'Reject with Remarks';
+    } else {
+        return;
+    }
+
+    form.action = urlTemplate.replace('__ID__', requestId);
+    titleEl.textContent = title;
+    actionInput.value = action;
+    textarea.value = '';
+
+    budgetRemarksModalInstance.show();
+}
+
 // Preview image before upload
 @foreach($requests as $req)
 document.getElementById('imageInput{{ $req->id }}')?.addEventListener('change', function(e) {
