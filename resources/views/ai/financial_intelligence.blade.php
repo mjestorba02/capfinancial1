@@ -186,6 +186,8 @@
 <script>
     let forecastChart = null;
     let thinkingModalInstance = null;
+    let thinkingModalShownAt = null;
+    const THINKING_MIN_DURATION_MS = 10000; // keep the modal for ~10 seconds
 
     function showThinkingModal() {
         const modalElement = document.getElementById('aiThinkingModal');
@@ -193,11 +195,26 @@
             backdrop: 'static',
             keyboard: false
         });
+        thinkingModalShownAt = Date.now();
         thinkingModalInstance.show();
     }
 
     function hideThinkingModal() {
-        if (thinkingModalInstance) {
+        if (!thinkingModalInstance) {
+            return;
+        }
+
+        const now = Date.now();
+        const elapsed = thinkingModalShownAt ? now - thinkingModalShownAt : THINKING_MIN_DURATION_MS;
+        const remaining = THINKING_MIN_DURATION_MS - elapsed;
+
+        if (remaining > 0) {
+            setTimeout(() => {
+                if (thinkingModalInstance) {
+                    thinkingModalInstance.hide();
+                }
+            }, remaining);
+        } else {
             thinkingModalInstance.hide();
         }
     }
