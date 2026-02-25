@@ -115,6 +115,10 @@ class GeminiService
         try {
             $endpoint = $this->baseUrl . "/models/" . $this->model . ":generateContent?key=" . urlencode($this->apiKey);
 
+            // Start from base config but enforce JSON output and a slightly lower temperature
+            $jsonConfig = $this->config;
+            $jsonConfig['responseMimeType'] = 'application/json';
+
             $payload = [
                 'contents' => [
                     [
@@ -125,8 +129,8 @@ class GeminiService
                         ]
                     ]
                 ],
-                // Use the same generation config; we will still parse JSON manually
-                'generationConfig' => $this->config,
+                // Ask the API to respond with JSON; we still keep our own validation
+                'generationConfig' => $jsonConfig,
             ];
 
             Log::debug('Gemini JSON API Request', [
