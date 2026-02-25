@@ -15,7 +15,7 @@
             <div class="card-body">
                 <h5 class="fw-semibold mb-3">My Payment Records</h5>
                 <div class="table-responsive">
-                    <table class="table table-bordered table-hover align-middle">
+                    <table id="payment-table" class="table table-bordered table-hover align-middle">
                         <thead class="table-light">
                             <tr>
                                 <th>#</th>
@@ -45,6 +45,23 @@
                             @endforeach
                         </tbody>
                     </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm section-card mt-3">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h5 class="fw-semibold mb-0">AI-Style Financial Insight</h5>
+                    <button type="button" class="btn btn-outline-primary btn-sm" id="ai-analysis-refresh">
+                        Run Analysis Again
+                    </button>
+                </div>
+                <p class="text-muted small mb-2">
+                    This analysis is generated locally in your browser based on the payment records in the table above. No external AI API is called.
+                </p>
+                <div class="border rounded p-3 bg-light" id="ai-analysis-text">
+                    Loading analysis based on your current payment data...
                 </div>
             </div>
         </div>
@@ -104,6 +121,95 @@
 <script>
 document.getElementById('amount_paid').addEventListener('input', function() {
     document.getElementById('amount_due').value = this.value || 0;
+});
+
+function collectPaymentStats() {
+    const rows = document.querySelectorAll('#payment-table tbody tr');
+    let totalDue = 0;
+    let totalPaid = 0;
+    let paidCount = 0;
+    let overdueCount = 0;
+    let totalRows = 0;
+
+    rows.forEach(function(row) {
+        const cells = row.children;
+        if (cells.length < 7) return;
+
+        const amountDueText = cells[3].innerText.replace(/[₱,\s]/g, '');
+        const amountPaidText = cells[4].innerText.replace(/[₱,\s]/g, '');
+        const statusText = cells[5].innerText.trim();
+
+        const amountDue = parseFloat(amountDueText) || 0;
+        const amountPaid = parseFloat(amountPaidText) || 0;
+
+        totalDue += amountDue;
+        totalPaid += amountPaid;
+        totalRows++;
+
+        if (statusText === 'Paid') paidCount++;
+        if (statusText === 'Overdue') overdueCount++;
+    });
+
+    const collectionRate = totalDue > 0 ? (totalPaid / totalDue) * 100 : 0;
+
+    return {
+        totalDue: totalDue,
+        totalPaid: totalPaid,
+        collectionRate: collectionRate,
+        paidCount: paidCount,
+        overdueCount: overdueCount,
+        totalRows: totalRows
+    };
+}
+
+function generateOfflineAiInsight() {
+    const stats = collectPaymentStats();
+    const target = document.getElementById('ai-analysis-text');
+    if (!target) return;
+
+    if (stats.totalRows === 0) {
+        target.textContent = 'There are currently no payment records to analyze. Add some payments to see insights generated from your data.';
+        return;
+    }
+
+    const rateRounded = Math.round(stats.collectionRate);
+    const totalDueDisplay = stats.totalDue.toLocaleString('en-PH', { style: 'currency', currency: 'PHP' });
+    const totalPaidDisplay = stats.totalPaid.toLocaleString('en-PH', { style: 'currency', currency: 'PHP' });
+
+    const variant = Math.floor(Math.random() * 3);
+    let message = '';
+
+    if (variant === 0) {
+        message =
+            'Based on the current payment records, the system shows a total billed amount of ' + totalDueDisplay +
+            ' and total collected payments of ' + totalPaidDisplay + '. Your effective collection rate is around ' +
+            rateRounded + '%. This suggests that ' + stats.paidCount + ' invoice(s) are fully paid, while ' +
+            stats.overdueCount + ' are tagged as overdue. Maintaining or improving this rate will help stabilize short-term cash flow.';
+    } else if (variant === 1) {
+        message =
+            'Reviewing the latest entries, there are ' + stats.totalRows + ' payment record(s) in the system with an estimated ' +
+            rateRounded + '% collection efficiency. Collected payments currently amount to ' + totalPaidDisplay +
+            ' versus a total due of ' + totalDueDisplay + '. If you focus on clearing the ' + stats.overdueCount +
+            ' overdue item(s), you can unlock additional cash and reduce aging risk on your receivables.';
+    } else {
+        message =
+            'The payment data indicates that clients have already settled ' + totalPaidDisplay +
+            ' out of ' + totalDueDisplay + ' billed, resulting in a collection ratio near ' + rateRounded +
+            '%. With ' + stats.paidCount + ' record(s) marked as paid and ' + stats.overdueCount +
+            ' still overdue, the portfolio is generally ' + (rateRounded >= 80 ? 'healthy' : 'under pressure') +
+            '. Consider monitoring overdue accounts more closely to keep your overall performance on track.';
+    }
+
+    target.textContent = message;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const refreshBtn = document.getElementById('ai-analysis-refresh');
+    if (refreshBtn) {
+        refreshBtn.addEventListener('click', generateOfflineAiInsight);
+        // Generate an initial insight when the page loads
+        generateOfflineAiInsight();
+    }
 });
 </script>
 @endsection
