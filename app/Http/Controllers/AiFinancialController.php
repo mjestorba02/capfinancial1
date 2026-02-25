@@ -205,9 +205,9 @@ class AiFinancialController extends Controller
                     'error' => json_last_error_msg(),
                 ]);
 
-                return response()->json([
-                    'error' => 'AI response was malformed. Please try again.',
-                ], 500);
+                // Fallback: return a safe default payload instead of an error,
+                // so the UI still renders with neutral values.
+                $payload = $this->buildFallbackPayload($labels, $historicalCollections, $historicalDisbursements);
             }
 
             // Audit trail: log that admin ran AI analysis
@@ -243,6 +243,48 @@ class AiFinancialController extends Controller
                 'error' => 'Unexpected error while running AI analysis.',
             ], 500);
         }
+    }
+
+    /**
+     * Build a safe fallback payload when Gemini fails or returns invalid JSON.
+     */
+    private function buildFallbackPayload(array $labels, array $collections, array $disbursements): array
+    {
+        $periods = count($labels) ?: 4;
+        $labels = $labels ?: array_map(fn ($i) => 'Period ' . ($i + 1), range(0, $periods - 1));
+
+        // Simple heuristics: use last known values if available, otherwise zeros.
+        $lastCollections = end($collections) ?: 0.0;
+        $lastDisbursements = end($disbursements) ?: 0.0;
+        $net = $lastCollections - $lastDisbursements;
+
+        $stressIndex = $net < 0 ? 70 : 40;
+        $healthScore = $net < 0 ? 45 : 60;
+
+        $forecastCollections = array_fill(0, $periods, $lastCollections);
+        $forecastDisbursements = array_fill(0, $periods, $lastDisbursements);
+        $forecastNet = array_fill(0, $periods, $net);
+
+        return [
+            'stressIndex' => $stressIndex,
+            'healthScore' => $healthScore,
+            'confidence' => 0,
+            'summaryBullets' => [
+                'AI service did not return a valid structured response, so these metrics use a neutral fallback.',
+                'Recent collections and disbursements were analysed locally to provide a basic view only.',
+            ],
+            'explanation' => 'The AI model response could not be parsed as valid JSON. The system has generated a neutral fallback analysis based on the most recent collections and disbursement totals so that the dashboard remains usable.',
+            'recommendedActions' => [
+                'Treat these figures as indicative only; they are not AI-optimised insights.',
+                'Review recent cash in and cash out manually to validate any decisions.',
+            ],
+            'forecast' => [
+                'labels' => $labels,
+                'collections' => $forecastCollections,
+                'disbursements' => $forecastDisbursements,
+                'netCashFlow' => $forecastNet,
+            ],
+        ];
     }
 
     /**
