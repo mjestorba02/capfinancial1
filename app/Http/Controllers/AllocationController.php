@@ -18,10 +18,26 @@ class AllocationController extends Controller
         $requests = BudgetRequest::where('status', 'Approved')
             ->orderByDesc('created_at')
             ->get();
-            
+
         $allocations = Allocation::orderByDesc('created_at')->get();
 
-        return view('finance.allocations', compact('requests', 'allocations'));
+        // Monthly department usage (current month) against the ₱50,000 cap
+        $monthStart = Carbon::now()->startOfMonth();
+        $monthEnd = Carbon::now()->endOfMonth();
+
+        $departmentMonthlyUsage = Allocation::select('department', DB::raw('SUM(allocated) as total_allocated'))
+            ->whereBetween('created_at', [$monthStart, $monthEnd])
+            ->groupBy('department')
+            ->pluck('total_allocated', 'department');
+
+        $monthlyLimit = 50000;
+
+        return view('finance.allocations', compact(
+            'requests',
+            'allocations',
+            'departmentMonthlyUsage',
+            'monthlyLimit'
+        ));
     }
 
     public function store(Request $request)
@@ -32,6 +48,21 @@ class AllocationController extends Controller
             'project' => 'required|string|max:255',
             'allocated' => 'required|numeric|min:0',
         ]);
+
+        $monthlyLimit = 50000;
+        $monthStart = Carbon::now()->startOfMonth();
+        $monthEnd = Carbon::now()->endOfMonth();
+
+        $currentTotalForDepartment = Allocation::where('department', $validated['department'])
+            ->whereBetween('created_at', [$monthStart, $monthEnd])
+            ->sum('allocated');
+
+        if (($currentTotalForDepartment + $validated['allocated']) > $monthlyLimit) {
+            $remaining = $monthlyLimit - $currentTotalForDepartment;
+            return back()
+                ->withInput()
+                ->with('error', 'This allocation would exceed the monthly department limit of ₱50,000. Remaining limit for this department this month is ₱' . number_format(max(0, $remaining), 2) . '.');
+        }
 
         DB::transaction(function() use ($validated) {
             $allocation = Allocation::create([
@@ -72,6 +103,22 @@ class AllocationController extends Controller
             'allocated' => 'required|numeric|min:0',
             'used' => 'nullable|numeric|min:0',
         ]);
+
+        $monthlyLimit = 50000;
+        $monthStart = Carbon::parse($allocation->created_at)->startOfMonth();
+        $monthEnd = Carbon::parse($allocation->created_at)->endOfMonth();
+
+        $currentTotalForDepartment = Allocation::where('department', $validated['department'])
+            ->whereBetween('created_at', [$monthStart, $monthEnd])
+            ->where('id', '!=', $allocation->id)
+            ->sum('allocated');
+
+        if (($currentTotalForDepartment + $validated['allocated']) > $monthlyLimit) {
+            $remaining = $monthlyLimit - $currentTotalForDepartment;
+            return back()
+                ->withInput()
+                ->with('error', 'Updating this allocation would exceed the monthly department limit of ₱50,000. Remaining limit for this department for that month is ₱' . number_format(max(0, $remaining), 2) . '.');
+        }
 
         DB::transaction(function() use ($allocation, $validated) {
             $allocation->update([

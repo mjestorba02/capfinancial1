@@ -14,9 +14,12 @@
         </button>
     </div>
 
-    {{-- flash --}}
+{{-- flash --}}
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+    @if(session('error'))
+        <div class="alert alert-danger">{{ session('error') }}</div>
     @endif
 
     {{-- Budget Plans --}}
@@ -72,6 +75,7 @@
                         <tr>
                             <th>#</th>
                             <th>Department</th>
+                            <th>Dept Monthly Usage (₱50,000 cap)</th>
                             <th>Project</th>
                             <th>Allocated</th>
                             <th>Used</th>
@@ -85,6 +89,35 @@
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $a->department }}</td>
+                                @php
+                                    $deptTotal = $departmentMonthlyUsage[$a->department] ?? 0;
+                                    $limit = $monthlyLimit ?? 50000;
+                                    $remainingLimit = max(0, $limit - $deptTotal);
+                                    $percent = $limit > 0 ? min(100, round(($deptTotal / $limit) * 100)) : 0;
+                                    $overLimit = $deptTotal > $limit;
+                                @endphp
+                                <td>
+                                    <div class="d-flex flex-column">
+                                        <span class="small {{ $overLimit ? 'text-danger fw-semibold' : 'text-muted' }}">
+                                            ₱{{ number_format($deptTotal, 2) }} / ₱{{ number_format($limit, 2) }}
+                                            @if($overLimit)
+                                                (Over limit)
+                                            @else
+                                                (Remaining: ₱{{ number_format($remainingLimit, 2) }})
+                                            @endif
+                                        </span>
+                                        <div class="progress mt-1" style="height: 6px;">
+                                            <div
+                                                class="progress-bar {{ $overLimit ? 'bg-danger' : 'bg-success' }}"
+                                                role="progressbar"
+                                                style="width: {{ $percent }}%;"
+                                                aria-valuenow="{{ $percent }}"
+                                                aria-valuemin="0"
+                                                aria-valuemax="100">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
                                 <td>{{ $a->project }}</td>
                                 <td>₱{{ number_format($a->allocated, 2) }}</td>
                                 <td>₱{{ number_format($a->used, 2) }}</td>
