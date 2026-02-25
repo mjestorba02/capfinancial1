@@ -106,6 +106,75 @@ class GeminiService
     }
 
     /**
+     * Send a prompt to Gemini and request strict JSON output.
+     *
+     * This DOES NOT prepend system context to keep control over the format.
+     */
+    public function generateJson(string $prompt): array
+    {
+        try {
+            $endpoint = $this->baseUrl . "/models/" . $this->model . ":generateContent?key=" . urlencode($this->apiKey);
+
+            $payload = [
+                'contents' => [
+                    [
+                        'parts' => [
+                            [
+                                'text' => $prompt
+                            ]
+                        ]
+                    ]
+                ],
+                'generationConfig' => $this->config,
+                // Instruct Gemini to respond with raw JSON
+                'responseMimeType' => 'application/json',
+            ];
+
+            Log::debug('Gemini JSON API Request', [
+                'model' => $this->model,
+                'prompt_length' => strlen($prompt),
+                'endpoint' => $endpoint
+            ]);
+
+            $response = Http::timeout(60)
+                ->post($endpoint, $payload)
+                ->json();
+
+            if (isset($response['error'])) {
+                Log::error('Gemini JSON API Error', $response);
+                return [
+                    'success' => false,
+                    'error' => $response['error']['message'] ?? 'Unknown error',
+                ];
+            }
+
+            if (isset($response['candidates'][0]['content']['parts'][0]['text'])) {
+                return [
+                    'success' => true,
+                    'response' => $response['candidates'][0]['content']['parts'][0]['text'],
+                    'model' => $this->model
+                ];
+            }
+
+            Log::error('Unexpected Gemini JSON Response', $response);
+            return [
+                'success' => false,
+                'error' => 'Unexpected response format',
+            ];
+        } catch (\Exception $e) {
+            Log::error('Gemini JSON Service Exception', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return [
+                'success' => false,
+                'error' => 'Service error: ' . $e->getMessage(),
+            ];
+        }
+    }
+
+    /**
      * Get available models
      */
     public function getAvailableModels()
