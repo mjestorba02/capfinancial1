@@ -33,7 +33,6 @@
                             <th>Payment Date</th>
                             <th>Department</th>
                             <th>Receipt</th>
-                            <th class="fms-actions">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -64,15 +63,6 @@
                                     <a href="{{ route('collections.receipt.pdf', $item->id) }}" class="btn btn-outline-secondary btn-sm">
                                         Receipt PDF
                                     </a>
-                                </td>
-                                <td class="fms-actions">
-                                    <div class="fms-action-group">
-                                        <!-- Edit Icon (for manual adjustments if needed) -->
-                                        <a href="#" data-bs-toggle="modal" data-bs-target="#editModal{{ $item->id }}" 
-                                        title="Edit Collection" class="text-white text-decoration-none">
-                                            <i class="fe fe-edit fe-18"></i>
-                                        </a>
-                                    </div>
                                 </td>
                             </tr>
                         @empty
