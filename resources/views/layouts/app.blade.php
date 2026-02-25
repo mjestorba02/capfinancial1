@@ -133,6 +133,14 @@
                         </a>
                     </li>
                     @endif
+                    @if(Auth::user() && (Auth::user()->isAdmin() || Auth::user()->isHr()))
+                    <li class="nav-item mb-3">
+                        <a href="{{ route('audit_trails.index') }}" class="nav-link {{ Request::routeIs('audit_trails.*') ? 'active' : '' }}">
+                            <i class="fe fe-activity fe-16"></i>
+                            <span class="ml-3 item-text">Audit Trail</span>
+                        </a>
+                    </li>
+                    @endif
                 </ul>
 
                 <p class="text-muted nav-heading mt-4 mb-1">
