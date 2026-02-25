@@ -172,7 +172,7 @@
 <!-- AI Thinking Modal -->
 <div class="modal fade" id="aiThinkingModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content text-center py-4">
+        <div class="modal-content d-flex flex-column justify-content-center align-items-center text-center py-4" style="min-height: 200px;">
             <div class="spinner-border text-primary mb-3" role="status"></div>
             <h5 class="fw-semibold mb-1">AI is thinking…</h5>
             <p class="text-muted mb-0">Analyzing collections and disbursements to forecast your cash flow.</p>
