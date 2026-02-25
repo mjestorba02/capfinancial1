@@ -125,10 +125,8 @@ class GeminiService
                         ]
                     ]
                 ],
-                // Put response_mime_type INSIDE generationConfig per Gemini API spec
-                'generationConfig' => array_merge($this->config, [
-                    'response_mime_type' => 'application/json',
-                ]),
+                // Use the same generation config; we will still parse JSON manually
+                'generationConfig' => $this->config,
             ];
 
             Log::debug('Gemini JSON API Request', [

@@ -186,7 +186,7 @@ class AiFinancialController extends Controller
             . "}\n";
 
         try {
-            // Ask Gemini specifically for JSON for this analytics use case
+            // Ask Gemini for a response and parse JSON ourselves
             $result = $this->gemini->generateJson($prompt);
 
             if (! ($result['success'] ?? false)) {
@@ -196,7 +196,7 @@ class AiFinancialController extends Controller
             }
 
             $raw = $result['response'] ?? '';
-            Log::debug('AI financial analysis raw response', ['raw' => $raw]);
+            Log::info('AI financial analysis raw response', ['raw' => $raw]);
             $payload = $this->decodeGeminiJson($raw);
 
             if (! is_array($payload)) {
