@@ -59,7 +59,7 @@
                             <td>{{ $log->created_at?->format('Y-m-d H:i') }}</td>
                             <td>{{ $log->actor_name ?? 'System' }}</td>
                             <td class="text-capitalize">{{ $log->actor_type }}</td>
-                            <td><code>{{ $log->action }}</code></td>
+                            <td>{{ ucfirst(str_replace('_', ' ', $log->action)) }}</td>
                             <td style="max-width: 320px;">
                                 <span class="d-inline-block text-truncate" style="max-width: 320px;" title="{{ $log->description }}">
                                     {{ $log->description ?? '-' }}

@@ -72,7 +72,7 @@
                 <input type="hidden" name="amount_due" id="amount_due" value="0">
                 <input type="hidden" name="employee_id" value="{{ Session::get('employee_id') }}">
                 <input type="hidden" name="payment_date" value="{{ now()->format('Y-m-d') }}">
-                <input type="hidden" name="status" value="Pending">
+                <input type="hidden" name="status" value="Paid">
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Department</label>
                     <select name="remarks" class="form-control">
