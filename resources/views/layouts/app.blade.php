@@ -249,9 +249,16 @@
                 <ul class="navbar-nav flex-fill w-100 mb-2">
                     <li class="nav-item mb-3">
                         <a href="{{ route('ai.chat') }}"
-                        class="nav-link {{ Request::routeIs('ai.*') ? 'active' : '' }}">
+                        class="nav-link {{ Request::routeIs('ai.chat') ? 'active' : '' }}">
+                            <i class="fe fe-message-circle fe-16"></i>
+                            <span class="ml-3 item-text">AI Chat</span>
+                        </a>
+                    </li>
+                    <li class="nav-item mb-3">
+                        <a href="{{ route('ai.financial_intelligence.index') }}"
+                        class="nav-link {{ Request::routeIs('ai.financial_intelligence.*') ? 'active' : '' }}">
                             <i class="fe fe-zap fe-16"></i>
-                            <span class="ml-3 item-text">Financial AI</span>
+                            <span class="ml-3 item-text">AI Financial Intelligence</span>
                         </a>
                     </li>
                 </ul>

@@ -12,6 +12,7 @@ use App\Http\Controllers\AuditTrailController;
 use App\Http\Controllers\AccountsController;
 use App\Http\Controllers\DisbursementController;
 use App\Http\Controllers\AIController;
+use App\Http\Controllers\AiFinancialController;
 
 //Employee Auth
 use App\Http\Controllers\EmployeeAuthController;
@@ -105,6 +106,8 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/request', [AIController::class, 'processRequest'])->name('ai.request');
         Route::get('/suggestions', [AIController::class, 'getSuggestions'])->name('ai.suggestions');
         Route::get('/test', [AIController::class, 'test'])->name('ai.test');
+        Route::get('/financial-intelligence', [AiFinancialController::class, 'index'])->name('ai.financial_intelligence.index');
+        Route::post('/financial-intelligence/analyze', [AiFinancialController::class, 'analyze'])->name('ai.financial_intelligence.analyze');
     });
 
     Route::prefix('finance')->group(function () {
