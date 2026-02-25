@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Employee;
 use App\Services\OtpService;
+use App\Services\AuditTrailService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
@@ -53,6 +54,12 @@ class EmployeeAuthController extends Controller
         Session::put('employee_name', $employee->name);
         Session::put('employee_department', $employee->department);
 
+        AuditTrailService::logEmployee(
+            $employee,
+            'employee_login',
+            'Employee logged in via employee portal.'
+        );
+
         return redirect()->route('employee.dashboard')
             ->with('success', 'Welcome back, ' . $employee->name . '!');
     }
@@ -99,6 +106,15 @@ class EmployeeAuthController extends Controller
     // 🔹 Handle logout
     public function logout()
     {
+        $employeeId = Session::get('employee_id');
+        $employee = $employeeId ? Employee::find($employeeId) : null;
+
+        AuditTrailService::logEmployee(
+            $employee,
+            'employee_logout',
+            'Employee logged out from employee portal.'
+        );
+
         Session::forget(['employee_id', 'employee_name', 'employee_department']);
 
         return redirect()->route('employee.login')->with('success', 'You have been logged out.');

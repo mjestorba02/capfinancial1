@@ -11,6 +11,7 @@ use App\Models\Employee;
 use App\Models\Payable;
 use Illuminate\Support\Str;
 use PDF;
+use App\Services\AuditTrailService;
 
 class EmployeeBudgetController extends Controller
 {
@@ -177,7 +178,7 @@ class EmployeeBudgetController extends Controller
             $attachmentPath = $request->file('attachment')->store('budget_request_attachments', 'public');
         }
 
-        BudgetRequest::create([
+        $budgetRequest = BudgetRequest::create([
             'request_id'       => $request_id,
             'employee_id'      => $employeeId,
             'name'             => $employeeName,
@@ -188,6 +189,14 @@ class EmployeeBudgetController extends Controller
             'attachment_path'  => $attachmentPath,
             'status'           => 'Pending',
         ]);
+
+        AuditTrailService::logEmployee(
+            $employee,
+            'budget_request_created',
+            'Employee created budget request ' . $request_id . ' for purpose: ' . $request->purpose,
+            'budget_request',
+            $budgetRequest->id
+        );
 
         return redirect()->back()->with('success', 'Budget request submitted! Request ID: ' . $request_id);
     }
@@ -211,6 +220,15 @@ class EmployeeBudgetController extends Controller
 
         // Create the collection record
         $collection = Collection::create($validated);
+
+        $employee = Employee::find($validated['employee_id'] ?? null);
+        AuditTrailService::logEmployee(
+            $employee,
+            'payment_created',
+            'Employee created payment INV-' . str_pad($nextId, 3, '0', STR_PAD_LEFT) . ' for customer: ' . ($validated['customer_name'] ?? ''),
+            'collection',
+            $collection->id
+        );
 
         // Auto-create Journal Entry when Paid
         if ($collection->status === 'Paid') {
@@ -317,6 +335,14 @@ class EmployeeBudgetController extends Controller
             'collection_id' => $collection->id,
             'remarks' => $request->remarks,
         ]);
+
+        AuditTrailService::logEmployee(
+            $employee,
+            'budget_order_created',
+            'Employee created budget order receipt ' . $receiptNumber . ' for request ' . $budgetRequest->request_id,
+            'budget_order',
+            $order->id
+        );
 
         return redirect()->route('employee.budget')->with('success', 'Order placed. Receipt #' . $receiptNumber . '. It will appear in Accounts Receivable - Collections as Ordered.');
     }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Services\OtpService;
+use App\Services\AuditTrailService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -53,6 +54,13 @@ class MainLoginController extends Controller
         $remember = $request->boolean('remember');
         $request->session()->forget(['otp_type', 'otp_verifiable_id', 'otp_remember']);
         Auth::guard('web')->login($user, $remember);
+
+        $action = $user->isAdmin() ? 'admin_login' : ($user->isHr() ? 'hr_login' : 'user_login');
+        AuditTrailService::logUser(
+            $user,
+            $action,
+            'User logged in via main login form.'
+        );
 
         return redirect()->intended(route('dashboard'))->with('success', 'Welcome back!');
     }

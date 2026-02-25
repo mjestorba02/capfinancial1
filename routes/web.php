@@ -8,6 +8,7 @@ use App\Http\Controllers\BudgetRequestController;
 use App\Http\Controllers\AllocationController;
 use App\Http\Controllers\ChartOfAccountsController;
 use App\Http\Controllers\JournalEntryController;
+use App\Http\Controllers\AuditTrailController;
 use App\Http\Controllers\AccountsController;
 use App\Http\Controllers\DisbursementController;
 use App\Http\Controllers\AIController;
@@ -55,6 +56,9 @@ Route::get('/', function () {
 // Protect dashboard and profile routes
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Audit Trail (Admin & HR)
+    Route::get('/audit-trails', [AuditTrailController::class, 'index'])->name('audit_trails.index');
 
     // User Approvals (HR only)
     Route::middleware('hr')->group(function () {

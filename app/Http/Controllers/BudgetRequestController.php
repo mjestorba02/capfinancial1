@@ -6,6 +6,7 @@ use App\Models\BudgetRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use App\Services\AuditTrailService;
 
 class BudgetRequestController extends Controller
 {
@@ -137,6 +138,14 @@ class BudgetRequestController extends Controller
                 'approved_at' => now(),
             ]);
         }
+        AuditTrailService::logUser(
+            Auth::user(),
+            'budget_request_approved_auto',
+            'Budget request ' . $budget->request_id . ' approved automatically by finance officer.',
+            'budget_request',
+            $budget->id
+        );
+
         return redirect()->back()->with('success', 'Budget Request Approved Successfully.');
     }
 
@@ -151,6 +160,14 @@ class BudgetRequestController extends Controller
             'status' => 'Pending Admin',
             'hr_approved_at' => now(),
         ]);
+
+        AuditTrailService::logUser(
+            Auth::user(),
+            'budget_request_hr_forwarded',
+            'HR forwarded budget request ' . $budget->request_id . ' to Admin for final approval.',
+            'budget_request',
+            $budget->id
+        );
         return redirect()->back()->with('success', 'Request sent to Admin for final approval.');
     }
 
@@ -169,6 +186,14 @@ class BudgetRequestController extends Controller
             'status' => 'Rejected',
             'remarks' => $request->remarks,
         ]);
+
+        AuditTrailService::logUser(
+            Auth::user(),
+            'budget_request_hr_rejected',
+            'HR rejected budget request ' . $budget->request_id . ' with remarks: ' . $request->remarks,
+            'budget_request',
+            $budget->id
+        );
         return redirect()->back()->with('success', 'Request rejected by HR with remarks.');
     }
 
@@ -205,6 +230,14 @@ class BudgetRequestController extends Controller
                 'approved_at' => now(),
             ]);
         }
+        AuditTrailService::logUser(
+            Auth::user(),
+            'budget_request_admin_approved',
+            'Admin approved budget request ' . $budget->request_id . ' with remarks: ' . $request->remarks,
+            'budget_request',
+            $budget->id
+        );
+
         return redirect()->back()->with('success', 'Budget Request approved with remarks. HR and Employee will see the status and remarks.');
     }
 
@@ -224,6 +257,14 @@ class BudgetRequestController extends Controller
             'remarks' => $request->remarks,
             'admin_approved_at' => now(),
         ]);
+        AuditTrailService::logUser(
+            Auth::user(),
+            'budget_request_admin_rejected',
+            'Admin rejected budget request ' . $budget->request_id . ' with remarks: ' . $request->remarks,
+            'budget_request',
+            $budget->id
+        );
+
         return redirect()->back()->with('success', 'Budget Request rejected with remarks. HR and Employee will see the status and remarks.');
     }
 
