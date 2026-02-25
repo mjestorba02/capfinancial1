@@ -125,9 +125,9 @@ class GeminiService
                         ]
                     ]
                 ],
-                // Put responseMimeType INSIDE generationConfig per Gemini API spec
+                // Put response_mime_type INSIDE generationConfig per Gemini API spec
                 'generationConfig' => array_merge($this->config, [
-                    'responseMimeType' => 'application/json',
+                    'response_mime_type' => 'application/json',
                 ]),
             ];
 

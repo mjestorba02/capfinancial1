@@ -186,8 +186,8 @@ class AiFinancialController extends Controller
             . "}\n";
 
         try {
-            // Use standard text response and parse JSON ourselves
-            $result = $this->gemini->generateContent($prompt);
+            // Ask Gemini specifically for JSON for this analytics use case
+            $result = $this->gemini->generateJson($prompt);
 
             if (! ($result['success'] ?? false)) {
                 return response()->json([
