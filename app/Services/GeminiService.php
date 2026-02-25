@@ -125,9 +125,10 @@ class GeminiService
                         ]
                     ]
                 ],
-                'generationConfig' => $this->config,
-                // Instruct Gemini to respond with raw JSON
-                'responseMimeType' => 'application/json',
+                // Put responseMimeType INSIDE generationConfig per Gemini API spec
+                'generationConfig' => array_merge($this->config, [
+                    'responseMimeType' => 'application/json',
+                ]),
             ];
 
             Log::debug('Gemini JSON API Request', [
