@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 
 class AiFinancialController extends Controller
 {
@@ -101,10 +102,19 @@ class AiFinancialController extends Controller
         }
 
         if (! empty($validated['department'])) {
-            // Collections department is stored in remarks
-            $collectionsQuery->where('remarks', $validated['department']);
-            // Disbursements department may also be stored in remarks for now
-            $disbursementsQuery->where('remarks', $validated['department']);
+            // Collections: department is stored in remarks (column exists on all environments)
+            if (Schema::hasColumn('collections', 'remarks')) {
+                $collectionsQuery->where('remarks', $validated['department']);
+            } else {
+                Log::warning('AI financial analysis: collections.remarks column missing; skipping department filter');
+            }
+
+            // Disbursements: some environments may not yet have a remarks column
+            if (Schema::hasColumn('disbursements', 'remarks')) {
+                $disbursementsQuery->where('remarks', $validated['department']);
+            } else {
+                Log::warning('AI financial analysis: disbursements.remarks column missing; skipping department filter');
+            }
         }
 
         // Group by week for the last 4 weeks worth of buckets
