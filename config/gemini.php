@@ -12,7 +12,7 @@ return [
     // fall back to the key baked into this config so the feature still works after deploy.
     // NOTE: This will expose the key in your codebase; prefer setting GEMINI_API_KEY in .env
     // when you are able to.
-    'api_key' => env('GEMINI_API_KEY', 'AIzaSyD9CLM3_5WM78BvbsJbUJAubYjJZoxwLIM'),
+    'api_key' => env('GEMINI_API_KEY', 'AIzaSyCS-RRhVoArpUCiCNquheqauxDZ-7RA9lA'),
 
     // Default to a current, fast model; can still be overridden in .env
     'model' => env('GEMINI_MODEL', 'gemini-2.5-flash'),
