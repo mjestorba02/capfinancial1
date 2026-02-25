@@ -196,6 +196,7 @@ class AiFinancialController extends Controller
             }
 
             $raw = $result['response'] ?? '';
+            Log::debug('AI financial analysis raw response', ['raw' => $raw]);
             $payload = $this->decodeGeminiJson($raw);
 
             if (! is_array($payload)) {
