@@ -195,18 +195,9 @@ class AiFinancialController extends Controller
             }
 
             $raw = $result['response'] ?? '';
+            $payload = $this->decodeGeminiJson($raw);
 
-            // Some models wrap JSON in ```; strip non-JSON prefix/suffix safely
-            $raw = trim($raw);
-            if (str_starts_with($raw, '```')) {
-                $raw = preg_replace('/^```[a-zA-Z]*\s*/', '', $raw);
-                $raw = preg_replace('/```$/', '', $raw);
-                $raw = trim($raw);
-            }
-
-            $payload = json_decode($raw, true);
-
-            if (json_last_error() !== JSON_ERROR_NONE || ! is_array($payload)) {
+            if (! is_array($payload)) {
                 Log::warning('AI financial analysis JSON decode failed', [
                     'raw' => $raw,
                     'error' => json_last_error_msg(),
@@ -251,5 +242,45 @@ class AiFinancialController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Best-effort JSON extraction from Gemini text responses.
+     */
+    private function decodeGeminiJson(string $raw): ?array
+    {
+        $raw = trim($raw);
+
+        if ($raw === '') {
+            return null;
+        }
+
+        // Strip code fences if present
+        if (str_starts_with($raw, '```')) {
+            $raw = preg_replace('/^```[a-zA-Z]*\s*/', '', $raw);
+            $raw = preg_replace('/```$/', '', $raw);
+            $raw = trim($raw);
+        }
+
+        // First attempt: decode whole string
+        $decoded = json_decode($raw, true);
+        if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+            return $decoded;
+        }
+
+        // Second attempt: extract first JSON object between { and }
+        $start = strpos($raw, '{');
+        $end = strrpos($raw, '}');
+
+        if ($start !== false && $end !== false && $end > $start) {
+            $json = substr($raw, $start, $end - $start + 1);
+            $decoded = json_decode($json, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                return $decoded;
+            }
+        }
+
+        return null;
+    }
 }
+
 
