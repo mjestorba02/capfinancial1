@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Disbursement;
+use App\Models\BudgetRequest;
 use App\Models\JournalEntry;
 use App\Models\Payable;
 use Illuminate\Http\Request;
@@ -12,7 +13,37 @@ class DisbursementController extends Controller
 {
     public function index()
     {
-        $disbursements = Disbursement::orderByDesc('id')->get();
+        $disbursements = Disbursement::orderByDesc('id')
+            ->get()
+            ->map(function ($d) {
+                $d->is_budget_request = false;
+                return $d;
+            });
+
+        $approvedBudgetRequests = BudgetRequest::where('status', 'Approved')
+            ->with('employee')
+            ->orderByDesc('admin_approved_at')
+            ->get()
+            ->map(function ($br) {
+                $item = new \stdClass();
+                $item->id = null;
+                $item->is_budget_request = true;
+                $item->voucher_no = $br->request_id;
+                $item->vendor = $br->employee->name ?? ($br->name ?? '');
+                $item->category = $br->department;
+                $item->amount = $br->amount;
+                $item->status = 'Approved';
+                $item->disbursement_date = optional($br->admin_approved_at)->toDateString() ?? optional($br->created_at)->toDateString();
+                return $item;
+            });
+
+        $disbursements = $approvedBudgetRequests
+            ->concat($disbursements)
+            ->sortByDesc(function ($item) {
+                return $item->disbursement_date;
+            })
+            ->values();
+
         return view('finance.disbursement', compact('disbursements'));
     }
 

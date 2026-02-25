@@ -56,10 +56,12 @@
                             <td class="text-center">
                                 <div class="d-flex justify-content-center align-items-center gap-2">
                                     {{-- Edit --}}
-                                    <a href="#" data-bs-toggle="modal" data-bs-target="#editModal{{ $item->id }}" 
-                                       class="text-primary" title="Edit">
-                                        <i class="fe fe-edit fe-18"></i>
-                                    </a>
+                                    @if(!empty($item->id))
+                                        <a href="#" data-bs-toggle="modal" data-bs-target="#editModal{{ $item->id }}" 
+                                           class="text-primary" title="Edit">
+                                            <i class="fe fe-edit fe-18"></i>
+                                        </a>
+                                    @endif
 
                                     {{-- Delete --}}
                                     <!-- <form method="POST" action="{{ route('disbursements.destroy', $item->id) }}"
@@ -138,6 +140,7 @@
 
 {{-- Edit Modals --}}
 @foreach($disbursements as $item)
+    @if(!empty($item->id))
 <div class="modal fade" id="editModal{{ $item->id }}" tabindex="-1" aria-labelledby="editModalLabel{{ $item->id }}" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <form method="POST" action="{{ route('disbursements.update', $item->id) }}" class="modal-content">
@@ -187,6 +190,7 @@
         </form>
     </div>
 </div>
+    @endif
 @endforeach
 
 @endsection
