@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\AuditTrail;
 use App\Models\Collection;
 use App\Models\Disbursement;
-use App\Services\GeminiService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,12 +13,9 @@ use Illuminate\Support\Facades\Schema;
 
 class AiFinancialController extends Controller
 {
-    protected GeminiService $gemini;
-
-    public function __construct(GeminiService $gemini)
+    public function __construct()
     {
         $this->middleware('auth');
-        $this->gemini = $gemini;
     }
 
     /**
@@ -158,67 +154,13 @@ class AiFinancialController extends Controller
             $historicalDisbursements[] = $disbursementsByWeek[$yearweek] ?? 0.0;
         }
 
-        // Build prompt with explainability + strict JSON schema
+        // Build labels we will use in the template output
         $rangeLabel = $validated['date_range'];
         $departmentLabel = $validated['department'] ?: 'All Departments';
 
-        $prompt = "You are an AI financial analyst for a corporate finance team.\n"
-            . "You receive recent weekly totals for collections (cash in) and disbursements (cash out).\n\n"
-            . "Context:\n"
-            . "- Date range: {$rangeLabel}\n"
-            . "- Department filter: {$departmentLabel}\n\n"
-            . "Historical data (up to 4 weeks):\n"
-            . "Labels (weeks): " . json_encode($labels) . "\n"
-            . "Collections: " . json_encode($historicalCollections) . "\n"
-            . "Disbursements: " . json_encode($historicalDisbursements) . "\n\n"
-            . "TASKS:\n"
-            . "1. Compute a financial stress index from 0 to 100 (higher = more stress on cash flow).\n"
-            . "2. Compute a financial health score from 0 to 100 (higher = healthier).\n"
-            . "3. Provide a confidence score (0-100) representing how reliable you think this analysis is based on the data.\n"
-            . "4. Forecast the next 4 weeks of collections, disbursements, and net cash flow.\n"
-            . "5. Provide 3–5 short executive summary bullet points (plain text).\n"
-            . "6. Provide a short explainability section that clearly states WHY the stress index and health score look the way they do, in 2–3 sentences.\n"
-            . "7. Provide 2–3 concrete recommended actions that finance leaders can take.\n\n"
-            . "Return ONLY valid JSON (no markdown, no backticks) with the following exact structure and key names:\n"
-            . "{\n"
-            . "  \"stressIndex\": number,\n"
-            . "  \"healthScore\": number,\n"
-            . "  \"confidence\": number,\n"
-            . "  \"summaryBullets\": [\"string\", \"string\"],\n"
-            . "  \"explanation\": \"short paragraph explaining the scores\",\n"
-            . "  \"recommendedActions\": [\"string\", \"string\"],\n"
-            . "  \"forecast\": {\n"
-            . "    \"labels\": [\"string\", \"string\", \"string\", \"string\"],\n"
-            . "    \"collections\": [number, number, number, number],\n"
-            . "    \"disbursements\": [number, number, number, number],\n"
-            . "    \"netCashFlow\": [number, number, number, number]\n"
-            . "  }\n"
-            . "}\n";
-
         try {
-            // Ask Gemini for a response and parse JSON ourselves
-            $result = $this->gemini->generateJson($prompt);
-
-            if (! ($result['success'] ?? false)) {
-                return response()->json([
-                    'error' => $result['error'] ?? 'AI service error',
-                ], 500);
-            }
-
-            $raw = $result['response'] ?? '';
-            Log::error('AI financial analysis raw response', ['raw' => $raw]);
-            $payload = $this->decodeGeminiJson($raw);
-
-            if (! is_array($payload)) {
-                Log::error('AI financial analysis JSON decode failed', [
-                    'raw' => $raw,
-                    'error' => json_last_error_msg(),
-                ]);
-
-                // Fallback: return a safe default payload instead of an error,
-                // so the UI still renders with neutral values.
-                $payload = $this->buildFallbackPayload($labels, $historicalCollections, $historicalDisbursements);
-            }
+            // Use deterministic, template‑based analysis derived directly from system data.
+            $payload = $this->buildFallbackPayload($labels, $historicalCollections, $historicalDisbursements, $rangeLabel, $departmentLabel);
 
             // Audit trail: log that admin ran AI analysis
             AuditTrail::create([
@@ -256,9 +198,9 @@ class AiFinancialController extends Controller
     }
 
     /**
-     * Build a safe fallback payload when Gemini fails or returns invalid JSON.
+     * Build a deterministic, template‑based payload from system data.
      */
-    private function buildFallbackPayload(array $labels, array $collections, array $disbursements): array
+    private function buildFallbackPayload(array $labels, array $collections, array $disbursements, string $rangeLabel, string $departmentLabel): array
     {
         $periods = count($labels) ?: 4;
         $labels = $labels ?: array_map(fn ($i) => 'Period ' . ($i + 1), range(0, $periods - 1));
@@ -271,23 +213,45 @@ class AiFinancialController extends Controller
         $stressIndex = $net < 0 ? 70 : 40;
         $healthScore = $net < 0 ? 45 : 60;
 
+        $totalCollections = array_sum($collections);
+        $totalDisbursements = array_sum($disbursements);
+        $totalNet = $totalCollections - $totalDisbursements;
+
         $forecastCollections = array_fill(0, $periods, $lastCollections);
         $forecastDisbursements = array_fill(0, $periods, $lastDisbursements);
         $forecastNet = array_fill(0, $periods, $net);
 
+        $trendDirection = $totalNet >= 0 ? 'positive' : 'negative';
+
+        $summaryBullets = [
+            "For {$departmentLabel} over {$rangeLabel}, total collections were " . number_format($totalCollections, 2) . " and total disbursements were " . number_format($totalDisbursements, 2) . ".",
+            "Net cash flow for the period is " . number_format($totalNet, 2) . ", indicating a {$trendDirection} cash position.",
+            "Recent weekly patterns are used to project the next {$periods} periods of collections, disbursements, and net cash flow.",
+        ];
+
+        $explanation = $net < 0
+            ? 'Stress is elevated because recent disbursements are higher than collections, putting pressure on short‑term liquidity. The health score remains moderate but should be monitored closely if this pattern continues.'
+            : 'Stress is moderate because collections are meeting or slightly exceeding disbursements, supporting short‑term liquidity. The health score is stronger while this favourable balance is maintained.';
+
+        $recommendedActions = $net < 0
+            ? [
+                'Delay or phase non‑critical disbursements to reduce immediate cash pressure.',
+                'Accelerate collections where possible (follow up on overdue items or offer early‑payment incentives).',
+                'Review upcoming commitments to ensure there is sufficient headroom for near‑term payments.',
+            ]
+            : [
+                'Use the positive cash position to clear high‑cost or overdue obligations where appropriate.',
+                'Evaluate opportunities to reinvest surplus cash in priority initiatives or reserves.',
+                'Continue monitoring collections and disbursements to ensure the current healthy pattern is sustained.',
+            ];
+
         return [
             'stressIndex' => $stressIndex,
             'healthScore' => $healthScore,
-            'confidence' => 0,
-            'summaryBullets' => [
-                'AI service did not return a valid structured response, so these metrics use a neutral fallback.',
-                'Recent collections and disbursements were analysed locally to provide a basic view only.',
-            ],
-            'explanation' => 'The AI model response could not be parsed as valid JSON. The system has generated a neutral fallback analysis based on the most recent collections and disbursement totals so that the dashboard remains usable.',
-            'recommendedActions' => [
-                'Treat these figures as indicative only; they are not AI-optimised insights.',
-                'Review recent cash in and cash out manually to validate any decisions.',
-            ],
+            'confidence' => 100,
+            'summaryBullets' => $summaryBullets,
+            'explanation' => $explanation,
+            'recommendedActions' => $recommendedActions,
             'forecast' => [
                 'labels' => $labels,
                 'collections' => $forecastCollections,
@@ -295,61 +259,6 @@ class AiFinancialController extends Controller
                 'netCashFlow' => $forecastNet,
             ],
         ];
-    }
-
-    /**
-     * Best-effort JSON extraction from Gemini text responses.
-     */
-    private function decodeGeminiJson(string $raw): ?array
-    {
-        $raw = trim($raw);
-
-        if ($raw === '') {
-            return null;
-        }
-
-        // Strip code fences if present
-        if (str_starts_with($raw, '```')) {
-            $raw = preg_replace('/^```[a-zA-Z]*\s*/', '', $raw);
-            $raw = preg_replace('/```$/', '', $raw);
-            $raw = trim($raw);
-        }
-
-        // Normalise common smart quotes and line endings that often break JSON
-        $raw = str_replace(
-            ['“', '”', '’', '‘', "\r\n", "\r"],
-            ['"', '"', "'", "'", "\n", "\n"],
-            $raw
-        );
-
-        // First attempt: decode whole string
-        $decoded = json_decode($raw, true);
-        if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
-            return $decoded;
-        }
-
-        // Second attempt: extract first JSON object between { and }
-        $start = strpos($raw, '{');
-        $end = strrpos($raw, '}');
-
-        if ($start !== false && $end !== false && $end > $start) {
-            $json = substr($raw, $start, $end - $start + 1);
-
-            // Try raw slice first
-            $decoded = json_decode($json, true);
-            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
-                return $decoded;
-            }
-
-            // Last‑chance repair: remove trailing commas before ] or }
-            $repaired = preg_replace('/,\s*([}\]])/', '$1', $json);
-            $decoded = json_decode($repaired, true);
-            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
-                return $decoded;
-            }
-        }
-
-        return null;
     }
 }
 
