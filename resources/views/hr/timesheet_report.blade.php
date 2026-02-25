@@ -57,65 +57,69 @@
             <div class="card-body">
                 <h5 class="mb-3 fw-semibold text-primary">Timesheet Report Results</h5>
 
-                <table class="table table-bordered align-middle">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>#</th>
-                            <th>Employee</th>
-                            <th>From</th>
-                            <th>To</th>
-                            <th>Position</th>
-                            <th>Department</th>
-                            <th>Total Hours</th>
-                            <th>Overtime</th>
-                            <th>Undertime</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($reportData as $index => $r)
+                <div class="table-responsive">
+                    <table class="table table-bordered align-middle">
+                        <thead class="table-dark">
                             <tr>
-                                <td>{{ $index + 1 }}</td>
-                                <td>{{ $r['employee'] }}</td>
-                                <td>{{ $from }}</td>
-                                <td>{{ $to }}</td>
-                                <td>{{ $r['position'] }}</td>
-                                <td>{{ $r['department'] }}</td>
-                                <td>{{ $r['total_hours'] }}</td>
-                                <td>{{ $r['overtime'] }}</td>
-                                <td>{{ $r['undertime'] }}</td>
-                                <td>
-                                    {{-- View button --}}
-                                    <button type="button"
-                                        class="btn btn-sm btn-info viewTimesheet"
-                                        data-id="{{ $r['employee_id'] ?? '' }}"
-                                        data-employee="{{ $r['employee'] ?? '' }}"
-                                        data-position="{{ $r['position'] ?? '' }}"
-                                        data-department="{{ $r['department'] ?? '' }}"
-                                        data-from="{{ $from }}"
-                                        data-to="{{ $to }}">
-                                        View
-                                    </button>
-
-                                    {{-- Download button --}}
-                                    <a href="{{ route('timesheet.download', $r['employee']) }}?from={{ $from }}&to={{ $to }}"
-                                        class="btn btn-sm btn-success">
-                                        <i class="fas fa-file-download"></i> Download
-                                    </a>
-                                </td>
+                                <th>#</th>
+                                <th>Employee</th>
+                                <th>From</th>
+                                <th>To</th>
+                                <th>Position</th>
+                                <th>Department</th>
+                                <th>Total Hours</th>
+                                <th>Overtime</th>
+                                <th>Undertime</th>
+                                <th class="fms-actions">Actions</th>
                             </tr>
-                        @endforeach
-                    </tbody>
-                    <tfoot class="table-dark fw-bold">
-                        <tr>
-                            <td colspan="6" class="text-end">Totals:</td>
-                            <td>{{ number_format(collect($reportData)->sum('total_hours'), 2) }}</td>
-                            <td>{{ number_format(collect($reportData)->sum('overtime'), 2) }}</td>
-                            <td>{{ number_format(collect($reportData)->sum('undertime'), 2) }}</td>
-                            <td></td>
-                        </tr>
-                    </tfoot>
-                </table>
+                        </thead>
+                        <tbody>
+                            @foreach($reportData as $index => $r)
+                                <tr>
+                                    <td>{{ $index + 1 }}</td>
+                                    <td>{{ $r['employee'] }}</td>
+                                    <td>{{ $from }}</td>
+                                    <td>{{ $to }}</td>
+                                    <td>{{ $r['position'] }}</td>
+                                    <td>{{ $r['department'] }}</td>
+                                    <td>{{ $r['total_hours'] }}</td>
+                                    <td>{{ $r['overtime'] }}</td>
+                                    <td>{{ $r['undertime'] }}</td>
+                                    <td class="fms-actions">
+                                        <div class="fms-action-group">
+                                            {{-- View button --}}
+                                            <button type="button"
+                                                class="btn btn-sm btn-info viewTimesheet"
+                                                data-id="{{ $r['employee_id'] ?? '' }}"
+                                                data-employee="{{ $r['employee'] ?? '' }}"
+                                                data-position="{{ $r['position'] ?? '' }}"
+                                                data-department="{{ $r['department'] ?? '' }}"
+                                                data-from="{{ $from }}"
+                                                data-to="{{ $to }}">
+                                                View
+                                            </button>
+
+                                            {{-- Download button --}}
+                                            <a href="{{ route('timesheet.download', $r['employee']) }}?from={{ $from }}&to={{ $to }}"
+                                                class="btn btn-sm btn-success">
+                                                <i class="fas fa-file-download"></i> Download
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                        <tfoot class="table-dark fw-bold">
+                            <tr>
+                                <td colspan="6" class="text-end">Totals:</td>
+                                <td>{{ number_format(collect($reportData)->sum('total_hours'), 2) }}</td>
+                                <td>{{ number_format(collect($reportData)->sum('overtime'), 2) }}</td>
+                                <td>{{ number_format(collect($reportData)->sum('undertime'), 2) }}</td>
+                                <td class="fms-actions"></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
             </div>
         </div>
         @elseif(request()->has('from'))

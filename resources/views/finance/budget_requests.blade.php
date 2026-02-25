@@ -57,25 +57,26 @@
     <div class="card shadow-sm">
         <div class="card-body">
             <h5 class="mb-3">Requests List</h5>
-            <table class="table table-bordered table-hover align-middle">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Request ID</th>
-                        <th>Employee</th>
-                        <th>Department</th>
-                        <th>Purpose (Reason)</th>
-                        <th>Amount</th>
-                        <th>Details</th>
-                        <th>Date Requested</th>
-                        <th>Status</th>
-                        <th>Image</th>
-                        <th>Attachment</th>
-                        <th class="text-center">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($requests as $req)
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Request ID</th>
+                            <th>Employee</th>
+                            <th>Department</th>
+                            <th>Purpose (Reason)</th>
+                            <th>Amount</th>
+                            <th>Details</th>
+                            <th>Date Requested</th>
+                            <th>Status</th>
+                            <th>Image</th>
+                            <th>Attachment</th>
+                            <th class="fms-actions">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($requests as $req)
                         @php
                             $isHr = $user && $user->isHr();
                             $isAdmin = $user && $user->isAdmin();
@@ -115,8 +116,8 @@
                                     <span class="text-muted">—</span>
                                 @endif
                             </td>
-                            <td class="text-center">
-                                <div class="d-flex justify-content-center align-items-center flex-wrap" style="gap: 8px;">
+                            <td class="fms-actions">
+                                <div class="fms-action-group">
                                     {{-- HR: Pending → Send to Admin or Reject --}}
                                     @if($isHr && $req->status === 'Pending')
                                         <form method="POST" action="{{ route('budget_requests.hr_approve', $req->id) }}" 
@@ -220,8 +221,9 @@
                             <td colspan="12" class="text-center text-muted">No budget requests found.</td>
                         </tr>
                     @endforelse
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>

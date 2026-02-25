@@ -74,69 +74,73 @@
         <div class="card shadow">
             <div class="card-body">
                 <h5 class="mb-3">Claims List</h5>
-                <table class="table table-bordered table-hover">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Claim ID</th>
-                            <th>Employee</th>
-                            <th>Position</th>
-                            <th>Type of Claim</th>
-                            <th>Attached Document</th>
-                            <th>Claim Date</th>
-                            <th>Claim Amount</th>
-                            <th>Reimbursement Amount</th>
-                            <th>Reimbursement Date</th>
-                            <th>Status</th>
-                            <th class="text-center">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($claims as $claim)
-                        <tr>
-                            <td>{{ $loop->iteration }}</td>
-                            <td>{{ $claim->claim_id }}</td>
-                            <td>{{ $claim->user->name }}</td>
-                            <td>{{ $claim->user->position }}</td>
-                            <td>{{ $claim->type_of_claim }}</td>
-                            <td>
-                                @if($claim->attached_document)
-                                    <a href="{{ asset('storage/' . $claim->attached_document) }}" target="_blank">View</a>
-                                @else
-                                    -
-                                @endif
-                            </td>
-                            <td>{{ $claim->claim_date }}</td>
-                            <td>₱{{ number_format($claim->claim_amount, 2) }}</td>
-                            <td>₱{{ number_format($claim->reimbursement_amount, 2) }}</td>
-                            <td>{{ $claim->reimbursement_date ?? '-' }}</td>
-                            <td>
-                                @php
-                                    $badgeClass = match($claim->status) {
-                                        'Pending' => 'warning',
-                                        'Denied'  => 'danger',
-                                        default   => 'success',
-                                    };
-                                @endphp
-                                <span class="badge badge-{{ $badgeClass }}">
-                                    {{ $claim->status }}
-                                </span>
-                            </td>
-                            <td class="text-center">
-                                <button class="btn btn-info btn-sm btn-view"
-                                    data-claim='@json($claim)'>
-                                    <i class="fe fe-eye"></i> View
-                                </button>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Claim ID</th>
+                                <th>Employee</th>
+                                <th>Position</th>
+                                <th>Type of Claim</th>
+                                <th>Attached Document</th>
+                                <th>Claim Date</th>
+                                <th>Claim Amount</th>
+                                <th>Reimbursement Amount</th>
+                                <th>Reimbursement Date</th>
+                                <th>Status</th>
+                                <th class="fms-actions">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($claims as $claim)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $claim->claim_id }}</td>
+                                <td>{{ $claim->user->name }}</td>
+                                <td>{{ $claim->user->position }}</td>
+                                <td>{{ $claim->type_of_claim }}</td>
+                                <td>
+                                    @if($claim->attached_document)
+                                        <a href="{{ asset('storage/' . $claim->attached_document) }}" target="_blank">View</a>
+                                    @else
+                                        -
+                                    @endif
+                                </td>
+                                <td>{{ $claim->claim_date }}</td>
+                                <td>₱{{ number_format($claim->claim_amount, 2) }}</td>
+                                <td>₱{{ number_format($claim->reimbursement_amount, 2) }}</td>
+                                <td>{{ $claim->reimbursement_date ?? '-' }}</td>
+                                <td>
+                                    @php
+                                        $badgeClass = match($claim->status) {
+                                            'Pending' => 'warning',
+                                            'Denied'  => 'danger',
+                                            default   => 'success',
+                                        };
+                                    @endphp
+                                    <span class="badge badge-{{ $badgeClass }}">
+                                        {{ $claim->status }}
+                                    </span>
+                                </td>
+                                <td class="fms-actions">
+                                    <div class="fms-action-group">
+                                        <button class="btn btn-info btn-sm btn-view"
+                                            data-claim='@json($claim)'>
+                                            <i class="fe fe-eye"></i> View
+                                        </button>
 
-                                <button class="btn btn-warning btn-sm btn-edit"
-                                    data-claim='@json($claim)'>
-                                    <i class="fe fe-edit"></i> Edit
-                                </button>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                                        <button class="btn btn-warning btn-sm btn-edit"
+                                            data-claim='@json($claim)'>
+                                            <i class="fe fe-edit"></i> Edit
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
 
                 {{-- === VIEW CLAIM MODAL === --}}
                 <div id="viewClaimModal" class="modal fade" tabindex="-1" role="dialog">

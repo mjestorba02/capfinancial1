@@ -49,108 +49,112 @@
     <div class="card shadow-sm mb-4">
         <div class="card-body">
             <h5 class="mb-3">Pending Admins</h5>
-            <table class="table table-bordered table-hover align-middle">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Position</th>
-                        <th>Department</th>
-                        <th>Registered</th>
-                        <th class="text-center">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($pendingUsers as $user)
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle">
+                    <thead>
                         <tr>
-                            <td>{{ $loop->iteration }}</td>
-                            <td>{{ $user->name }}</td>
-                            <td>{{ $user->email }}</td>
-                            <td>{{ $user->position }}</td>
-                            <td>{{ $user->department }}</td>
-                            <td>{{ $user->created_at->format('M d, Y H:i') }}</td>
-                            <td class="text-center">
-                                <div class="d-flex justify-content-center align-items-center" style="gap: 12px;">
-                                    <form method="POST" action="{{ route('user-approvals.approve', $user) }}"
-                                        onsubmit="return confirm('Approve this account? The user will be able to log in.')" class="d-inline">
-                                        @csrf
-                                        <button type="submit" class="btn btn-sm btn-success" title="Approve">
-                                            <i class="fe fe-check-circle me-1"></i> Approve
-                                        </button>
-                                    </form>
-                                    <form method="POST" action="{{ route('user-approvals.reject', $user) }}"
-                                        onsubmit="return confirm('Reject this account? The user will not be able to log in.')" class="d-inline">
-                                        @csrf
-                                        <button type="submit" class="btn btn-sm btn-danger" title="Reject">
-                                            <i class="fe fe-x-circle me-1"></i> Reject
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Position</th>
+                            <th>Department</th>
+                            <th>Registered</th>
+                            <th class="fms-actions">Actions</th>
                         </tr>
-                    @empty
-                        <tr>
-                            <td colspan="7" class="text-center text-muted py-3">
-                                <i class="fe fe-info me-2"></i> No pending admin accounts.
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @forelse($pendingUsers as $user)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $user->name }}</td>
+                                <td>{{ $user->email }}</td>
+                                <td>{{ $user->position }}</td>
+                                <td>{{ $user->department }}</td>
+                                <td>{{ $user->created_at->format('M d, Y H:i') }}</td>
+                                <td class="fms-actions">
+                                    <div class="fms-action-group">
+                                        <form method="POST" action="{{ route('user-approvals.approve', $user) }}"
+                                            onsubmit="return confirm('Approve this account? The user will be able to log in.')" class="d-inline">
+                                            @csrf
+                                            <button type="submit" class="btn btn-sm btn-success" title="Approve">
+                                                <i class="fe fe-check-circle me-1"></i> Approve
+                                            </button>
+                                        </form>
+                                        <form method="POST" action="{{ route('user-approvals.reject', $user) }}"
+                                            onsubmit="return confirm('Reject this account? The user will not be able to log in.')" class="d-inline">
+                                            @csrf
+                                            <button type="submit" class="btn btn-sm btn-danger" title="Reject">
+                                                <i class="fe fe-x-circle me-1"></i> Reject
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="7" class="text-center text-muted py-3">
+                                    <i class="fe fe-info me-2"></i> No pending admin accounts.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
     <div class="card shadow-sm">
         <div class="card-body">
             <h5 class="mb-3">Pending Employees</h5>
-            <table class="table table-bordered table-hover align-middle">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Department</th>
-                        <th>Registered</th>
-                        <th class="text-center">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($pendingEmployees as $employee)
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle">
+                    <thead>
                         <tr>
-                            <td>{{ $loop->iteration }}</td>
-                            <td>{{ $employee->name }}</td>
-                            <td>{{ $employee->email }}</td>
-                            <td>{{ $employee->department }}</td>
-                            <td>{{ $employee->created_at->format('M d, Y H:i') }}</td>
-                            <td class="text-center">
-                                <div class="d-flex justify-content-center align-items-center" style="gap: 12px;">
-                                    <form method="POST" action="{{ route('user-approvals.employee.approve', $employee) }}"
-                                        onsubmit="return confirm('Approve this employee? They will be able to log in to the employee portal.')" class="d-inline">
-                                        @csrf
-                                        <button type="submit" class="btn btn-sm btn-success" title="Approve">
-                                            <i class="fe fe-check-circle me-1"></i> Approve
-                                        </button>
-                                    </form>
-                                    <form method="POST" action="{{ route('user-approvals.employee.reject', $employee) }}"
-                                        onsubmit="return confirm('Reject this employee? They will not be able to log in.')" class="d-inline">
-                                        @csrf
-                                        <button type="submit" class="btn btn-sm btn-danger" title="Reject">
-                                            <i class="fe fe-x-circle me-1"></i> Reject
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Department</th>
+                            <th>Registered</th>
+                            <th class="fms-actions">Actions</th>
                         </tr>
-                    @empty
-                        <tr>
-                            <td colspan="6" class="text-center text-muted py-3">
-                                <i class="fe fe-info me-2"></i> No pending employee accounts.
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @forelse($pendingEmployees as $employee)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $employee->name }}</td>
+                                <td>{{ $employee->email }}</td>
+                                <td>{{ $employee->department }}</td>
+                                <td>{{ $employee->created_at->format('M d, Y H:i') }}</td>
+                                <td class="fms-actions">
+                                    <div class="fms-action-group">
+                                        <form method="POST" action="{{ route('user-approvals.employee.approve', $employee) }}"
+                                            onsubmit="return confirm('Approve this employee? They will be able to log in to the employee portal.')" class="d-inline">
+                                            @csrf
+                                            <button type="submit" class="btn btn-sm btn-success" title="Approve">
+                                                <i class="fe fe-check-circle me-1"></i> Approve
+                                            </button>
+                                        </form>
+                                        <form method="POST" action="{{ route('user-approvals.employee.reject', $employee) }}"
+                                            onsubmit="return confirm('Reject this employee? They will not be able to log in.')" class="d-inline">
+                                            @csrf
+                                            <button type="submit" class="btn btn-sm btn-danger" title="Reject">
+                                                <i class="fe fe-x-circle me-1"></i> Reject
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="text-center text-muted py-3">
+                                    <i class="fe fe-info me-2"></i> No pending employee accounts.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>

@@ -39,29 +39,14 @@ class EmployeeAuthController extends Controller
             return back()->withErrors(['login' => 'Your account is still pending approval. Please wait for an admin to approve your registration.']);
         }
 
-        // --- OTP temporarily disabled for testing. To restore: uncomment block below and remove the direct login block.
-        // $this->otpService->createAndSend(
-        //     OtpService::TYPE_EMPLOYEE,
-        //     (int) $employee->id,
-        //     $employee->email
-        // );
-        // $request->session()->put('otp_type', OtpService::TYPE_EMPLOYEE);
-        // $request->session()->put('otp_verifiable_id', $employee->id);
-        // return redirect()->route('employee.login.otp.form');
-
-        // Direct login (no OTP) for testing
-        Session::put('employee_id', $employee->id);
-        Session::put('employee_name', $employee->name);
-        Session::put('employee_department', $employee->department);
-
-        AuditTrailService::logEmployee(
-            $employee,
-            'employee_login',
-            'Employee logged in via employee portal.'
+        $this->otpService->createAndSend(
+            OtpService::TYPE_EMPLOYEE,
+            (int) $employee->id,
+            $employee->email
         );
-
-        return redirect()->route('employee.dashboard')
-            ->with('success', 'Welcome back, ' . $employee->name . '!');
+        $request->session()->put('otp_type', OtpService::TYPE_EMPLOYEE);
+        $request->session()->put('otp_verifiable_id', $employee->id);
+        return redirect()->route('employee.login.otp.form');
     }
 
     // 🔹 Show OTP verification form (employee)
@@ -98,6 +83,12 @@ class EmployeeAuthController extends Controller
         Session::put('employee_id', $employee->id);
         Session::put('employee_name', $employee->name);
         Session::put('employee_department', $employee->department);
+
+        AuditTrailService::logEmployee(
+            $employee,
+            'employee_login',
+            'Employee logged in via employee portal.'
+        );
 
         return redirect()->route('employee.dashboard')
             ->with('success', 'Welcome back, ' . $employee->name . '!');

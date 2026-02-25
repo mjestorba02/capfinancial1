@@ -62,58 +62,62 @@
         <div class="card shadow">
             <div class="card-body">
                 <h5 class="mb-3">Timesheet Records</h5>
-                <table class="table table-bordered table-hover">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Employee</th>
-                            <th>From</th>
-                            <th>To</th>
-                            <th>Position</th>
-                            <th>Notes</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($timesheets as $sheet)
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead>
                             <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td>{{ $sheet->employee->name }}</td>
-                                <td>{{ $sheet->from_date }}</td>
-                                <td>{{ $sheet->to_date }}</td>
-                                <td>{{ $sheet->position }}</td>
-                                <td>{{ $sheet->notes }}</td>
-                                <td>
-                                    {{-- Edit button --}}
-                                    <button type="button" 
-                                        class="btn btn-sm btn-warning"
-                                        onclick="editTimesheet({{ $sheet }})">
-                                        Edit
-                                    </button>
-
-                                    {{-- View button --}}
-                                    <button type="button"
-                                        class="btn btn-sm btn-info viewTimesheet"
-                                        data-id="{{ $sheet->employee_id }}"
-                                        data-employee="{{ $sheet->employee->name }}"
-                                        data-position="{{ $sheet->employee->position }}"
-                                        data-department="{{ $sheet->employee->department }}"
-                                        data-from="{{ $sheet->from_date }}"
-                                        data-to="{{ $sheet->to_date }}">
-                                        View
-                                    </button>
-
-                                    {{-- Delete form --}}
-                                    <!-- <form action="{{ route('timesheet.destroy', $sheet->id) }}" method="POST" style="display:inline;">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="btn btn-sm btn-danger" onclick="return confirm('Delete this record?')">Delete</button>
-                                    </form> -->
-                                </td>
+                                <th>#</th>
+                                <th>Employee</th>
+                                <th>From</th>
+                                <th>To</th>
+                                <th>Position</th>
+                                <th>Notes</th>
+                                <th class="fms-actions">Actions</th>
                             </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            @foreach($timesheets as $sheet)
+                                <tr>
+                                    <td>{{ $loop->iteration }}</td>
+                                    <td>{{ $sheet->employee->name }}</td>
+                                    <td>{{ $sheet->from_date }}</td>
+                                    <td>{{ $sheet->to_date }}</td>
+                                    <td>{{ $sheet->position }}</td>
+                                    <td>{{ $sheet->notes }}</td>
+                                    <td class="fms-actions">
+                                        <div class="fms-action-group">
+                                            {{-- Edit button --}}
+                                            <button type="button" 
+                                                class="btn btn-sm btn-warning"
+                                                onclick="editTimesheet({{ $sheet }})">
+                                                Edit
+                                            </button>
+
+                                            {{-- View button --}}
+                                            <button type="button"
+                                                class="btn btn-sm btn-info viewTimesheet"
+                                                data-id="{{ $sheet->employee_id }}"
+                                                data-employee="{{ $sheet->employee->name }}"
+                                                data-position="{{ $sheet->employee->position }}"
+                                                data-department="{{ $sheet->employee->department }}"
+                                                data-from="{{ $sheet->from_date }}"
+                                                data-to="{{ $sheet->to_date }}">
+                                                View
+                                            </button>
+
+                                            {{-- Delete form --}}
+                                            <!-- <form action="{{ route('timesheet.destroy', $sheet->id) }}" method="POST" style="display:inline;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button class="btn btn-sm btn-danger" onclick="return confirm('Delete this record?')">Delete</button>
+                                            </form> -->
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

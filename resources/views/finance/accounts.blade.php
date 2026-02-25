@@ -36,54 +36,58 @@
         </div>
 
         <div class="card-body">
-            <table class="table table-bordered table-hover align-middle">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Payment ID</th>
-                        <th>Vendor</th>
-                        <th>Invoice #</th>
-                        <th>Amount</th>
-                        <th>Mode of Payment</th>
-                        <th>Due Date</th>
-                        <th>Payment Date</th>
-                        <th>Status</th>
-                        <th>Remarks</th>
-                        <th width="90">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($payables as $item)
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle">
+                    <thead>
                         <tr>
-                            <td>{{ $loop->iteration }}</td>
-                            <td>{{ $item->payment_id }}</td>
-                            <td>{{ $item->vendor }}</td>
-                            <td>{{ $item->invoice_number ?? '-' }}</td>
-                            <td>₱{{ number_format($item->amount, 2) }}</td>
-                            <td>{{ $item->mode_of_payment ?? '-' }}</td>
-                            <td>{{ $item->due_date ?? '-' }}</td>
-                            <td>{{ $item->payment_date ?? '-' }}</td>
-                            <td>
-                                <span class="badge 
-                                    @if($item->status === 'Paid') bg-success 
-                                    @elseif($item->status === 'Unpaid') bg-warning 
-                                    @elseif($item->status === 'Overdue') bg-danger 
-                                    @else bg-secondary @endif">
-                                    {{ $item->status }}
-                                </span>
-                            </td>
-                            <td>{{ $item->remarks ?? '-' }}</td>
-                            <td class="text-center">
-                                <a href="#" data-bs-toggle="modal" data-bs-target="#editPayableModal{{ $item->id }}">
-                                    <i class="fe fe-edit fe-18 text-primary"></i>
-                                </a>
-                            </td>
+                            <th>#</th>
+                            <th>Payment ID</th>
+                            <th>Vendor</th>
+                            <th>Invoice #</th>
+                            <th>Amount</th>
+                            <th>Mode of Payment</th>
+                            <th>Due Date</th>
+                            <th>Payment Date</th>
+                            <th>Status</th>
+                            <th>Remarks</th>
+                            <th class="fms-actions">Action</th>
                         </tr>
-                    @empty
-                        <tr><td colspan="11" class="text-center text-muted py-3">No payables found.</td></tr>
-                    @endforelse
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @forelse($payables as $item)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $item->payment_id }}</td>
+                                <td>{{ $item->vendor }}</td>
+                                <td>{{ $item->invoice_number ?? '-' }}</td>
+                                <td>₱{{ number_format($item->amount, 2) }}</td>
+                                <td>{{ $item->mode_of_payment ?? '-' }}</td>
+                                <td>{{ $item->due_date ?? '-' }}</td>
+                                <td>{{ $item->payment_date ?? '-' }}</td>
+                                <td>
+                                    <span class="badge 
+                                        @if($item->status === 'Paid') bg-success 
+                                        @elseif($item->status === 'Unpaid') bg-warning 
+                                        @elseif($item->status === 'Overdue') bg-danger 
+                                        @else bg-secondary @endif">
+                                        {{ $item->status }}
+                                    </span>
+                                </td>
+                                <td>{{ $item->remarks ?? '-' }}</td>
+                                <td class="fms-actions">
+                                    <div class="fms-action-group">
+                                        <a href="#" data-bs-toggle="modal" data-bs-target="#editPayableModal{{ $item->id }}">
+                                            <i class="fe fe-edit fe-18 text-primary"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr><td colspan="11" class="text-center text-muted py-3">No payables found.</td></tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 

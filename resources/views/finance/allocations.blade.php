@@ -81,7 +81,7 @@
                             <th>Used</th>
                             <th>Remaining</th>
                             <th>Date</th>
-                            <th class="text-center">Actions</th>
+                            <th class="fms-actions">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -123,8 +123,8 @@
                                 <td>₱{{ number_format($a->used, 2) }}</td>
                                 <td>₱{{ number_format($a->allocated - $a->used, 2) }}</td>
                                 <td>{{ optional($a->created_at)->format('Y-m-d') }}</td>
-                                <td class="text-center">
-                                    <div class="d-flex justify-content-center align-items-center" style="gap: 12px;">
+                                <td class="fms-actions">
+                                    <div class="fms-action-group">
                                         <!-- Calculate Used Icon -->
                                         <a href="#" data-bs-toggle="modal" data-bs-target="#calculateUsedModal{{ $a->id }}" 
                                         title="Calculate Used" class="text-white text-decoration-none">

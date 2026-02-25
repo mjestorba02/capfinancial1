@@ -42,54 +42,56 @@
             </form>
 
             <!-- Table -->
-            <table class="table table-bordered table-hover">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Account</th>
-                        <th>Credit</th>
-                        <th>Debit</th>
-                        <th>Description</th>
-                        <th>Date</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($journals as $journal)
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead>
                         <tr>
-                            <td>{{ $loop->iteration }}</td>
-                            <td>{{ $journal->account }}</td>
-                            <td>₱{{ number_format($journal->credit, 2) }}</td>
-                            <td>₱{{ number_format($journal->debit, 2) }}</td>
-                            <td>{{ $journal->description ?? '-' }}</td>
-                            <td>{{ \Carbon\Carbon::parse($journal->entry_date)->format('Y-m-d') }}</td>
-                            <td class="text-center">
-                                <div class="d-flex justify-content-center align-items-center gap-3">
-                                    <!-- Edit -->
-                                    <a href="#" data-bs-toggle="modal" data-bs-target="#editModal{{ $journal->id }}" class="text-primary">
-                                        <i class="fe fe-edit fe-18"></i>
-                                    </a>
+                            <th>#</th>
+                            <th>Account</th>
+                            <th>Credit</th>
+                            <th>Debit</th>
+                            <th>Description</th>
+                            <th>Date</th>
+                            <th class="fms-actions">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($journals as $journal)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $journal->account }}</td>
+                                <td>₱{{ number_format($journal->credit, 2) }}</td>
+                                <td>₱{{ number_format($journal->debit, 2) }}</td>
+                                <td>{{ $journal->description ?? '-' }}</td>
+                                <td>{{ \Carbon\Carbon::parse($journal->entry_date)->format('Y-m-d') }}</td>
+                                <td class="fms-actions">
+                                    <div class="fms-action-group">
+                                        <!-- Edit -->
+                                        <a href="#" data-bs-toggle="modal" data-bs-target="#editModal{{ $journal->id }}" class="text-primary">
+                                            <i class="fe fe-edit fe-18"></i>
+                                        </a>
 
-                                    <!-- Delete -->
-                                    <!-- <form action="{{ route('journal_entries.destroy', $journal->id) }}" method="POST" onsubmit="return confirm('Delete this journal entry?')" class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="bg-transparent border-0 text-danger p-0">
-                                            <i class="fe fe-trash fe-18"></i>
-                                        </button>
-                                    </form> -->
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="7" class="text-center text-muted py-3">
-                                <i class="fe fe-info me-2"></i> No journal entries found.
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                                        <!-- Delete -->
+                                        <!-- <form action="{{ route('journal_entries.destroy', $journal->id) }}" method="POST" onsubmit="return confirm('Delete this journal entry?')" class="d-inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="bg-transparent border-0 text-danger p-0">
+                                                <i class="fe fe-trash fe-18"></i>
+                                            </button>
+                                        </form> -->
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="7" class="text-center text-muted py-3">
+                                    <i class="fe fe-info me-2"></i> No journal entries found.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>

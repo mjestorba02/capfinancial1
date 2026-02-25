@@ -20,69 +20,71 @@
     <div class="card shadow">
         <div class="card-body">
             <h5 class="mb-3">Collections Summary</h5>
-            <table class="table table-bordered table-hover">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Customer</th>
-                        <th>Invoice #</th>
-                        <th>Amount Due</th>
-                        <th>Amount Paid</th>
-                        <th>Status</th>
-                        <th>Payment Date</th>
-                        <th>Department</th>
-                        <th>Receipt</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($collections as $item)
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead>
                         <tr>
-                            <td>{{ $loop->iteration }}</td>
-                            <td>{{ $item->customer_name }}</td>
-                            <td>{{ $item->invoice_number }}</td>
-                            <td>₱{{ number_format($item->amount_due, 2) }}</td>
-                            <td>₱{{ number_format($item->amount_paid, 2) }}</td>
-                            <td>
-                                @php
-                                    $badgeClass = match($item->status) {
-                                        'Paid' => 'success',
-                                        'Ordered' => 'info',
-                                        'Overdue' => 'danger',
-                                        'Pending' => 'warning',
-                                        default => 'secondary',
-                                    };
-                                @endphp
-                                <span class="badge badge-{{ $badgeClass }}">
-                                    {{ $item->status }}
-                                </span>
-                            </td>
-                            <td>{{ $item->payment_date ?? '-' }}</td>
-                            <td>{{ $item->remarks ?? '-' }}</td>
-                            <td class="text-center">
-                                <a href="{{ route('collections.receipt.pdf', $item->id) }}" class="btn btn-outline-secondary btn-sm">
-                                    Receipt PDF
-                                </a>
-                            </td>
-                            <td class="text-center">
-                                <div class="d-flex justify-content-center align-items-center" style="gap: 12px;">
-                                    <!-- Edit Icon (for manual adjustments if needed) -->
-                                    <a href="#" data-bs-toggle="modal" data-bs-target="#editModal{{ $item->id }}" 
-                                    title="Edit Collection" class="text-white text-decoration-none">
-                                        <i class="fe fe-edit fe-18"></i>
+                            <th>#</th>
+                            <th>Customer</th>
+                            <th>Invoice #</th>
+                            <th>Amount Due</th>
+                            <th>Amount Paid</th>
+                            <th>Status</th>
+                            <th>Payment Date</th>
+                            <th>Department</th>
+                            <th>Receipt</th>
+                            <th class="fms-actions">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($collections as $item)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $item->customer_name }}</td>
+                                <td>{{ $item->invoice_number }}</td>
+                                <td>₱{{ number_format($item->amount_due, 2) }}</td>
+                                <td>₱{{ number_format($item->amount_paid, 2) }}</td>
+                                <td>
+                                    @php
+                                        $badgeClass = match($item->status) {
+                                            'Paid' => 'success',
+                                            'Ordered' => 'info',
+                                            'Overdue' => 'danger',
+                                            'Pending' => 'warning',
+                                            default => 'secondary',
+                                        };
+                                    @endphp
+                                    <span class="badge badge-{{ $badgeClass }}">
+                                        {{ $item->status }}
+                                    </span>
+                                </td>
+                                <td>{{ $item->payment_date ?? '-' }}</td>
+                                <td>{{ $item->remarks ?? '-' }}</td>
+                                <td class="text-center">
+                                    <a href="{{ route('collections.receipt.pdf', $item->id) }}" class="btn btn-outline-secondary btn-sm">
+                                        Receipt PDF
                                     </a>
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="9" class="text-center text-muted py-3">
-                                <i class="fe fe-info me-2"></i> No collections found.
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                                </td>
+                                <td class="fms-actions">
+                                    <div class="fms-action-group">
+                                        <!-- Edit Icon (for manual adjustments if needed) -->
+                                        <a href="#" data-bs-toggle="modal" data-bs-target="#editModal{{ $item->id }}" 
+                                        title="Edit Collection" class="text-white text-decoration-none">
+                                            <i class="fe fe-edit fe-18"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="9" class="text-center text-muted py-3">
+                                    <i class="fe fe-info me-2"></i> No collections found.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>

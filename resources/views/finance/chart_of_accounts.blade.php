@@ -20,55 +20,57 @@
     <div class="card shadow">
         <div class="card-body">
             <h5 class="mb-3">List of Accounts</h5>
-            <table class="table table-bordered table-hover align-middle">
-                <thead>
-                    <tr class="text-center">
-                        <th>#</th>
-                        <th>Account Code</th>
-                        <th>Account Name</th>
-                        <th>Account Type</th>
-                        <th>Category</th>
-                        <th>Description</th>
-                        <!-- <th>Balance</th> -->
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($accounts as $account)
-                        <tr>
-                            <td class="text-center">{{ $loop->iteration }}</td>
-                            <td>{{ $account->account_code }}</td>
-                            <td>{{ $account->account_name }}</td>
-                            <td>{{ $account->account_type }}</td>
-                            <td>{{ $account->category }}</td>
-                            <td>{{ $account->description ?? '-' }}</td>
-                            <!-- <td class="text-end">₱{{ number_format($account->balance, 2) }}</td> -->
-                            <td class="text-center">
-                                <div class="d-flex justify-content-center align-items-center gap-2">
-                                    <!-- Edit -->
-                                    <a href="#" class="text-primary" title="Edit" data-bs-toggle="modal" data-bs-target="#editModal{{ $account->id }}">
-                                        <i class="fe fe-edit fe-18"></i>
-                                    </a>
-                                    <!-- Delete -->
-                                    <!-- <form action="{{ route('chart.destroy', $account->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this account?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-link text-danger p-0 m-0" title="Delete">
-                                            <i class="fe fe-trash fe-18"></i>
-                                        </button>
-                                    </form> -->
-                                </div>
-                            </td>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle">
+                    <thead>
+                        <tr class="text-center">
+                            <th>#</th>
+                            <th>Account Code</th>
+                            <th>Account Name</th>
+                            <th>Account Type</th>
+                            <th>Category</th>
+                            <th>Description</th>
+                            <!-- <th>Balance</th> -->
+                            <th class="fms-actions">Action</th>
                         </tr>
-                    @empty
-                        <tr>
-                            <td colspan="8" class="text-center text-muted py-3">
-                                <i class="fe fe-info me-2"></i> No accounts found.
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @forelse($accounts as $account)
+                            <tr>
+                                <td class="text-center">{{ $loop->iteration }}</td>
+                                <td>{{ $account->account_code }}</td>
+                                <td>{{ $account->account_name }}</td>
+                                <td>{{ $account->account_type }}</td>
+                                <td>{{ $account->category }}</td>
+                                <td>{{ $account->description ?? '-' }}</td>
+                                <!-- <td class="text-end">₱{{ number_format($account->balance, 2) }}</td> -->
+                                <td class="fms-actions">
+                                    <div class="fms-action-group">
+                                        <!-- Edit -->
+                                        <a href="#" class="text-primary" title="Edit" data-bs-toggle="modal" data-bs-target="#editModal{{ $account->id }}">
+                                            <i class="fe fe-edit fe-18"></i>
+                                        </a>
+                                        <!-- Delete -->
+                                        <!-- <form action="{{ route('chart.destroy', $account->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this account?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-link text-danger p-0 m-0" title="Delete">
+                                                <i class="fe fe-trash fe-18"></i>
+                                            </button>
+                                        </form> -->
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="8" class="text-center text-muted py-3">
+                                    <i class="fe fe-info me-2"></i> No accounts found.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
 
             <div class="mt-3">
                 <h6 class="fw-semibold">Totals</h6>

@@ -237,16 +237,49 @@ body.vertical {
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
   max-width: 100%;
-  margin-bottom: 0;
 }
 
+/* Ensure tables keep enough width to avoid squeezing action buttons off-screen */
 .main-content .table-responsive .table {
-  margin-bottom: 0;
-}
-
-.main-content .table {
+  min-width: 900px;
   margin-bottom: 0;
   font-size: 0.9rem;
+}
+
+/* Action column: sticky on the right + never wrap buttons */
+.main-content .table th.fms-actions,
+.main-content .table td.fms-actions {
+  position: sticky;
+  right: 0;
+  z-index: 2;
+  background: var(--fms-page-bg);
+  white-space: nowrap;
+  text-align: center;
+  min-width: 8.5rem;
+}
+
+.main-content .table thead th.fms-actions {
+  z-index: 3;
+}
+
+/* Keep action buttons visible and evenly spaced */
+.main-content .fms-actions .fms-action-group {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: nowrap;
+}
+
+/* Icon-only action buttons (optional pattern) */
+.main-content .btn.fms-icon-btn {
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
 }
 
 .main-content .table thead th {

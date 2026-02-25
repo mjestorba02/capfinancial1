@@ -57,56 +57,60 @@
         <div class="card shadow">
             <div class="card-body">
                 <h5 class="mb-3">Overtime Requests List</h5>
-                <table class="table table-bordered table-hover align-middle">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Employee</th>
-                            <th>Date</th>
-                            <th>Start</th>
-                            <th>End</th>
-                            <th>Reason</th>
-                            <th>Status</th>
-                            <th class="text-center">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($requests as $req)
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover align-middle">
+                        <thead>
                             <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td>{{ $req->employee->name }}</td>
-                                <td>{{ $req->date }}</td>
-                                <td>{{ $req->start_time }}</td>
-                                <td>{{ $req->end_time }}</td>
-                                <td>{{ $req->reason ?? '—' }}</td>
-                                <td>
-                                    <span class="badge
-                                        @if($req->status === 'Pending') bg-warning
-                                        @elseif($req->status === 'Approved') bg-success
-                                        @else bg-danger @endif">
-                                        {{ $req->status }}
-                                    </span>
-                                </td>
-                                <td class="text-center">
-                                    @if($req->status === 'Pending')
-                                        <button class="btn btn-success btn-sm"
-                                            onclick="openModal({{ $req->id }}, 'Approved')">
-                                            Approve
-                                        </button>
-                                        <button class="btn btn-warning btn-sm"
-                                            onclick="openModal({{ $req->id }}, 'Denied')">
-                                            Deny
-                                        </button>
-                                    @elseif(in_array($req->status, ['Approved', 'Denied']))
-                                        -
-                                    @endif
-                                </td>
+                                <th>#</th>
+                                <th>Employee</th>
+                                <th>Date</th>
+                                <th>Start</th>
+                                <th>End</th>
+                                <th>Reason</th>
+                                <th>Status</th>
+                                <th class="fms-actions">Action</th>
                             </tr>
-                        @empty
-                            <tr><td colspan="8" class="text-center text-muted">No overtime requests yet.</td></tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            @forelse($requests as $req)
+                                <tr>
+                                    <td>{{ $loop->iteration }}</td>
+                                    <td>{{ $req->employee->name }}</td>
+                                    <td>{{ $req->date }}</td>
+                                    <td>{{ $req->start_time }}</td>
+                                    <td>{{ $req->end_time }}</td>
+                                    <td>{{ $req->reason ?? '—' }}</td>
+                                    <td>
+                                        <span class="badge
+                                            @if($req->status === 'Pending') bg-warning
+                                            @elseif($req->status === 'Approved') bg-success
+                                            @else bg-danger @endif">
+                                            {{ $req->status }}
+                                        </span>
+                                    </td>
+                                    <td class="fms-actions">
+                                        <div class="fms-action-group">
+                                            @if($req->status === 'Pending')
+                                                <button class="btn btn-success btn-sm"
+                                                    onclick="openModal({{ $req->id }}, 'Approved')">
+                                                    Approve
+                                                </button>
+                                                <button class="btn btn-warning btn-sm"
+                                                    onclick="openModal({{ $req->id }}, 'Denied')">
+                                                    Deny
+                                                </button>
+                                            @elseif(in_array($req->status, ['Approved', 'Denied']))
+                                                -
+                                            @endif
+                                        </div>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr><td colspan="8" class="text-center text-muted">No overtime requests yet.</td></tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

@@ -38,7 +38,7 @@
                                     <th>Approved Amount</th>
                                     <th>Used</th>
                                     <th>Remaining</th>
-                                    <th>Action</th>
+                                    <th class="fms-actions">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -53,14 +53,16 @@
                                     <td>₱{{ number_format($req->amount, 2) }}</td>
                                     <td>₱{{ number_format($used, 2) }}</td>
                                     <td>₱{{ number_format($remaining, 2) }}</td>
-                                    <td>
-                                        @if($remaining > 0)
-                                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#orderModal{{ $req->id }}">
-                                                Order Material
-                                            </button>
-                                        @else
-                                            <span class="text-muted small">Budget fully used</span>
-                                        @endif
+                                    <td class="fms-actions">
+                                        <div class="fms-action-group">
+                                            @if($remaining > 0)
+                                                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#orderModal{{ $req->id }}">
+                                                    Order Material
+                                                </button>
+                                            @else
+                                                <span class="text-muted small">Budget fully used</span>
+                                            @endif
+                                        </div>
                                     </td>
                                 </tr>
                                 @endforeach
