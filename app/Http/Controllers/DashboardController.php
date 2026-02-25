@@ -9,6 +9,8 @@ use App\Models\BudgetRequest;
 use App\Models\Payable;
 use App\Models\Disbursement;
 use App\Models\Allocation;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
@@ -39,9 +41,21 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
-        // --- Budget Allocation by Department (uses 'used' column per your model) ---
+        // --- Budget Allocation by Department (per-department monthly cap) ---
         $budgetAllocations = Allocation::select('id','department','allocated','used','project','budget_request_id')
             ->get();
+
+        // For the dashboard summary/progress, we show how much each department
+        // has been allocated this month against a fixed per-department cap.
+        $monthStart = Carbon::now()->startOfMonth();
+        $monthEnd = Carbon::now()->endOfMonth();
+
+        $departmentMonthlyUsage = Allocation::select('department', DB::raw('SUM(allocated) as total_allocated'))
+            ->whereBetween('created_at', [$monthStart, $monthEnd])
+            ->groupBy('department')
+            ->pluck('total_allocated', 'department');
+
+        $monthlyLimit = 50000;
 
         // --- Analytics: Cash flow breakdown (for pie chart) ---
         $flowBreakdown = [
@@ -103,6 +117,8 @@ class DashboardController extends Controller
             'recentBudgetRequests',
             'recentPayables',
             'budgetAllocations',
+            'departmentMonthlyUsage',
+            'monthlyLimit',
             'flowBreakdown',
             'budgetByStatus',
             'monthlyData',

@@ -169,18 +169,21 @@
             </div>
         </div>
 
-        {{-- Budget Allocation Progress --}}
+        {{-- Budget Allocation Progress (per-department monthly cap) --}}
         <div class="card shadow mb-4">
             <div class="card-body">
                 <h5 class="mb-3">Budget Allocation by Department</h5>
-                @forelse($budgetAllocations as $allocation)
+                @php
+                    $deptLimit = $monthlyLimit ?? 50000;
+                @endphp
+                @forelse($departmentMonthlyUsage ?? [] as $dept => $totalAllocated)
                     @php
-                        $percentage = $allocation->allocated > 0 
-                            ? round(($allocation->used / $allocation->allocated) * 100, 2)
+                        $percentage = $deptLimit > 0
+                            ? min(100, round(($totalAllocated / $deptLimit) * 100, 2))
                             : 0;
                     @endphp
                     <div class="mb-2">
-                        <strong>{{ $allocation->department }}</strong>
+                        <strong>{{ $dept }}</strong>
                         <div class="progress" style="height: 20px;">
                             <div class="progress-bar bg-info" 
                                 role="progressbar"
@@ -191,10 +194,10 @@
                                 {{ $percentage }}%
                             </div>
                         </div>
-                        <small>₱{{ number_format($allocation->used, 2) }} of ₱{{ number_format($allocation->allocated, 2) }}</small>
+                        <small>₱{{ number_format($totalAllocated, 2) }} of ₱{{ number_format($deptLimit, 2) }} (per department cap)</small>
                     </div>
                 @empty
-                    <p class="text-muted">No budget allocation data available.</p>
+                    <p class="text-muted">No budget allocation data available for this month.</p>
                 @endforelse
             </div>
         </div>
