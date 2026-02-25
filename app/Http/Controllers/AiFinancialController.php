@@ -263,6 +263,13 @@ class AiFinancialController extends Controller
             $raw = trim($raw);
         }
 
+        // Normalise common smart quotes and line endings that often break JSON
+        $raw = str_replace(
+            ['“', '”', '’', '‘', "\r\n", "\r"],
+            ['"', '"', "'", "'", "\n", "\n"],
+            $raw
+        );
+
         // First attempt: decode whole string
         $decoded = json_decode($raw, true);
         if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
@@ -275,7 +282,16 @@ class AiFinancialController extends Controller
 
         if ($start !== false && $end !== false && $end > $start) {
             $json = substr($raw, $start, $end - $start + 1);
+
+            // Try raw slice first
             $decoded = json_decode($json, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                return $decoded;
+            }
+
+            // Last‑chance repair: remove trailing commas before ] or }
+            $repaired = preg_replace('/,\s*([}\]])/', '$1', $json);
+            $decoded = json_decode($repaired, true);
             if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
                 return $decoded;
             }
