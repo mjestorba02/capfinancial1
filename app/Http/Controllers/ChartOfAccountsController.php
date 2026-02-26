@@ -36,6 +36,16 @@ class ChartOfAccountsController extends Controller
         return redirect()->back()->with('success', 'Account Added Successfully.');
     }
 
+    /**
+     * Show receipt for an account (system-generated if none exists).
+     */
+    public function receipt($id)
+    {
+        $account = ChartOfAccount::findOrFail($id);
+        $receiptNumber = 'COA-' . $account->account_code . '-' . str_pad((string) $account->id, 4, '0', STR_PAD_LEFT);
+        return view('finance.chart_of_account_receipt', compact('account', 'receiptNumber'));
+    }
+
     // Fetch single account
     public function show($id)
     {

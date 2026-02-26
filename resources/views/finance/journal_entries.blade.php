@@ -66,19 +66,12 @@
                                 <td>{{ \Carbon\Carbon::parse($journal->entry_date)->format('Y-m-d') }}</td>
                                 <td class="fms-actions">
                                     <div class="fms-action-group">
-                                        <!-- Edit -->
-                                        <a href="#" data-bs-toggle="modal" data-bs-target="#editModal{{ $journal->id }}" class="text-primary">
+                                        <a href="{{ route('journal_entries.receipt', $journal->id) }}" class="btn btn-sm fms-icon-btn" title="View Receipt" target="_blank">
+                                            <i class="fe fe-file-text fe-18"></i>
+                                        </a>
+                                        <a href="#" data-bs-toggle="modal" data-bs-target="#editModal{{ $journal->id }}" class="text-primary" title="Edit">
                                             <i class="fe fe-edit fe-18"></i>
                                         </a>
-
-                                        <!-- Delete -->
-                                        <!-- <form action="{{ route('journal_entries.destroy', $journal->id) }}" method="POST" onsubmit="return confirm('Delete this journal entry?')" class="d-inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="bg-transparent border-0 text-danger p-0">
-                                                <i class="fe fe-trash fe-18"></i>
-                                            </button>
-                                        </form> -->
                                     </div>
                                 </td>
                             </tr>

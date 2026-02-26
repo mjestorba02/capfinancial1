@@ -34,6 +34,16 @@ class JournalEntryController extends Controller
     }
 
     /**
+     * Show receipt for a journal entry (system-generated if none exists).
+     */
+    public function receipt($id)
+    {
+        $journal = JournalEntry::findOrFail($id);
+        $receiptNumber = 'JE-' . str_pad((string) $journal->id, 5, '0', STR_PAD_LEFT);
+        return view('finance.journal_entry_receipt', compact('journal', 'receiptNumber'));
+    }
+
+    /**
      * Store a newly created journal entry.
      */
     public function store(Request $request)

@@ -140,11 +140,13 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/budget_requests/{id}/admin-reject', [BudgetRequestController::class, 'adminReject'])->name('budget_requests.admin_reject');
 
         Route::get('/chart-of-accounts', [ChartOfAccountsController::class, 'index'])->name('chart.index');
+        Route::get('/chart-of-accounts/{id}/receipt', [ChartOfAccountsController::class, 'receipt'])->name('chart.receipt');
         Route::get('/chart-of-accounts/{id}', [ChartOfAccountsController::class, 'show'])->name('chart.show');
         Route::post('/chart-of-accounts', [ChartOfAccountsController::class, 'store'])->name('chart.store');
         Route::put('/chart-of-accounts/{id}', [ChartOfAccountsController::class, 'update'])->name('chart.update');
         Route::delete('/chart-of-accounts/{id}', [ChartOfAccountsController::class, 'destroy'])->name('chart.destroy');
 
+        Route::get('/journal_entries/{id}/receipt', [JournalEntryController::class, 'receipt'])->name('journal_entries.receipt');
         Route::resource('journal_entries', JournalEntryController::class);
 
         Route::get('/accounts', [AccountsController::class, 'index'])->name('accounts.index');

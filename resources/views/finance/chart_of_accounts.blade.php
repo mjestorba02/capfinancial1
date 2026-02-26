@@ -46,18 +46,12 @@
                                 <!-- <td class="text-end">₱{{ number_format($account->balance, 2) }}</td> -->
                                 <td class="fms-actions">
                                     <div class="fms-action-group">
-                                        <!-- Edit -->
+                                        <a href="{{ route('chart.receipt', $account->id) }}" class="btn btn-sm fms-icon-btn" title="View Receipt" target="_blank">
+                                            <i class="fe fe-file-text fe-18"></i>
+                                        </a>
                                         <button type="button" class="btn btn-sm fms-icon-btn" title="Edit" data-bs-toggle="modal" data-bs-target="#editModal{{ $account->id }}">
                                             <i class="fe fe-edit fe-18"></i>
                                         </button>
-                                        <!-- Delete -->
-                                        <!-- <form action="{{ route('chart.destroy', $account->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this account?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-link text-danger p-0 m-0" title="Delete">
-                                                <i class="fe fe-trash fe-18"></i>
-                                            </button>
-                                        </form> -->
                                     </div>
                                 </td>
                             </tr>
