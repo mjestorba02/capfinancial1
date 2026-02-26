@@ -157,16 +157,23 @@
                                             <button type="submit" class="btn btn-sm btn-outline-success" title="Approve directly">Approve</button>
                                         </form>
                                     @endif
-                                    <!-- Upload Image -->
-                                    <a href="#" data-bs-toggle="modal" data-bs-target="#imageModal{{ $req->id }}" 
-                                    title="Upload Image" class="text-warning text-decoration-none">
+                                    <!-- Upload / Manage Image -->
+                                    <button type="button"
+                                        class="btn btn-sm fms-icon-btn"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#imageModal{{ $req->id }}"
+                                        title="Upload or Manage Image">
                                         <i class="fe fe-image fe-18"></i>
-                                    </a>
-                                    <!-- Edit -->
-                                    <a href="#" data-bs-toggle="modal" data-bs-target="#editModal{{ $req->id }}" 
-                                    title="Edit" class="text-white text-decoration-none">
+                                    </button>
+
+                                    <!-- Edit Request -->
+                                    <button type="button"
+                                        class="btn btn-sm fms-icon-btn"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#editModal{{ $req->id }}"
+                                        title="Edit">
                                         <i class="fe fe-edit fe-18"></i>
-                                    </a>
+                                    </button>
                                 </div>
                             </td>
                         </tr>

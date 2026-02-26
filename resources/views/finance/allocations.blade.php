@@ -125,17 +125,23 @@
                                 <td>{{ optional($a->created_at)->format('Y-m-d') }}</td>
                                 <td class="fms-actions">
                                     <div class="fms-action-group">
-                                        <!-- Calculate Used Icon -->
-                                        <a href="#" data-bs-toggle="modal" data-bs-target="#calculateUsedModal{{ $a->id }}" 
-                                        title="Calculate Used" class="text-white text-decoration-none">
+                                        <!-- Calculate Used -->
+                                        <button type="button"
+                                            class="btn btn-sm fms-icon-btn"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#calculateUsedModal{{ $a->id }}"
+                                            title="Calculate Used">
                                             <i class="fe fe-bar-chart-2 fe-18"></i>
-                                        </a>
+                                        </button>
 
-                                        <!-- Edit Icon -->
-                                        <a href="#" data-bs-toggle="modal" data-bs-target="#editAllocationModal{{ $a->id }}" 
-                                        title="Edit" class="text-white text-decoration-none">
+                                        <!-- Edit Allocation -->
+                                        <button type="button"
+                                            class="btn btn-sm fms-icon-btn"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#editAllocationModal{{ $a->id }}"
+                                            title="Edit">
                                             <i class="fe fe-edit fe-18"></i>
-                                        </a>
+                                        </button>
 
                                         <!-- Delete Icon -->
                                         <!-- <form action="{{ route('finance.allocations.destroy', $a->id) }}" method="POST" class="d-inline"
