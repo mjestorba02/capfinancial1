@@ -47,9 +47,9 @@
                                 <td class="fms-actions">
                                     <div class="fms-action-group">
                                         <!-- Edit -->
-                                        <a href="#" class="text-primary" title="Edit" data-bs-toggle="modal" data-bs-target="#editModal{{ $account->id }}">
+                                        <button type="button" class="btn btn-sm fms-icon-btn" title="Edit" data-bs-toggle="modal" data-bs-target="#editModal{{ $account->id }}">
                                             <i class="fe fe-edit fe-18"></i>
-                                        </a>
+                                        </button>
                                         <!-- Delete -->
                                         <!-- <form action="{{ route('chart.destroy', $account->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this account?')">
                                             @csrf
@@ -72,7 +72,7 @@
                 </table>
             </div>
 
-            <div class="mt-3">
+            <div class="mt-3 fms-totals-block">
                 <h6 class="fw-semibold">Totals</h6>
                 <p class="mb-1">Total Assets: <strong>₱{{ number_format($totalAssets, 2) }}</strong></p>
                 <p class="mb-1">Total Liabilities: <strong>₱{{ number_format($totalLiabilities, 2) }}</strong></p>
