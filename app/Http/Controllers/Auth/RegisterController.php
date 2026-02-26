@@ -76,6 +76,16 @@ class RegisterController extends Controller
                 Rule::unique('employees'),
             ],
             'position' => ['required', 'string', 'in:Employee,Admin,HR'],
+            'department' => [
+                'nullable',
+                'string',
+                'required_if:position,Employee',
+                Rule::in([
+                    'IT/Technical Department',
+                    'Logistics / Operations Department',
+                    'Marketing Department',
+                ]),
+            ],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
     }
@@ -109,6 +119,7 @@ class RegisterController extends Controller
         return Employee::create([
             'name' => $data['name'],
             'email' => $data['email'],
+            'department' => $data['department'] ?? null,
             
             'approval_status' => 'pending',
             'password' => Hash::make($data['password']),

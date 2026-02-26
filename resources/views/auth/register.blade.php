@@ -37,7 +37,17 @@
                     <option value="HR">HR</option>
                 </select>
             </div>
-          
+
+            <div class="form-group mb-3" id="department-group" style="display: none;">
+                <label for="department" class="sr-only">Department</label>
+                <select name="department" id="department" class="form-control form-control-lg">
+                    <option value="">Select Department</option>
+                    <option value="IT/Technical Department">IT/Technical Department</option>
+                    <option value="Logistics / Operations Department">Logistics / Operations Department</option>
+                    <option value="Marketing Department">Marketing Department</option>
+                </select>
+            </div>
+
             <div class="form-group mb-3">
                 <label for="password" class="sr-only">Password</label>
                 <input type="password" name="password" id="password" class="form-control form-control-lg" placeholder="Password" required>
@@ -54,4 +64,32 @@
         </form>
     </div>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var positionSelect = document.getElementById('position');
+        var departmentGroup = document.getElementById('department-group');
+        var departmentSelect = document.getElementById('department');
+
+        function toggleDepartment() {
+            if (positionSelect && positionSelect.value === 'Employee') {
+                departmentGroup.style.display = 'block';
+                departmentSelect.setAttribute('required', 'required');
+            } else {
+                departmentGroup.style.display = 'none';
+                departmentSelect.removeAttribute('required');
+                if (departmentSelect) {
+                    departmentSelect.value = '';
+                }
+            }
+        }
+
+        if (positionSelect && departmentGroup && departmentSelect) {
+            positionSelect.addEventListener('change', toggleDepartment);
+            toggleDepartment();
+        }
+    });
+</script>
 @endsection
