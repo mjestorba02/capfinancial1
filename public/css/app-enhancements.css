@@ -250,8 +250,9 @@ body.vertical {
   margin-bottom: 0.5rem;
 }
 .main-content .fms-totals-block p {
-  color: var(--fms-text-muted);
+  color: var(--fms-heading-color);
   margin-bottom: 0.25rem;
+  font-weight: 500;
 }
 .main-content .fms-totals-block strong {
   color: var(--fms-heading-color);
