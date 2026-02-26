@@ -58,6 +58,13 @@ Route::get('/', function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
+    // Terms & Conditions acknowledgement (admin / HR users)
+    Route::post('/accept-terms', function (\Illuminate\Http\Request $request) {
+        $request->session()->put('terms_accepted', true);
+
+        return response()->json(['status' => 'ok']);
+    })->name('terms.accept');
+
     // Audit Trail (Admin & HR)
     Route::get('/audit-trails', [AuditTrailController::class, 'index'])->name('audit_trails.index');
 
@@ -169,6 +176,13 @@ Route::prefix('employee')->group(function () {
     Route::get('/login/otp', [EmployeeAuthController::class, 'showOtpForm'])->name('employee.login.otp.form');
     Route::post('/login/otp', [EmployeeAuthController::class, 'verifyOtp'])->name('employee.login.otp.verify');
     Route::post('/logout', [EmployeeAuthController::class, 'logout'])->name('employee.logout');
+
+    // Terms & Conditions acknowledgement (employee portal users)
+    Route::post('/accept-terms', function (\Illuminate\Http\Request $request) {
+        $request->session()->put('employee_terms_accepted', true);
+
+        return response()->json(['status' => 'ok']);
+    })->name('employee.terms.accept');
 
     Route::get('/dashboard', [EmployeeBudgetController::class, 'index'])->name('employee.dashboard');
     Route::get('/budget-requests', [EmployeeBudgetController::class, 'budgetRequests'])->name('employee.budget.requests');

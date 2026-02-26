@@ -153,6 +153,65 @@
         </main>
     </div>
 
+    @if(session()->has('employee_id'))
+    <!-- Terms & Conditions Modal (Employee Portal) -->
+    <div class="modal fade" id="employeeTermsModal" tabindex="-1" aria-labelledby="employeeTermsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="employeeTermsModalLabel">Financial Management System - Employee Portal Terms &amp; Conditions</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="small text-muted mb-3">
+                        Please read these Terms &amp; Conditions carefully. By using the Employee Portal you confirm that you understand and agree to them.
+                    </p>
+
+                    <ul class="small ps-3">
+                        <li class="mb-1">
+                            <strong>Authorised Use Only</strong> – This portal is provided for employees to view and manage
+                            information related to budgets, payments, and other work activities. You must not share your access
+                            or use the portal for any unauthorised purpose.
+                        </li>
+                        <li class="mb-1">
+                            <strong>Accuracy of Information</strong> – You are responsible for the accuracy of any information
+                            you submit (such as budget requests or payment details) and must review your entries before
+                            submitting.
+                        </li>
+                        <li class="mb-1">
+                            <strong>Confidentiality</strong> – Information displayed in this portal may include confidential
+                            financial or HR data. You must not disclose, copy, or share this information with anyone who is
+                            not authorised to receive it.
+                        </li>
+                        <li class="mb-1">
+                            <strong>Compliance &amp; Conduct</strong> – You agree to follow all company policies, employment
+                            rules, and applicable laws while using this portal. Misuse of the system may result in
+                            disciplinary action.
+                        </li>
+                        <li class="mb-1">
+                            <strong>Monitoring &amp; Audit</strong> – Your activity in this portal may be logged and reviewed
+                            for security and compliance purposes.
+                        </li>
+                        <li class="mb-1">
+                            <strong>Security</strong> – Keep your credentials secure, do not leave the portal unattended on a
+                            shared device, and always log out when you are finished.
+                        </li>
+                    </ul>
+
+                    <p class="small mt-3 mb-0">
+                        If you do not agree with these Terms &amp; Conditions, you must not use this portal and should contact
+                        HR or the system administrator immediately.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary btn-sm" id="employeeAcceptTermsButton">I Have Read &amp; Agree</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
     <!-- Scripts (same as admin for theme switcher and sidebar) -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -160,6 +219,43 @@
     <script src="{{ asset('js/tinycolor-min.js') }}"></script>
     <script src="{{ asset('js/config.js') }}"></script>
     <script src="{{ asset('js/apps.js') }}"></script>
+
+    @if(session()->has('employee_id'))
+    <script>
+        (function () {
+            var hasAccepted = {{ session('employee_terms_accepted') ? 'true' : 'false' }};
+
+            if (!hasAccepted) {
+                document.addEventListener('DOMContentLoaded', function () {
+                    var modalEl = document.getElementById('employeeTermsModal');
+                    if (!modalEl || !window.bootstrap) return;
+
+                    var termsModal = new bootstrap.Modal(modalEl);
+                    termsModal.show();
+
+                    var acceptBtn = document.getElementById('employeeAcceptTermsButton');
+                    if (acceptBtn) {
+                        acceptBtn.addEventListener('click', function () {
+                            $.ajax({
+                                url: '{{ route('employee.terms.accept') }}',
+                                type: 'POST',
+                                data: {
+                                    _token: document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                },
+                                success: function () {
+                                    var instance = bootstrap.Modal.getInstance(modalEl);
+                                    if (instance) {
+                                        instance.hide();
+                                    }
+                                }
+                            });
+                        });
+                    }
+                });
+            }
+        })();
+    </script>
+    @endif
 
     @yield('scripts')
 </body>

@@ -267,6 +267,77 @@
         </main>
     </div>
 
+    @if(Auth::check())
+    <!-- Terms & Conditions Modal (Admin / HR / Finance users) -->
+    <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="termsModalLabel">Financial Management System - Terms &amp; Conditions</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="small text-muted mb-3">
+                        Please read these Terms &amp; Conditions carefully. By continuing to use this system you confirm that you understand and agree to them.
+                    </p>
+
+                    <ul class="small ps-3">
+                        <li class="mb-1">
+                            <strong>Authorised Use Only</strong> – This Financial Management System is for authorised users and
+                            official company purposes only. You must not share your login or allow others to access the system
+                            on your behalf.
+                        </li>
+                        <li class="mb-1">
+                            <strong>Accuracy of Data</strong> – You are responsible for ensuring that all information you enter,
+                            approve, or export (including collections, disbursements, budgets and HR records) is accurate,
+                            complete, and up to date to the best of your knowledge.
+                        </li>
+                        <li class="mb-1">
+                            <strong>Confidentiality</strong> – Financial and HR information in this system is confidential.
+                            You must not disclose, copy, download, or use any data for personal purposes or share it with
+                            unauthorised persons.
+                        </li>
+                        <li class="mb-1">
+                            <strong>Compliance</strong> – You agree to use this system in line with all applicable company
+                            policies, employment rules, and relevant laws and regulations (including data protection and
+                            financial reporting requirements).
+                        </li>
+                        <li class="mb-1">
+                            <strong>Monitoring &amp; Audit</strong> – All activity in this system may be logged and reviewed
+                            for security, compliance, and audit purposes. Misuse may lead to disciplinary action and/or legal
+                            consequences.
+                        </li>
+                        <li class="mb-1">
+                            <strong>Security</strong> – You must keep your credentials secure, log out when finished, and
+                            promptly report any suspected unauthorised access, data breach, or unusual activity to the system
+                            administrator or HR.
+                        </li>
+                        <li class="mb-1">
+                            <strong>System Output</strong> – Reports, analytics, and AI-generated insights are decision-support
+                            tools only and do not replace professional judgement. The organisation is not liable for decisions
+                            made solely on automated outputs without appropriate review.
+                        </li>
+                        <li class="mb-1">
+                            <strong>Changes to Terms</strong> – These Terms &amp; Conditions may be updated from time to time.
+                            Continued use of the system after changes are published will constitute your acceptance of the
+                            updated terms.
+                        </li>
+                    </ul>
+
+                    <p class="small mt-3 mb-0">
+                        If you do not agree with these Terms &amp; Conditions, you must not use this system and should contact
+                        your line manager or the system administrator immediately.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary btn-sm" id="acceptTermsButton">I Have Read &amp; Agree</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -296,6 +367,43 @@
     <script src="{{ asset('js/fullcalendar.custom.js') }}"></script>
     <script src="{{ asset('js/apps.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/js/select2.min.js"></script>
+
+    @if(Auth::check())
+    <script>
+        (function () {
+            var hasAccepted = {{ session('terms_accepted') ? 'true' : 'false' }};
+
+            if (!hasAccepted) {
+                document.addEventListener('DOMContentLoaded', function () {
+                    var modalEl = document.getElementById('termsModal');
+                    if (!modalEl || !window.bootstrap) return;
+
+                    var termsModal = new bootstrap.Modal(modalEl);
+                    termsModal.show();
+
+                    var acceptBtn = document.getElementById('acceptTermsButton');
+                    if (acceptBtn) {
+                        acceptBtn.addEventListener('click', function () {
+                            $.ajax({
+                                url: '{{ route('terms.accept') }}',
+                                type: 'POST',
+                                data: {
+                                    _token: document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                },
+                                success: function () {
+                                    var instance = bootstrap.Modal.getInstance(modalEl);
+                                    if (instance) {
+                                        instance.hide();
+                                    }
+                                }
+                            });
+                        });
+                    }
+                });
+            }
+        })();
+    </script>
+    @endif
 
     @yield('scripts')
 </body>
