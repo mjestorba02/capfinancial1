@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Session;
 use App\Models\Collection;
 use App\Models\Employee;
 use App\Models\Payable;
+use App\Models\JournalEntry;
+use Carbon\Carbon;
 use Illuminate\Support\Str;
 use PDF;
 use App\Services\AuditTrailService;
@@ -238,6 +240,37 @@ class EmployeeBudgetController extends Controller
         return redirect()
             ->route('employee.payment.receipt', $collection->id)
             ->with('success', 'Payment saved and receipt generated successfully.');
+    }
+
+    // Journal Entry Automation
+    private function createJournalEntries($collection)
+    {
+        $amount = $collection->amount_paid ?: $collection->amount_due;
+        $today = Carbon::now()->toDateString();
+
+        // Debit: Cash / Bank
+        JournalEntry::create([
+            'account' => 'Cash',
+            'type' => 'Debit',
+            'debit' => $amount,
+            'credit' => 0,
+            'description' => 'Collection received from ' . $collection->customer_name,
+            'entry_date' => $today,
+            'source_module' => 'Collections',
+            'reference_id' => $collection->id,
+        ]);
+
+        // Credit: Accounts Receivable
+        JournalEntry::create([
+            'account' => 'Accounts Receivable',
+            'type' => 'Credit',
+            'debit' => 0,
+            'credit' => $amount,
+            'description' => 'Collection payment recorded for ' . $collection->customer_name,
+            'entry_date' => $today,
+            'source_module' => 'Collections',
+            'reference_id' => $collection->id,
+        ]);
     }
 
     /**

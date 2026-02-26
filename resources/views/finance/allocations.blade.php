@@ -9,9 +9,7 @@
             <h2 class="fw-bold text-primary mb-0">Budget Allocation</h2>
             <p class="text-muted mb-0">Plan, allocate, and track your budgets.</p>
         </div>
-        <button class="btn btn-indigo text-white btn-primary" data-bs-toggle="modal" data-bs-target="#addAllocationModal">
-            <i class="bi bi-plus-lg me-1"></i> New Allocation
-        </button>
+        
     </div>
 
 {{-- flash --}}
