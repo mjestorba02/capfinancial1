@@ -7,17 +7,22 @@ use Illuminate\Http\Request;
 
 class ChartOfAccountsController extends Controller
 {
-    // Display all accounts
+    // Display all accounts with computed totals
     public function index()
     {
         $accounts = ChartOfAccount::orderBy('account_code')->get();
 
-        // Calculate totals
-        $totalAssets = $accounts->where('category', 'like', '%Asset%')->sum('balance');
-        $totalLiabilities = $accounts->where('category', 'like', '%Liabil%')->sum('balance');
-        $totalEquity = $accounts->where('category', 'like', '%Equity%')->sum('balance');
+        // Calculate totals based on account type so it works consistently
+        $totalAssets = $accounts->where('account_type', 'Asset')->sum('balance');
+        $totalLiabilities = $accounts->where('account_type', 'Liability')->sum('balance');
+        $totalEquity = $accounts->where('account_type', 'Equity')->sum('balance');
 
-        return view('finance.chart_of_accounts', compact('accounts', 'totalAssets', 'totalLiabilities', 'totalEquity'));
+        return view('finance.chart_of_accounts', compact(
+            'accounts',
+            'totalAssets',
+            'totalLiabilities',
+            'totalEquity'
+        ));
     }
 
     // Store new account
