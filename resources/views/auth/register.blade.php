@@ -38,7 +38,7 @@
                 </select>
             </div>
 
-            <div class="form-group mb-3" id="department-group" style="display: none;">
+            <div class="form-group mb-3" id="department-group">
                 <label for="department" class="sr-only">Department</label>
                 <select name="department" id="department" class="form-control form-control-lg">
                     <option value="">Select Department</option>
