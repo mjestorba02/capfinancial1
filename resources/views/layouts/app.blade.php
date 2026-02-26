@@ -243,18 +243,20 @@
                     </li>
                 </ul>
 
-                <p class="text-muted nav-heading mt-4 mb-1">
-                    <span>AI Assistant</span>
-                </p>
-                <ul class="navbar-nav flex-fill w-100 mb-2">
-                    <li class="nav-item mb-3">
-                        <a href="{{ route('ai.financial_intelligence.index') }}"
-                        class="nav-link {{ Request::routeIs('ai.financial_intelligence.*') ? 'active' : '' }}">
-                            <i class="fe fe-zap fe-16"></i>
-                            <span class="ml-3 item-text">AI Financial Intelligence</span>
-                        </a>
-                    </li>
-                </ul>
+                @if(Auth::user() && Auth::user()->isAdmin())
+                    <p class="text-muted nav-heading mt-4 mb-1">
+                        <span>AI Assistant</span>
+                    </p>
+                    <ul class="navbar-nav flex-fill w-100 mb-2">
+                        <li class="nav-item mb-3">
+                            <a href="{{ route('ai.financial_intelligence.index') }}"
+                            class="nav-link {{ Request::routeIs('ai.financial_intelligence.*') ? 'active' : '' }}">
+                                <i class="fe fe-zap fe-16"></i>
+                                <span class="ml-3 item-text">AI Financial Intelligence</span>
+                            </a>
+                        </li>
+                    </ul>
+                @endif
             </nav>
         </aside>
 

@@ -42,7 +42,7 @@
                             <td>
                                 @php
                                     $badgeClass = match($item->status) {
-                                        'Released' => 'success',
+                                        'Released', 'Approved' => 'success',
                                         'Pending' => 'warning',
                                         'Cancelled' => 'danger',
                                         default => 'secondary',
