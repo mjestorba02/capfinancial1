@@ -15,7 +15,7 @@
                 <div>
                     <a href="{{ route('employee.budget.requests') }}" class="btn btn-primary btn-sm me-2">Budget Requests</a>
                     <a href="{{ route('employee.budget') }}" class="btn btn-outline-primary btn-sm me-2">Budget</a>
-                    <a href="{{ route('employee.payment.portal') }}" class="btn btn-outline-primary btn-sm">Payment Portal</a>
+                  
                 </div>
             </div>
 

@@ -57,9 +57,7 @@
                         Run Analysis Again
                     </button>
                 </div>
-                <p class="text-muted small mb-2">
-                    This analysis is generated locally in your browser based on the payment records in the table above. No external AI API is called.
-                </p>
+                
                 <div class="border rounded p-3 bg-light" id="ai-analysis-text">
                     Loading analysis based on your current payment data...
                 </div>

@@ -70,9 +70,7 @@
                     This is a system-generated receipt for your payment record.
                 </p>
             </div>
-            <div class="card-footer d-flex justify-content-between">
-                <a href="{{ route('employee.payment.portal') }}" class="btn btn-secondary btn-sm">Back to Payment Portal</a>
-            </div>
+            
         </div>
     </div>
 </div>
