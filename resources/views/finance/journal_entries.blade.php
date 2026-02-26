@@ -10,6 +10,10 @@
             <h2 class="fw-bold text-primary mb-0">Journal Entries</h2>
             <p class="text-muted mb-0">Manage and track accounting journal entries.</p>
         </div>
+        <div class="d-flex gap-2">
+            <a class="btn btn-outline-secondary btn-sm" href="{{ route('journal_entries.export.csv', request()->query()) }}">Export CSV</a>
+            <a class="btn btn-outline-secondary btn-sm" href="{{ route('journal_entries.export.pdf', request()->query()) }}">Export PDF</a>
+        </div>
     </div>
 
     @if(session('success'))

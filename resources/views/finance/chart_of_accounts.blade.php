@@ -9,7 +9,11 @@
             <h2 class="fw-bold text-primary mb-0">Chart of Accounts</h2>
             <p class="text-muted mb-0">Manage financial account records and categories.</p>
         </div>
-        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">Add Account</button>
+        <div class="d-flex gap-2">
+            <a class="btn btn-outline-secondary" href="{{ route('chart.export.csv') }}">Export CSV</a>
+            <a class="btn btn-outline-secondary" href="{{ route('chart.export.pdf') }}">Export PDF</a>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">Add Account</button>
+        </div>
     </div>
 
     @if(session('success'))

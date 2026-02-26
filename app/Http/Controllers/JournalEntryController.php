@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\JournalEntry;
+use Illuminate\Support\Carbon;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use PDF;
 
 class JournalEntryController extends Controller
 {
@@ -31,6 +34,82 @@ class JournalEntryController extends Controller
         $journals = $query->orderBy('entry_date', 'desc')->get();
 
         return view('finance.journal_entries', compact('journals'));
+    }
+
+    public function exportCsv(Request $request): StreamedResponse
+    {
+        $query = JournalEntry::query();
+
+        if ($request->filled('account')) {
+            $query->where('account', 'like', '%' . $request->account . '%');
+        }
+        if ($request->filled('from')) {
+            $query->whereDate('entry_date', '>=', $request->from);
+        }
+        if ($request->filled('to')) {
+            $query->whereDate('entry_date', '<=', $request->to);
+        }
+
+        $journals = $query->orderBy('entry_date', 'desc')->get();
+        $filename = 'journal_entries_' . Carbon::now()->format('Ymd_His') . '.csv';
+
+        return response()->streamDownload(function () use ($journals) {
+            $out = fopen('php://output', 'w');
+
+            fputcsv($out, [
+                'Account',
+                'Credit',
+                'Debit',
+                'Description',
+                'Date',
+                'Source Module',
+                'Reference ID',
+            ]);
+
+            foreach ($journals as $journal) {
+                fputcsv($out, [
+                    $journal->account,
+                    $journal->credit,
+                    $journal->debit,
+                    $journal->description,
+                    $journal->entry_date,
+                    $journal->source_module,
+                    $journal->reference_id,
+                ]);
+            }
+
+            fclose($out);
+        }, $filename, [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+        ]);
+    }
+
+    public function exportPdf(Request $request)
+    {
+        $query = JournalEntry::query();
+
+        if ($request->filled('account')) {
+            $query->where('account', 'like', '%' . $request->account . '%');
+        }
+        if ($request->filled('from')) {
+            $query->whereDate('entry_date', '>=', $request->from);
+        }
+        if ($request->filled('to')) {
+            $query->whereDate('entry_date', '<=', $request->to);
+        }
+
+        $journals = $query->orderBy('entry_date', 'desc')->get();
+
+        $filters = [
+            'account' => $request->account,
+            'from' => $request->from,
+            'to' => $request->to,
+        ];
+
+        $pdf = PDF::loadView('finance.exports.journal_entries_pdf', compact('journals', 'filters'))
+            ->setPaper('a4', 'landscape');
+
+        return $pdf->download('journal_entries.pdf');
     }
 
     /**
