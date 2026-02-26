@@ -12,7 +12,7 @@
         <div class="d-flex gap-2">
             <a class="btn btn-outline-secondary" href="{{ route('chart.export.csv') }}">Export CSV</a>
             <a class="btn btn-outline-secondary" href="{{ route('chart.export.pdf') }}">Export PDF</a>
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">Add Account</button>
+          
         </div>
     </div>
 
